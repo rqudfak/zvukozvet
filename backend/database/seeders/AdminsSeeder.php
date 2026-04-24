@@ -22,7 +22,7 @@ class AdminsSeeder extends Seeder
                 'language' => 'Русский',
                 'timbre' => 'Сопрано',
                 'avatar' => null,
-                'achievements_progress' => null,
+                'achievements_progress' => 0,
                 'achievements_count' => 0,
                 'banned_until' => null,
                 'ban_reason' => null,
