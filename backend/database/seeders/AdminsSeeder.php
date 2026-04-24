@@ -11,19 +11,18 @@ class AdminsSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
-            ['login' => 'admin1'],
+        $admins = [
             [
                 'name' => 'Анастасия',
                 'login' => 'admin1',
                 'email' => 'nastya.davydova.2006@mail.ru',
                 'password' => Hash::make('123456'),
                 'role' => 'admin',
-                'gender' => null,
-                'language' => null,
-                'timbre' => null,
+                'gender' => 'Женский',
+                'language' => 'Русский',
+                'timbre' => 'Сопрано',
                 'avatar' => null,
-                'achievements_progress' => null,
+                'achievements_progress' => 0,
                 'achievements_count' => 0,
                 'banned_until' => null,
                 'ban_reason' => null,
@@ -31,6 +30,12 @@ class AdminsSeeder extends Seeder
                 'locked_until' => null,
                 'email_verified_at' => now(),
             ]
-        );
+        ];
+        foreach ($admins as $admin) {
+            User::updateOrCreate(
+                ['login' => $admin['login']],
+                $admin 
+            );
+        }
     }
 }
