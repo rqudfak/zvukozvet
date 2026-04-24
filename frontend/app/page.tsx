@@ -230,7 +230,7 @@ export default async function Home({
                   >
                     {announcement.genre_icon ? (
                       <img
-                        src={`http://localhost:8000/images/genres/${announcement.genre_icon}`}
+                        src={`${process.env.NEXT_PUBLIC_API_URL}/images/genres/${announcement.genre_icon}`}
                         alt={announcement.genre}
                         className="genre-icon"
                         data-hide-on-error
