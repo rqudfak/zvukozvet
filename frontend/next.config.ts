@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',  // ВКЛЮЧАЕМ СТАТИЧЕСКИЙ ЭКСПОРТ
   images: {
     unoptimized: true,
   },
