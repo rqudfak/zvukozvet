@@ -1,65 +1,301 @@
-import Image from "next/image";
+import Link from "next/link";
+import { fetchApi } from "@/lib/api";
+import CreateAnnouncementButton from "@/components/CreateAnnouncementButton";
 
-export default function Home() {
+type Announcement = {
+  id: number;
+  title: string;
+  type: string;
+  genre: string;
+  color: string;
+  genre_icon?: string | null;
+  languages: string;
+  gender: string;
+  duration: string;
+  description: string;
+  created_at: string;
+};
+
+type Genre = { id: number; name: string; type: string };
+
+type ApiPagination<T> = {
+  data: T[];
+  current_page: number;
+  last_page: number;
+};
+
+function valueToArray(value: string | string[] | undefined): string[] {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yy = String(date.getFullYear()).slice(-2);
+  return `${dd}.${mm}.${yy}`;
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = new URLSearchParams();
+  const resolved = (await searchParams) ?? {};
+  Object.entries(resolved).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((entry) => params.append(key, entry));
+      return;
+    }
+
+    if (value) params.set(key, value);
+  });
+
+  const [announcements, genres] = await Promise.all([
+    fetchApi<ApiPagination<Announcement>>(`/announcements?${params.toString()}`),
+    fetchApi<{ all: Genre[] }>("/genres"),
+  ]);
+  const selectedTypes = [
+    ...valueToArray(resolved.types as string | string[] | undefined),
+    ...valueToArray(resolved["types[]"] as string | string[] | undefined),
+  ];
+  const selectedGenres = [
+    ...valueToArray(resolved.genres as string | string[] | undefined),
+    ...valueToArray(resolved["genres[]"] as string | string[] | undefined),
+  ];
+  const bookGenreNames = genres.all
+    .filter((genre) => genre.type === "Книга")
+    .map((genre) => genre.name);
+  const gameGenreNames = genres.all
+    .filter((genre) => genre.type === "Видеоигра")
+    .map((genre) => genre.name);
+  const typeBookChecked =
+    selectedTypes.includes("Книга") || selectedGenres.some((genre) => bookGenreNames.includes(genre));
+  const typeGameChecked =
+    selectedTypes.includes("Видеоигра") ||
+    selectedGenres.some((genre) => gameGenreNames.includes(genre));
+  const selectedGender = (resolved.gender as string) ?? "";
+  const selectedSearch = (resolved.search as string) ?? "";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <div className="announcements-header">
+        <h2>Доска объявлений</h2>
+        {announcements.last_page > 1 ? (
+          <div className="pagination pagination-top">
+            <nav>
+              {Array.from({ length: announcements.last_page }, (_, i) => i + 1).map((page) => {
+                const pageParams = new URLSearchParams(params.toString());
+                if (page === 1) pageParams.delete("page");
+                else pageParams.set("page", String(page));
+
+                return page === announcements.current_page ? (
+                  <span key={page} aria-current="page">
+                    {page}
+                  </span>
+                ) : (
+                  <Link key={page} href={`/?${pageParams.toString()}`}>
+                    {page}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        ) : null}
+
+        <CreateAnnouncementButton />
+      </div>
+
+      <div className="announcements-main">
+        <div className="filters-container">
+          <form key={params.toString()} method="GET" action="/" id="filters-form">
+            <div className="filter-section">
+              <h3 className="filter-title">Тип</h3>
+              <div className="filter-tags">
+                <label className="filter-tag">
+                  <input
+                    type="checkbox"
+                    name="types[]"
+                    value="Книга"
+                    defaultChecked={typeBookChecked}
+                  />
+                  <span>Книга</span>
+                </label>
+                <label className="filter-tag">
+                  <input
+                    type="checkbox"
+                    name="types[]"
+                    value="Видеоигра"
+                    defaultChecked={typeGameChecked}
+                  />
+                  <span>Видеоигра</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="filter-divider"></div>
+
+            <div className="filter-section">
+              <h3 className="filter-title">Жанр</h3>
+              <div className="filter-tags filter-tags-grid">
+                {genres.all.map((genre) => (
+                  <label key={genre.id} className="filter-tag">
+                    <input
+                      type="checkbox"
+                      name="genres[]"
+                      value={genre.name}
+                      defaultChecked={selectedGenres.includes(genre.name)}
+                    />
+                    <span>{genre.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="filter-divider"></div>
+
+            <div className="filter-section">
+              <h3 className="filter-title">Пол</h3>
+              <div className="filter-radio-group">
+                <label className="filter-radio">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Мужской"
+                    defaultChecked={selectedGender === "Мужской"}
+                  />
+                  <span>Мужской</span>
+                </label>
+                <label className="filter-radio">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="Женский"
+                    defaultChecked={selectedGender === "Женский"}
+                  />
+                  <span>Женский</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="filter-divider"></div>
+
+            <div className="filter-section">
+              <h3 className="filter-title">Поиск</h3>
+              <input
+                type="text"
+                name="search"
+                defaultValue={selectedSearch}
+                placeholder="Поиск по названию"
+                className="filter-search-input"
+              />
+            </div>
+
+            <div className="filter-actions">
+              <button className="btn-submit" type="submit">
+                Применить
+              </button>
+              <Link href="/" className="btn-switch">
+                Сброс
+              </Link>
+            </div>
+          </form>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="announcements-grid">
+          {announcements.data.length === 0 ? (
+            <p className="no-announcements">Объявлений пока нет.</p>
+          ) : (
+            announcements.data.map((announcement) => (
+              <div
+                key={announcement.id}
+                className="announcement-card"
+                style={{ ["--genre-color" as string]: announcement.color }}
+              >
+                <div className="announcement-title-row">
+                  <h3 className="announcement-title">
+                    <Link href={`/announcements/${announcement.id}`}>
+                      {announcement.title}
+                    </Link>
+                  </h3>
+                  <span className="announcement-date">{formatDate(announcement.created_at)}</span>
+                </div>
+
+                <div className="announcement-type-genre-section">
+                  <div
+                    className="genre-icon-container"
+                    style={{ backgroundColor: announcement.color }}
+                  >
+                    {announcement.genre_icon ? (
+                      <img
+                        src={`http://localhost:8000/images/genres/${announcement.genre_icon}`}
+                        alt={announcement.genre}
+                        className="genre-icon"
+                        data-hide-on-error
+                      />
+                    ) : null}
+                  </div>
+                  <div className="type-genre-info">
+                    <div className="type-row">
+                      <span className="type-label">Тип:</span>
+                      <span className="type-value">{announcement.type}</span>
+                    </div>
+                    <div className="genre-row">
+                      <span className="genre-label">Жанр:</span>
+                      <span className="genre-value">{announcement.genre}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="announcement-details">
+                  <div className="detail-item">
+                    <span className="detail-label">Языки:</span>
+                    <span className="detail-value">{announcement.languages}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Пол:</span>
+                    <span className="detail-value">{announcement.gender}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Срок:</span>
+                    <span className="detail-value">{announcement.duration}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Описание:</span>
+                    <span className="detail-value">
+                      {announcement.description.slice(0, 100)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-      </main>
-    </div>
+      </div>
+
+      {announcements.last_page > 1 ? (
+        <div className="pagination pagination-bottom">
+          <nav>
+            {Array.from({ length: announcements.last_page }, (_, i) => i + 1).map((page) => {
+              const pageParams = new URLSearchParams(params.toString());
+              if (page === 1) pageParams.delete("page");
+              else pageParams.set("page", String(page));
+
+              return page === announcements.current_page ? (
+                <span key={page} aria-current="page">
+                  {page}
+                </span>
+              ) : (
+                <Link key={page} href={`/?${pageParams.toString()}`}>
+                  {page}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      ) : null}
+    </>
   );
 }
