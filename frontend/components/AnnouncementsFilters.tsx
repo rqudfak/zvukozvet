@@ -129,7 +129,7 @@ export default function AnnouncementsFilters({
 
       <div className="filter-actions">
         <button className="btn-submit" type="submit">
-          Применить
+          Найти
         </button>
         <Link href="/" className="btn-switch">
           Сброс

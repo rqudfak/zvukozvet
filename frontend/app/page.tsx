@@ -112,6 +112,7 @@ export default async function Home({
       <div className="announcements-main">
         <div className="filters-container">
           <AnnouncementsFilters
+            key={params.toString()}
             genres={genres.all}
             typeBookChecked={typeBookChecked}
             typeGameChecked={typeGameChecked}
