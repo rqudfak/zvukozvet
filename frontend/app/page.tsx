@@ -255,7 +255,7 @@ export default async function Home({
                     <span className="detail-value">{announcement.languages}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">Пол:</span>
+                    <span className="detail-label">Голос озвучивания:</span>
                     <span className="detail-value">{announcement.gender}</span>
                   </div>
                   <div className="detail-item">

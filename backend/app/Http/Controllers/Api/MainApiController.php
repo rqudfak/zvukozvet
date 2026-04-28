@@ -255,10 +255,24 @@ class MainApiController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $publicAnnouncements = $user->announcements()
+            ->where('status', 'Одобрено')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $myResponses = $user->responses()
+            ->with([
+                'announcement:id,title,status,created_at',
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return response()->json([
             'user' => $user,
             'all_achievements' => $allAchievements,
             'my_announcements' => $myAnnouncements,
+            'public_announcements' => $publicAnnouncements,
+            'my_responses' => $myResponses,
         ]);
     }
 
@@ -533,6 +547,9 @@ class MainApiController extends Controller
         }
         if ($response->user_id !== $request->user()->id) {
             abort(403);
+        }
+        if ($response->status === 'Принято') {
+            return response()->json(['message' => 'Принятый отклик нельзя удалить.'], 422);
         }
 
         if ($response->audio_path) {

@@ -50,10 +50,24 @@ type MyAnnouncement = {
   accepted_responses_count?: number;
 };
 
+type MyResponse = {
+  id: number;
+  status: string;
+  created_at?: string;
+  announcement?: {
+    id: number;
+    title: string;
+    status: string;
+    created_at?: string;
+  };
+};
+
 type UserPayload = {
   user: UserData;
   all_achievements: Achievement[];
   my_announcements: MyAnnouncement[];
+  public_announcements: MyAnnouncement[];
+  my_responses: MyResponse[];
 };
 
 function formatDate(dateString?: string): string {
@@ -314,6 +328,23 @@ export default function UserPage() {
             >
               Мои объявления
             </button>
+          ) : (
+            <button
+              type="button"
+              className={`profile-tab ${activeTab === "announcements" ? "active" : ""}`}
+              onClick={() => setActiveTab("announcements")}
+            >
+              Объявления
+            </button>
+          )}
+          {canEdit ? (
+            <button
+              type="button"
+              className={`profile-tab ${activeTab === "my-responses" ? "active" : ""}`}
+              onClick={() => setActiveTab("my-responses")}
+            >
+              Мои отклики
+            </button>
           ) : null}
           <button
             type="button"
@@ -404,6 +435,62 @@ export default function UserPage() {
             </div>
           </div>
         ) : null}
+
+        {canEdit ? (
+          <div className={`profile-tab-content ${activeTab === "my-responses" ? "active" : ""}`}>
+            <div className="my-announcements-list">
+              {payload.my_responses.length === 0 ? (
+                <p className="profile-empty">Откликов пока нет.</p>
+              ) : (
+                payload.my_responses.map((response) => (
+                  <div key={response.id} className="my-announcement-item">
+                    <div className="my-announcement-top">
+                      {response.announcement ? (
+                        <Link className="my-announcement-title" href={`/announcements/${response.announcement.id}`}>
+                          {response.announcement.title}
+                        </Link>
+                      ) : (
+                        <span className="my-announcement-title">Объявление недоступно</span>
+                      )}
+                      <span className="my-announcement-date">{formatDate(response.created_at)}</span>
+                    </div>
+                    <div className="my-announcement-meta">
+                      <span className="my-announcement-status">Статус отклика: {response.status}</span>
+                    </div>
+                    {response.announcement?.status !== "Одобрено" ? (
+                      <div className="my-announcement-desc">
+                        Объявление снято с публикации. Откликнуться повторно нельзя.
+                      </div>
+                    ) : null}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className={`profile-tab-content ${activeTab === "announcements" ? "active" : ""}`}>
+            <div className="my-announcements-list">
+              {payload.public_announcements.length === 0 ? (
+                <p className="profile-empty">Объявлений пока нет.</p>
+              ) : (
+                payload.public_announcements.map((announcement) => (
+                  <div key={announcement.id} className="my-announcement-item">
+                    <div className="my-announcement-top">
+                      <Link className="my-announcement-title" href={`/announcements/${announcement.id}`}>
+                        {announcement.title}
+                      </Link>
+                      <span className="my-announcement-date">{formatDate(announcement.created_at)}</span>
+                    </div>
+                    <div className="my-announcement-meta">
+                      <span className="my-announcement-status">Статус: {announcement.status}</span>
+                    </div>
+                    <div className="my-announcement-desc">{announcement.description ?? ""}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
 
         <div className={`profile-tab-content ${activeTab === "reviews" ? "active" : ""}`}>
           <div className="reviews-list">
