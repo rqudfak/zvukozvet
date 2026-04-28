@@ -68,6 +68,9 @@ class AnnouncementResponseController extends Controller
         if ($response->announcement_id !== $announcement->id) {
             abort(404);
         }
+        if ($response->status === 'Принято') {
+            return back()->withErrors(['audio' => 'Принятый отклик нельзя удалить.']);
+        }
 
         if ($response->audio_path) {
             Storage::disk('public')->delete($response->audio_path);

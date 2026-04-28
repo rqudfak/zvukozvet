@@ -160,6 +160,9 @@ class AnnouncementController extends Controller
         if ($announcement->user_id !== Auth::id()) {
             abort(403, 'У вас нет прав для редактирования этого объявления');
         }
+        if ($announcement->responses()->where('status', 'Принято')->exists()) {
+            abort(403, 'Нельзя редактировать объявление с принятым откликом.');
+        }
         if (Auth::user()->isBanned()) {
             abort(403, 'Заблокированные пользователи не могут редактировать объявления.');
         }
@@ -174,6 +177,9 @@ class AnnouncementController extends Controller
     {
         if ($announcement->user_id !== Auth::id()) {
             abort(403, 'У вас нет прав для редактирования этого объявления');
+        }
+        if ($announcement->responses()->where('status', 'Принято')->exists()) {
+            abort(403, 'Нельзя редактировать объявление с принятым откликом.');
         }
         if (Auth::user()->isBanned()) {
             abort(403, 'Заблокированные пользователи не могут редактировать объявления.');

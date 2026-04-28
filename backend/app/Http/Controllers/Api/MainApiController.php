@@ -12,6 +12,7 @@ use App\Models\PortfolioItem;
 use App\Models\Review;
 use App\Notifications\AnnouncementStatusUpdated;
 use App\Notifications\NewGenreAdded;
+use App\Notifications\NewFollowedAuthorAnnouncement;
 use App\Notifications\NewReviewReceived;
 use App\Notifications\NewResponseOnYourAnnouncement;
 use App\Notifications\ResponseStatusUpdated;
@@ -237,7 +238,7 @@ class MainApiController extends Controller
         ]);
     }
 
-    public function userProfile(User $user)
+    public function userProfile(Request $request, User $user)
     {
         $user->load([
             'portfolioItems',
@@ -255,10 +256,65 @@ class MainApiController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $publicAnnouncements = $user->announcements()
+            ->where('status', 'Одобрено')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $myResponses = $user->responses()
+            ->with([
+                'announcement:id,title,status,created_at',
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $viewer = null;
+        $bearerToken = $request->bearerToken();
+        if (is_string($bearerToken) && $bearerToken !== '') {
+            $accessToken = PersonalAccessToken::findToken($bearerToken);
+            if ($accessToken && $accessToken->tokenable instanceof User) {
+                $viewer = $accessToken->tokenable;
+            }
+        }
+
+        $isFollowing = false;
+        if ($viewer && $viewer->id !== $user->id) {
+            $isFollowing = $viewer->followingUsers()->where('followed_id', $user->id)->exists();
+        }
+
+        $subscriptionsCount = $user->followingUsers()->count();
+        $subscribersCount = $user->followersUsers()->count();
+
+        $subscriptionsAnnouncements = collect();
+        $subscribers = collect();
+        if ($viewer && $viewer->id === $user->id) {
+            $subscriptionsAnnouncements = Announcement::query()
+                ->with('user:id,name')
+                ->whereIn('user_id', $user->followingUsers()->select('users.id'))
+                ->where('status', 'Одобрено')
+                ->whereDoesntHave('responses', function ($q) {
+                    $q->where('status', 'Принято');
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $subscribers = $user->followersUsers()
+                ->select('users.id', 'users.name', 'users.avatar')
+                ->orderBy('users.name')
+                ->get();
+        }
+
         return response()->json([
             'user' => $user,
             'all_achievements' => $allAchievements,
             'my_announcements' => $myAnnouncements,
+            'public_announcements' => $publicAnnouncements,
+            'my_responses' => $myResponses,
+            'is_following' => $isFollowing,
+            'subscriptions_count' => $subscriptionsCount,
+            'subscribers_count' => $subscribersCount,
+            'subscriptions_announcements' => $subscriptionsAnnouncements,
+            'subscribers' => $subscribers,
         ]);
     }
 
@@ -323,6 +379,52 @@ class MainApiController extends Controller
         }
 
         return response()->json(['url' => $url]);
+    }
+
+    public function notificationsReadAll(Request $request)
+    {
+        $request->user()->unreadNotifications->markAsRead();
+
+        return response()->json(['message' => 'Все уведомления отмечены как прочитанные']);
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        if ($request->user()->id !== $user->id) {
+            return response()->json(['message' => 'Редактировать можно только свой профиль'], 403);
+        }
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|in:Мужской,Женский,Не указано',
+            'language' => 'required|string|max:255',
+            'timbre' => 'required|in:Тенор,Баритон,Бас,Сопрано,Меццо-сопрано,Контральто,Не указано',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && $user->avatar !== 'defult.png') {
+                Storage::disk('public')->delete('avatars/' . $user->avatar);
+            }
+            $file = $request->file('avatar');
+            $filename = $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('avatars', $filename, 'public');
+            $data['avatar'] = $filename;
+        } else {
+            unset($data['avatar']);
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            'message' => 'Профиль обновлён',
+            'user' => $user->fresh(),
+        ]);
+    }
+
+    public function updateMyProfile(Request $request)
+    {
+        return $this->updateUser($request, $request->user());
     }
 
     public function enableTwoFactor(Request $request)
@@ -488,6 +590,9 @@ class MainApiController extends Controller
         if ($response->user_id !== $request->user()->id) {
             abort(403);
         }
+        if ($response->status === 'Принято') {
+            return response()->json(['message' => 'Принятый отклик нельзя удалить.'], 422);
+        }
 
         if ($response->audio_path) {
             Storage::disk('public')->delete($response->audio_path);
@@ -541,6 +646,12 @@ class MainApiController extends Controller
         $announcement->loadMissing('user');
         if ($oldStatus !== $newStatus && $announcement->user) {
             $announcement->user->notify(new AnnouncementStatusUpdated($announcement, $oldStatus, $newStatus));
+            if ($newStatus === 'Одобрено') {
+                $followers = $announcement->user->followersUsers()->select('users.id')->get();
+                foreach ($followers as $follower) {
+                    $follower->notify(new NewFollowedAuthorAnnouncement($announcement, $announcement->user));
+                }
+            }
         }
 
         return response()->json(['message' => 'Статус объявления обновлён']);
@@ -678,5 +789,23 @@ class MainApiController extends Controller
 
         $review->delete();
         return response()->json(['message' => 'Отзыв удалён']);
+    }
+
+    public function followUser(Request $request, User $user)
+    {
+        if ($request->user()->id === $user->id) {
+            return response()->json(['message' => 'Нельзя подписаться на самого себя.'], 422);
+        }
+
+        $request->user()->followingUsers()->syncWithoutDetaching([$user->id]);
+
+        return response()->json(['message' => 'Вы подписались на пользователя.']);
+    }
+
+    public function unfollowUser(Request $request, User $user)
+    {
+        $request->user()->followingUsers()->detach($user->id);
+
+        return response()->json(['message' => 'Подписка отменена.']);
     }
 }

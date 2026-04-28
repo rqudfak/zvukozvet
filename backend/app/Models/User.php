@@ -159,4 +159,16 @@ class User extends Authenticatable
             ->withPivot('awarded_at')
             ->withTimestamps();
     }
+
+    public function followingUsers()
+    {
+        return $this->belongsToMany(User::class, 'subscriptions', 'follower_id', 'followed_id')
+            ->withTimestamps();
+    }
+
+    public function followersUsers()
+    {
+        return $this->belongsToMany(User::class, 'subscriptions', 'followed_id', 'follower_id')
+            ->withTimestamps();
+    }
 }

@@ -20,36 +20,47 @@ export default function HeaderNav() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const notifRef = useRef<HTMLLIElement | null>(null);
 
+  async function loadUserAndNotifications() {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      setIsAuthorized(false);
+      setIsAdmin(false);
+      setNotifications([]);
+      return;
+    }
+
+    const userResponse = await fetch(`${API_URL}/user`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!userResponse.ok) {
+      throw new Error("Unauthorized");
+    }
+    const user = (await userResponse.json()) as { role?: string };
+    setIsAuthorized(true);
+    setIsAdmin(user.role === "admin");
+
+    const notificationsResponse = await fetch(`${API_URL}/notifications`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (notificationsResponse.ok) {
+      const payload = (await notificationsResponse.json()) as { data?: NotificationItem[] };
+      setNotifications((payload.data ?? []).slice(0, 8));
+    }
+  }
+
   useEffect(() => {
-    const timer = setTimeout(async () => {
-      const token = localStorage.getItem("auth_token");
-      if (!token) return;
+    loadUserAndNotifications().catch(() => {
+      localStorage.removeItem("auth_token");
+      setIsAuthorized(false);
+      setIsAdmin(false);
+      setNotifications([]);
+    });
 
-      try {
-        const userResponse = await fetch(`${API_URL}/user`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!userResponse.ok) throw new Error("Unauthorized");
-        const user = (await userResponse.json()) as { role?: string };
-        setIsAuthorized(true);
-        setIsAdmin(user.role === "admin");
+    const interval = setInterval(() => {
+      loadUserAndNotifications().catch(() => null);
+    }, 5000);
 
-        const notificationsResponse = await fetch(`${API_URL}/notifications`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (notificationsResponse.ok) {
-          const payload = (await notificationsResponse.json()) as { data?: NotificationItem[] };
-          setNotifications((payload.data ?? []).slice(0, 8));
-        }
-      } catch {
-        localStorage.removeItem("auth_token");
-        setIsAuthorized(false);
-        setIsAdmin(false);
-        setNotifications([]);
-      }
-    }, 0);
-
-    return () => clearTimeout(timer);
+    return () => clearInterval(interval);
   }, []);
 
   function handleLogout() {
@@ -126,9 +137,11 @@ export default function HeaderNav() {
           <li>
             <Link href="/">Главная</Link>
           </li>
-          <li>
-            <Link href={isAuthorized ? "/profile" : "/"}>Профиль</Link>
-          </li>
+          {isAuthorized ? (
+            <li>
+              <Link href="/profile">Профиль</Link>
+            </li>
+          ) : null}
           <li>
             <Link href="/">О нас</Link>
           </li>

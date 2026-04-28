@@ -91,7 +91,7 @@ export default function AnnouncementDetailPage({
           if (meResponse.ok) {
             const me = (await meResponse.json()) as CurrentUser;
             setCurrentUser(me);
-            setCanEdit(me.id === payload.announcement.user_id);
+            setCanEdit(me.id === payload.announcement.user_id && (payload.accepted_response_id ?? null) === null);
           }
         }
       } catch {
@@ -153,10 +153,16 @@ export default function AnnouncementDetailPage({
     if (!announcement) return;
     const token = localStorage.getItem("auth_token");
     if (!token) return;
-    await fetch(`${API_URL}/announcements/${announcement.id}/responses/${responseId}`, {
+    const response = await fetch(`${API_URL}/announcements/${announcement.id}/responses/${responseId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
+    const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+    if (!response.ok) {
+      setResponseError(payload?.message ?? "Не удалось удалить отклик.");
+      return;
+    }
+    setResponseError(null);
     setSuccessFlash("Отклик удалён");
     await refreshAnnouncement();
   }
@@ -223,6 +229,7 @@ export default function AnnouncementDetailPage({
 
   const isAuthor = currentUser?.id === announcement.user_id;
   const isAuthorized = Boolean(currentUser);
+  const hasAcceptedResponse = acceptedResponseId !== null;
 
   return (
     <>
@@ -257,12 +264,20 @@ export default function AnnouncementDetailPage({
             </div>
           ) : null}
         </div>
+        {isAuthor && hasAcceptedResponse ? (
+          <p style={{ marginTop: 8 }}>Редактирование недоступно: по объявлению уже принят отклик.</p>
+        ) : null}
 
         <h1 className="announcement-detail-title">{announcement.title}</h1>
 
         <div className="announcement-detail-info">
           <div className="info-item">
-            <strong>Автор:</strong> {announcement.user?.name ?? "Неизвестно"}
+            <strong>Автор:</strong>{" "}
+            {announcement.user?.id ? (
+              <Link href={`/users/${announcement.user.id}`}>{announcement.user?.name ?? "Неизвестно"}</Link>
+            ) : (
+              announcement.user?.name ?? "Неизвестно"
+            )}
           </div>
           <div className="info-item">
             <strong>Дата создания:</strong> {formatDateTime(announcement.created_at)}
@@ -271,7 +286,7 @@ export default function AnnouncementDetailPage({
             <strong>Языки:</strong> {announcement.languages}
           </div>
           <div className="info-item">
-            <strong>Пол:</strong> {announcement.gender}
+            <strong>Голос озвучивания:</strong> {announcement.gender}
           </div>
           <div className="info-item">
             <strong>Срок:</strong> {announcement.duration}
@@ -284,7 +299,7 @@ export default function AnnouncementDetailPage({
         </div>
 
         <div className="announcement-detail-fragment">
-          <h3>Текст</h3>
+          <h3>Текст для озвучивания</h3>
           <div style={{ whiteSpace: "pre-line" }}>{announcement.fragment}</div>
         </div>
 
@@ -299,8 +314,8 @@ export default function AnnouncementDetailPage({
 
       {!isAuthorized ? (
         <div className="announcement-detail" style={{ marginTop: 25 }}>
-          Чтобы откликнуться на объявление, пожалуйста, <Link href="/auth/login">войдите</Link> или{" "}
-          <Link href="/auth/register">зарегистрируйтесь</Link>.
+          Чтобы откликнуться на объявление, пожалуйста, <Link href="/auth/login"><span className="announcement-detail-link">войдите</span></Link> или{" "}
+          <Link href="/auth/register"><span className="announcement-detail-link">зарегистрируйтесь</span></Link>.
         </div>
       ) : null}
 
@@ -316,14 +331,16 @@ export default function AnnouncementDetailPage({
                 {userResponse.message ? <p>{userResponse.message}</p> : null}
                 <audio controls src={buildStorageUrl(userResponse.audio_path) ?? undefined} />
                 <p>Статус: {userResponse.status}</p>
-                <button
-                  type="button"
-                  className="btn-submit"
-                  style={{ marginTop: 10 }}
-                  onClick={() => deleteMyResponse(userResponse.id)}
-                >
-                  Удалить отклик
-                </button>
+                {userResponse.status !== "Принято" ? (
+                  <button
+                    type="button"
+                    className="btn-submit"
+                    style={{ marginTop: 10 }}
+                    onClick={() => deleteMyResponse(userResponse.id)}
+                  >
+                    Удалить отклик
+                  </button>
+                ) : null}
               </div>
             </>
           ) : (
