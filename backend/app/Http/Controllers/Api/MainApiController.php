@@ -285,8 +285,17 @@ class MainApiController extends Controller
         $subscriptionsCount = $user->followingUsers()->count();
         $subscribersCount = $user->followersUsers()->count();
 
+        $subscriptions = $user->followingUsers()
+            ->select('users.id', 'users.name', 'users.avatar')
+            ->orderBy('users.name')
+            ->get();
+
+        $subscribers = $user->followersUsers()
+            ->select('users.id', 'users.name', 'users.avatar')
+            ->orderBy('users.name')
+            ->get();
+
         $subscriptionsAnnouncements = collect();
-        $subscribers = collect();
         if ($viewer && $viewer->id === $user->id) {
             $subscriptionsAnnouncements = Announcement::query()
                 ->with('user:id,name')
@@ -296,11 +305,6 @@ class MainApiController extends Controller
                     $q->where('status', 'Принято');
                 })
                 ->orderBy('created_at', 'desc')
-                ->get();
-
-            $subscribers = $user->followersUsers()
-                ->select('users.id', 'users.name', 'users.avatar')
-                ->orderBy('users.name')
                 ->get();
         }
 
@@ -313,6 +317,7 @@ class MainApiController extends Controller
             'is_following' => $isFollowing,
             'subscriptions_count' => $subscriptionsCount,
             'subscribers_count' => $subscribersCount,
+            'subscriptions' => $subscriptions,
             'subscriptions_announcements' => $subscriptionsAnnouncements,
             'subscribers' => $subscribers,
         ]);
@@ -336,7 +341,7 @@ class MainApiController extends Controller
             'type' => 'required|in:Книга,Видеоигра',
             'genre' => 'required|string',
             'languages' => 'required|string',
-            'gender' => 'required|in:Мужской,Женский',
+            'gender' => 'required|in:Мужской,Женский,Детский',
             'duration' => 'required|in:Кратковременная роль,Долгосрочная роль',
             'description' => 'required|string',
             'fragment' => 'required|string',

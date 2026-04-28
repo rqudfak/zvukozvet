@@ -330,6 +330,7 @@
 .filter-radio-group {
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
 }
 
 .filter-radio {
@@ -376,7 +377,7 @@
 }
 
 .filter-actions .btn-submit, .filter-actions .btn-switch {
-    padding: 10px 24px;
+    padding: 10px 30px;
     font-size: 14px;
 }
 

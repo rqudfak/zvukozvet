@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    document.querySelectorAll('[data-auto-submit]').forEach(function (el) {
+    document.querySelectorAll('[data-auto-submit], #filters-form .filter-radio-group input[type="radio"]').forEach(function (el) {
         el.addEventListener('change', function () {
             var form = el.closest('form');
             if (form) {

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { fetchApi } from "@/lib/api";
 import CreateAnnouncementButton from "@/components/CreateAnnouncementButton";
+import AnnouncementsFilters from "@/components/AnnouncementsFilters";
 
 type Announcement = {
   id: number;
@@ -110,98 +111,15 @@ export default async function Home({
 
       <div className="announcements-main">
         <div className="filters-container">
-          <form key={params.toString()} method="GET" action="/" id="filters-form">
-            <div className="filter-section">
-              <h3 className="filter-title">Тип</h3>
-              <div className="filter-tags">
-                <label className="filter-tag">
-                  <input
-                    type="checkbox"
-                    name="types[]"
-                    value="Книга"
-                    defaultChecked={typeBookChecked}
-                  />
-                  <span>Книга</span>
-                </label>
-                <label className="filter-tag">
-                  <input
-                    type="checkbox"
-                    name="types[]"
-                    value="Видеоигра"
-                    defaultChecked={typeGameChecked}
-                  />
-                  <span>Видеоигра</span>
-                </label>
-              </div>
-            </div>
-
-            <div className="filter-divider"></div>
-
-            <div className="filter-section">
-              <h3 className="filter-title">Жанр</h3>
-              <div className="filter-tags filter-tags-grid">
-                {genres.all.map((genre) => (
-                  <label key={genre.id} className="filter-tag">
-                    <input
-                      type="checkbox"
-                      name="genres[]"
-                      value={genre.name}
-                      defaultChecked={selectedGenres.includes(genre.name)}
-                    />
-                    <span>{genre.name}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div className="filter-divider"></div>
-
-            <div className="filter-section">
-              <h3 className="filter-title">Пол</h3>
-              <div className="filter-radio-group">
-                <label className="filter-radio">
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="Мужской"
-                    defaultChecked={selectedGender === "Мужской"}
-                  />
-                  <span>Мужской</span>
-                </label>
-                <label className="filter-radio">
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="Женский"
-                    defaultChecked={selectedGender === "Женский"}
-                  />
-                  <span>Женский</span>
-                </label>
-              </div>
-            </div>
-
-            <div className="filter-divider"></div>
-
-            <div className="filter-section">
-              <h3 className="filter-title">Поиск</h3>
-              <input
-                type="text"
-                name="search"
-                defaultValue={selectedSearch}
-                placeholder="Поиск по названию"
-                className="filter-search-input"
-              />
-            </div>
-
-            <div className="filter-actions">
-              <button className="btn-submit" type="submit">
-                Применить
-              </button>
-              <Link href="/" className="btn-switch">
-                Сброс
-              </Link>
-            </div>
-          </form>
+          <AnnouncementsFilters
+            key={params.toString()}
+            genres={genres.all}
+            typeBookChecked={typeBookChecked}
+            typeGameChecked={typeGameChecked}
+            selectedGenres={selectedGenres}
+            selectedGender={selectedGender}
+            selectedSearch={selectedSearch}
+          />
         </div>
 
         <div className="announcements-grid">
@@ -224,10 +142,7 @@ export default async function Home({
                 </div>
 
                 <div className="announcement-type-genre-section">
-                  <div
-                    className="genre-icon-container"
-                    style={{ backgroundColor: announcement.color }}
-                  >
+                  <div className="genre-icon-container" style={{ backgroundColor: announcement.color }}>
                     {announcement.genre_icon ? (
                       <img
                         src={`${process.env.NEXT_PUBLIC_API_URL}/images/genres/${announcement.genre_icon}`}
@@ -264,9 +179,7 @@ export default async function Home({
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Описание:</span>
-                    <span className="detail-value">
-                      {announcement.description.slice(0, 100)}
-                    </span>
+                    <span className="detail-value">{announcement.description.slice(0, 100)}</span>
                   </div>
                 </div>
               </div>

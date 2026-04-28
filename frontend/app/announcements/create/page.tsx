@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { API_URL, fetchApi } from "@/lib/api";
+import { fetchApi } from "@/lib/api";
 import { setSuccessFlash } from "@/lib/flash";
 
 type Genre = { id: number; name: string };
@@ -42,11 +42,12 @@ export default function CreateAnnouncementPage() {
     const formData = new FormData(form);
 
     try {
-      const response = await fetch(`${API_URL}/announcements`, {
+      const response = await fetch("/api/announcements", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          Accept: "application/json",
         },
         body: JSON.stringify({
           title: formData.get("title"),
@@ -59,7 +60,7 @@ export default function CreateAnnouncementPage() {
           fragment: formData.get("fragment"),
         }),
       });
-      const payload = await response.json();
+      const payload = (await response.json().catch(() => ({}))) as { message?: string };
 
       if (!response.ok) {
         setError(payload.message ?? "Не удалось создать объявление");
@@ -115,6 +116,7 @@ export default function CreateAnnouncementPage() {
           <select id="gender" name="gender" defaultValue="Мужской">
             <option value="Мужской">Мужской</option>
             <option value="Женский">Женский</option>
+            <option value="Детский">Детский</option>
           </select>
         </div>
         <div className="form-group">
