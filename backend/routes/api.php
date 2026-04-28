@@ -41,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/2fa/disable', [MainApiController::class, 'disableTwoFactor']);
     Route::post('/users/{user}/portfolio', [MainApiController::class, 'storePortfolio']);
     Route::delete('/users/{user}/portfolio/{portfolio_item}', [MainApiController::class, 'deletePortfolio']);
+    Route::post('/users/{user}/follow', [MainApiController::class, 'followUser']);
+    Route::delete('/users/{user}/follow', [MainApiController::class, 'unfollowUser']);
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {

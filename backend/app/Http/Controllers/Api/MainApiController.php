@@ -12,6 +12,7 @@ use App\Models\PortfolioItem;
 use App\Models\Review;
 use App\Notifications\AnnouncementStatusUpdated;
 use App\Notifications\NewGenreAdded;
+use App\Notifications\NewFollowedAuthorAnnouncement;
 use App\Notifications\NewReviewReceived;
 use App\Notifications\NewResponseOnYourAnnouncement;
 use App\Notifications\ResponseStatusUpdated;
@@ -237,7 +238,7 @@ class MainApiController extends Controller
         ]);
     }
 
-    public function userProfile(User $user)
+    public function userProfile(Request $request, User $user)
     {
         $user->load([
             'portfolioItems',
@@ -267,12 +268,53 @@ class MainApiController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $viewer = null;
+        $bearerToken = $request->bearerToken();
+        if (is_string($bearerToken) && $bearerToken !== '') {
+            $accessToken = PersonalAccessToken::findToken($bearerToken);
+            if ($accessToken && $accessToken->tokenable instanceof User) {
+                $viewer = $accessToken->tokenable;
+            }
+        }
+
+        $isFollowing = false;
+        if ($viewer && $viewer->id !== $user->id) {
+            $isFollowing = $viewer->followingUsers()->where('followed_id', $user->id)->exists();
+        }
+
+        $subscriptionsCount = $user->followingUsers()->count();
+        $subscribersCount = $user->followersUsers()->count();
+
+        $subscriptionsAnnouncements = collect();
+        $subscribers = collect();
+        if ($viewer && $viewer->id === $user->id) {
+            $subscriptionsAnnouncements = Announcement::query()
+                ->with('user:id,name')
+                ->whereIn('user_id', $user->followingUsers()->select('users.id'))
+                ->where('status', 'Одобрено')
+                ->whereDoesntHave('responses', function ($q) {
+                    $q->where('status', 'Принято');
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $subscribers = $user->followersUsers()
+                ->select('users.id', 'users.name', 'users.avatar')
+                ->orderBy('users.name')
+                ->get();
+        }
+
         return response()->json([
             'user' => $user,
             'all_achievements' => $allAchievements,
             'my_announcements' => $myAnnouncements,
             'public_announcements' => $publicAnnouncements,
             'my_responses' => $myResponses,
+            'is_following' => $isFollowing,
+            'subscriptions_count' => $subscriptionsCount,
+            'subscribers_count' => $subscribersCount,
+            'subscriptions_announcements' => $subscriptionsAnnouncements,
+            'subscribers' => $subscribers,
         ]);
     }
 
@@ -604,6 +646,12 @@ class MainApiController extends Controller
         $announcement->loadMissing('user');
         if ($oldStatus !== $newStatus && $announcement->user) {
             $announcement->user->notify(new AnnouncementStatusUpdated($announcement, $oldStatus, $newStatus));
+            if ($newStatus === 'Одобрено') {
+                $followers = $announcement->user->followersUsers()->select('users.id')->get();
+                foreach ($followers as $follower) {
+                    $follower->notify(new NewFollowedAuthorAnnouncement($announcement, $announcement->user));
+                }
+            }
         }
 
         return response()->json(['message' => 'Статус объявления обновлён']);
@@ -741,5 +789,23 @@ class MainApiController extends Controller
 
         $review->delete();
         return response()->json(['message' => 'Отзыв удалён']);
+    }
+
+    public function followUser(Request $request, User $user)
+    {
+        if ($request->user()->id === $user->id) {
+            return response()->json(['message' => 'Нельзя подписаться на самого себя.'], 422);
+        }
+
+        $request->user()->followingUsers()->syncWithoutDetaching([$user->id]);
+
+        return response()->json(['message' => 'Вы подписались на пользователя.']);
+    }
+
+    public function unfollowUser(Request $request, User $user)
+    {
+        $request->user()->followingUsers()->detach($user->id);
+
+        return response()->json(['message' => 'Подписка отменена.']);
     }
 }

@@ -91,7 +91,7 @@ export default function AnnouncementDetailPage({
           if (meResponse.ok) {
             const me = (await meResponse.json()) as CurrentUser;
             setCurrentUser(me);
-            setCanEdit(me.id === payload.announcement.user_id);
+            setCanEdit(me.id === payload.announcement.user_id && (payload.accepted_response_id ?? null) === null);
           }
         }
       } catch {
@@ -229,6 +229,7 @@ export default function AnnouncementDetailPage({
 
   const isAuthor = currentUser?.id === announcement.user_id;
   const isAuthorized = Boolean(currentUser);
+  const hasAcceptedResponse = acceptedResponseId !== null;
 
   return (
     <>
@@ -263,12 +264,20 @@ export default function AnnouncementDetailPage({
             </div>
           ) : null}
         </div>
+        {isAuthor && hasAcceptedResponse ? (
+          <p style={{ marginTop: 8 }}>Редактирование недоступно: по объявлению уже принят отклик.</p>
+        ) : null}
 
         <h1 className="announcement-detail-title">{announcement.title}</h1>
 
         <div className="announcement-detail-info">
           <div className="info-item">
-            <strong>Автор:</strong> {announcement.user?.name ?? "Неизвестно"}
+            <strong>Автор:</strong>{" "}
+            {announcement.user?.id ? (
+              <Link href={`/users/${announcement.user.id}`}>{announcement.user?.name ?? "Неизвестно"}</Link>
+            ) : (
+              announcement.user?.name ?? "Неизвестно"
+            )}
           </div>
           <div className="info-item">
             <strong>Дата создания:</strong> {formatDateTime(announcement.created_at)}

@@ -68,6 +68,11 @@ type UserPayload = {
   my_announcements: MyAnnouncement[];
   public_announcements: MyAnnouncement[];
   my_responses: MyResponse[];
+  is_following: boolean;
+  subscriptions_count: number;
+  subscribers_count: number;
+  subscriptions_announcements: (MyAnnouncement & { user?: { id: number; name: string } })[];
+  subscribers: { id: number; name: string; avatar?: string | null }[];
 };
 
 function formatDate(dateString?: string): string {
@@ -80,16 +85,27 @@ function formatDate(dateString?: string): string {
 }
 
 export default function UserPage() {
+  const PAGE_SIZE = 10;
   const params = useParams<{ id: string }>();
   const [payload, setPayload] = useState<UserPayload | null>(null);
   const [activeTab, setActiveTab] = useState("portfolio");
   const [canEdit, setCanEdit] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState(false);
   const [securityPassword, setSecurityPassword] = useState("");
   const [securityMessage, setSecurityMessage] = useState<string | null>(null);
   const [portfolioDescription, setPortfolioDescription] = useState("");
   const [portfolioAudio, setPortfolioAudio] = useState<File | null>(null);
   const [portfolioMessage, setPortfolioMessage] = useState<string | null>(null);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [followMessage, setFollowMessage] = useState<string | null>(null);
+  const [portfolioPage, setPortfolioPage] = useState(1);
+  const [myAnnouncementsPage, setMyAnnouncementsPage] = useState(1);
+  const [publicAnnouncementsPage, setPublicAnnouncementsPage] = useState(1);
+  const [responsesPage, setResponsesPage] = useState(1);
+  const [reviewsPage, setReviewsPage] = useState(1);
+  const [subscriptionsPage, setSubscriptionsPage] = useState(1);
+  const [subscribersPage, setSubscribersPage] = useState(1);
 
   async function refreshProfile() {
     try {
@@ -106,7 +122,10 @@ export default function UserPage() {
       .catch(() => setPayload(null));
 
     const token = localStorage.getItem("auth_token");
-    if (!token) return;
+    if (!token) {
+      setIsAuthorized(false);
+      return;
+    }
 
     fetch(`${API_URL}/user`, {
       headers: {
@@ -118,11 +137,25 @@ export default function UserPage() {
         return response.json() as Promise<{ id: number; two_factor_enabled?: boolean }>;
       })
       .then((currentUser) => {
+        setIsAuthorized(true);
         setCanEdit(String(currentUser.id) === String(params.id));
         setIsTwoFactorEnabled(Boolean(currentUser.two_factor_enabled));
       })
-      .catch(() => setCanEdit(false));
+      .catch(() => {
+        setIsAuthorized(false);
+        setCanEdit(false);
+      });
   }, [params.id]);
+
+  useEffect(() => {
+    setPortfolioPage(1);
+    setMyAnnouncementsPage(1);
+    setPublicAnnouncementsPage(1);
+    setResponsesPage(1);
+    setReviewsPage(1);
+    setSubscriptionsPage(1);
+    setSubscribersPage(1);
+  }, [activeTab, params.id]);
 
   async function submitTwoFactor(enabled: boolean) {
     setSecurityMessage(null);
@@ -195,6 +228,58 @@ export default function UserPage() {
     }
   }
 
+  async function deletePortfolioItem(itemId: number) {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      setPortfolioMessage("Нужно войти в аккаунт.");
+      return;
+    }
+    try {
+      const response = await fetch(`${API_URL}/users/${params.id}/portfolio/${itemId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = (await response.json().catch(() => null)) as { message?: string } | null;
+      if (!response.ok) {
+        setPortfolioMessage(data?.message ?? "Не удалось удалить запись.");
+        return;
+      }
+      setPortfolioMessage(data?.message ?? "Запись удалена.");
+      await refreshProfile();
+    } catch {
+      setPortfolioMessage("Ошибка сервера при удалении записи.");
+    }
+  }
+
+  async function toggleFollow() {
+    const token = localStorage.getItem("auth_token");
+    if (!token || !payload || canEdit) return;
+    setFollowLoading(true);
+    setFollowMessage(null);
+    try {
+      const response = await fetch(`${API_URL}/users/${params.id}/follow`, {
+        method: payload.is_following ? "DELETE" : "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      const data = (await response.json().catch(() => null)) as { message?: string } | null;
+      if (!response.ok) {
+        setFollowMessage(data?.message ?? "Не удалось изменить подписку.");
+        return;
+      }
+      setFollowMessage(data?.message ?? "Готово.");
+      await refreshProfile();
+    } catch {
+      setFollowMessage("Ошибка сервера при изменении подписки.");
+    } finally {
+      setFollowLoading(false);
+    }
+  }
+
   const achievementProgress = useMemo(() => {
     if (!payload) return { earned: 0, total: 0, percent: 0 };
     const earned = payload.user.achievements?.length ?? 0;
@@ -202,6 +287,48 @@ export default function UserPage() {
     const percent = total > 0 ? Math.round((earned / total) * 100) : 0;
     return { earned, total, percent };
   }, [payload]);
+  const acceptedWorksCount = useMemo(() => {
+    if (!payload) return 0;
+    return (payload.my_responses ?? []).filter((response) => response.status === "Принято").length;
+  }, [payload]);
+
+  function paginate<T>(items: T[], page: number): T[] {
+    const start = (page - 1) * PAGE_SIZE;
+    return items.slice(start, start + PAGE_SIZE);
+  }
+
+  function Pagination({
+    page,
+    total,
+    onChange,
+    positionClass,
+  }: {
+    page: number;
+    total: number;
+    onChange: (nextPage: number) => void;
+    positionClass?: string;
+  }) {
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (totalPages <= 1) return null;
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    return (
+      <div className={`pagination ${positionClass ?? ""}`}>
+        <nav>
+          {pages.map((currentPage) =>
+            currentPage === page ? (
+              <span key={currentPage} aria-current="page">
+                {currentPage}
+              </span>
+            ) : (
+              <button key={currentPage} type="button" onClick={() => onChange(currentPage)}>
+                {currentPage}
+              </button>
+            ),
+          )}
+        </nav>
+      </div>
+    );
+  }
 
   if (!payload) {
     return <div className="profile-card">Загрузка профиля...</div>;
@@ -239,6 +366,9 @@ export default function UserPage() {
             <p>
               <strong>На сайте:</strong> с {formatDate(payload.user.created_at)}
             </p>
+            <p>
+              <strong>Принято откликов:</strong> {acceptedWorksCount}
+            </p>
 
             <div className="profile-achievements-bar-wrap">
               <strong>
@@ -257,6 +387,12 @@ export default function UserPage() {
                 Редактировать
               </Link>
             ) : null}
+            {!canEdit && isAuthorized ? (
+              <button type="button" className="btn-edit-profile" onClick={toggleFollow} disabled={followLoading}>
+                {payload.is_following ? "Отписаться" : "Подписаться"}
+              </button>
+            ) : null}
+            {followMessage ? <p>{followMessage}</p> : null}
 
             {canEdit ? (
               <div className="profile-security-section">
@@ -346,6 +482,24 @@ export default function UserPage() {
               Мои отклики
             </button>
           ) : null}
+          {canEdit ? (
+            <button
+              type="button"
+              className={`profile-tab ${activeTab === "subscriptions" ? "active" : ""}`}
+              onClick={() => setActiveTab("subscriptions")}
+            >
+              Подписки ({payload.subscriptions_count})
+            </button>
+          ) : null}
+          {canEdit ? (
+            <button
+              type="button"
+              className={`profile-tab ${activeTab === "subscribers" ? "active" : ""}`}
+              onClick={() => setActiveTab("subscribers")}
+            >
+              Подписчики ({payload.subscribers_count})
+            </button>
+          ) : null}
           <button
             type="button"
             className={`profile-tab ${activeTab === "reviews" ? "active" : ""}`}
@@ -391,11 +545,29 @@ export default function UserPage() {
             </div>
           ) : null}
           <div className="portfolio-list">
+            <Pagination
+              page={portfolioPage}
+              total={(payload.user.portfolio_items ?? []).length}
+              onChange={setPortfolioPage}
+              positionClass="pagination-top"
+            />
             {(payload.user.portfolio_items ?? []).length === 0 ? (
               <p className="profile-empty">Записей в портфолио пока нет.</p>
             ) : (
-              payload.user.portfolio_items?.map((item) => (
+              paginate(payload.user.portfolio_items ?? [], portfolioPage).map((item) => (
                 <div key={item.id} className="portfolio-item">
+                  {canEdit ? (
+                    <div className="portfolio-item-delete">
+                      <button
+                        type="button"
+                        className="btn-delete-small"
+                        title="Удалить запись"
+                        onClick={() => deletePortfolioItem(item.id)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ) : null}
                   <span className="portfolio-item-date">{formatDate(item.created_at)}</span>
                   <p className="portfolio-item-desc">{item.description || "—"}</p>
                   {item.audio_path ? (
@@ -406,16 +578,28 @@ export default function UserPage() {
                 </div>
               ))
             )}
+            <Pagination
+              page={portfolioPage}
+              total={(payload.user.portfolio_items ?? []).length}
+              onChange={setPortfolioPage}
+              positionClass="pagination-bottom"
+            />
           </div>
         </div>
 
         {canEdit ? (
           <div className={`profile-tab-content ${activeTab === "my-announcements" ? "active" : ""}`}>
             <div className="my-announcements-list">
+              <Pagination
+                page={myAnnouncementsPage}
+                total={payload.my_announcements.length}
+                onChange={setMyAnnouncementsPage}
+                positionClass="pagination-top"
+              />
               {payload.my_announcements.length === 0 ? (
                 <p className="profile-empty">Объявлений пока нет.</p>
               ) : (
-                payload.my_announcements.map((announcement) => (
+                paginate(payload.my_announcements, myAnnouncementsPage).map((announcement) => (
                   <div key={announcement.id} className="my-announcement-item">
                     <div className="my-announcement-top">
                       <Link className="my-announcement-title" href={`/announcements/${announcement.id}`}>
@@ -432,6 +616,12 @@ export default function UserPage() {
                   </div>
                 ))
               )}
+              <Pagination
+                page={myAnnouncementsPage}
+                total={payload.my_announcements.length}
+                onChange={setMyAnnouncementsPage}
+                positionClass="pagination-bottom"
+              />
             </div>
           </div>
         ) : null}
@@ -439,10 +629,16 @@ export default function UserPage() {
         {canEdit ? (
           <div className={`profile-tab-content ${activeTab === "my-responses" ? "active" : ""}`}>
             <div className="my-announcements-list">
+              <Pagination
+                page={responsesPage}
+                total={payload.my_responses.length}
+                onChange={setResponsesPage}
+                positionClass="pagination-top"
+              />
               {payload.my_responses.length === 0 ? (
                 <p className="profile-empty">Откликов пока нет.</p>
               ) : (
-                payload.my_responses.map((response) => (
+                paginate(payload.my_responses, responsesPage).map((response) => (
                   <div key={response.id} className="my-announcement-item">
                     <div className="my-announcement-top">
                       {response.announcement ? (
@@ -465,15 +661,27 @@ export default function UserPage() {
                   </div>
                 ))
               )}
+              <Pagination
+                page={responsesPage}
+                total={payload.my_responses.length}
+                onChange={setResponsesPage}
+                positionClass="pagination-bottom"
+              />
             </div>
           </div>
         ) : (
           <div className={`profile-tab-content ${activeTab === "announcements" ? "active" : ""}`}>
             <div className="my-announcements-list">
+              <Pagination
+                page={publicAnnouncementsPage}
+                total={payload.public_announcements.length}
+                onChange={setPublicAnnouncementsPage}
+                positionClass="pagination-top"
+              />
               {payload.public_announcements.length === 0 ? (
                 <p className="profile-empty">Объявлений пока нет.</p>
               ) : (
-                payload.public_announcements.map((announcement) => (
+                paginate(payload.public_announcements, publicAnnouncementsPage).map((announcement) => (
                   <div key={announcement.id} className="my-announcement-item">
                     <div className="my-announcement-top">
                       <Link className="my-announcement-title" href={`/announcements/${announcement.id}`}>
@@ -488,16 +696,104 @@ export default function UserPage() {
                   </div>
                 ))
               )}
+              <Pagination
+                page={publicAnnouncementsPage}
+                total={payload.public_announcements.length}
+                onChange={setPublicAnnouncementsPage}
+                positionClass="pagination-bottom"
+              />
             </div>
           </div>
         )}
 
+        {canEdit ? (
+          <div className={`profile-tab-content ${activeTab === "subscriptions" ? "active" : ""}`}>
+            <div className="my-announcements-list">
+              <Pagination
+                page={subscriptionsPage}
+                total={payload.subscriptions_announcements.length}
+                onChange={setSubscriptionsPage}
+                positionClass="pagination-top"
+              />
+              {payload.subscriptions_announcements.length === 0 ? (
+                <p className="profile-empty">У авторов, на которых вы подписаны, пока нет действующих объявлений.</p>
+              ) : (
+                paginate(payload.subscriptions_announcements, subscriptionsPage).map((announcement) => (
+                  <div key={announcement.id} className="my-announcement-item">
+                    <div className="my-announcement-top">
+                      <Link className="my-announcement-title" href={`/announcements/${announcement.id}`}>
+                        {announcement.title}
+                      </Link>
+                      <span className="my-announcement-date">{formatDate(announcement.created_at)}</span>
+                    </div>
+                    <div className="my-announcement-meta">
+                      <span className="my-announcement-status">
+                        Автор:{" "}
+                        {announcement.user ? (
+                          <Link href={`/users/${announcement.user.id}`}>{announcement.user.name}</Link>
+                        ) : (
+                          "Пользователь"
+                        )}
+                      </span>
+                    </div>
+                    <div className="my-announcement-desc">{announcement.description ?? ""}</div>
+                  </div>
+                ))
+              )}
+              <Pagination
+                page={subscriptionsPage}
+                total={payload.subscriptions_announcements.length}
+                onChange={setSubscriptionsPage}
+                positionClass="pagination-bottom"
+              />
+            </div>
+          </div>
+        ) : null}
+
+        {canEdit ? (
+          <div className={`profile-tab-content ${activeTab === "subscribers" ? "active" : ""}`}>
+            <div className="my-announcements-list">
+              <Pagination
+                page={subscribersPage}
+                total={payload.subscribers.length}
+                onChange={setSubscribersPage}
+                positionClass="pagination-top"
+              />
+              {payload.subscribers.length === 0 ? (
+                <p className="profile-empty">Подписчиков пока нет.</p>
+              ) : (
+                paginate(payload.subscribers, subscribersPage).map((subscriber) => (
+                  <div key={subscriber.id} className="my-announcement-item">
+                    <div className="my-announcement-top">
+                      <Link className="my-announcement-title" href={`/users/${subscriber.id}`}>
+                        {subscriber.name}
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
+              <Pagination
+                page={subscribersPage}
+                total={payload.subscribers.length}
+                onChange={setSubscribersPage}
+                positionClass="pagination-bottom"
+              />
+            </div>
+          </div>
+        ) : null}
+
         <div className={`profile-tab-content ${activeTab === "reviews" ? "active" : ""}`}>
           <div className="reviews-list">
+            <Pagination
+              page={reviewsPage}
+              total={(payload.user.reviews_received ?? []).length}
+              onChange={setReviewsPage}
+              positionClass="pagination-top"
+            />
             {(payload.user.reviews_received ?? []).length === 0 ? (
               <p className="profile-empty">Отзывов пока нет.</p>
             ) : (
-              payload.user.reviews_received?.map((review) => (
+              paginate(payload.user.reviews_received ?? [], reviewsPage).map((review) => (
                 <div key={review.id} className="review-item">
                   <div className="review-header">
                     <span className="review-author">{review.reviewer?.name ?? "Пользователь"}</span>
@@ -517,6 +813,12 @@ export default function UserPage() {
                 </div>
               ))
             )}
+            <Pagination
+              page={reviewsPage}
+              total={(payload.user.reviews_received ?? []).length}
+              onChange={setReviewsPage}
+              positionClass="pagination-bottom"
+            />
           </div>
         </div>
 
