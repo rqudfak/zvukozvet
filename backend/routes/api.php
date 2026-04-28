@@ -25,6 +25,9 @@ Route::get('/users/{user}', [MainApiController::class, 'userProfile']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [MainApiController::class, 'me']);
+    Route::post('/profile/update', [MainApiController::class, 'updateMyProfile']);
+    Route::put('/users/{user}', [MainApiController::class, 'updateUser']);
+    Route::post('/users/{user}', [MainApiController::class, 'updateUser']);
     Route::post('/announcements', [MainApiController::class, 'createAnnouncement']);
     Route::post('/announcements/{announcement}/responses', [MainApiController::class, 'storeResponse']);
     Route::delete('/announcements/{announcement}/responses/{response}', [MainApiController::class, 'deleteResponse']);
@@ -33,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/reviews/{review}', [MainApiController::class, 'deleteReview']);
     Route::get('/notifications', [MainApiController::class, 'notifications']);
     Route::post('/notifications/{id}/go', [MainApiController::class, 'notificationGo']);
+    Route::post('/notifications/read-all', [MainApiController::class, 'notificationsReadAll']);
     Route::post('/2fa/enable', [MainApiController::class, 'enableTwoFactor']);
     Route::post('/2fa/disable', [MainApiController::class, 'disableTwoFactor']);
     Route::post('/users/{user}/portfolio', [MainApiController::class, 'storePortfolio']);

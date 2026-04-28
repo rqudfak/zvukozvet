@@ -271,7 +271,7 @@ export default function AnnouncementDetailPage({
             <strong>Языки:</strong> {announcement.languages}
           </div>
           <div className="info-item">
-            <strong>Пол:</strong> {announcement.gender}
+            <strong>Голос озвучивания:</strong> {announcement.gender}
           </div>
           <div className="info-item">
             <strong>Срок:</strong> {announcement.duration}

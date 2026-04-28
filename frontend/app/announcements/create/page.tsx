@@ -111,7 +111,7 @@ export default function CreateAnnouncementPage() {
           <input id="languages" name="languages" required />
         </div>
         <div className="form-group">
-          <label htmlFor="gender">Пол</label>
+          <label htmlFor="gender">Голос озвучивания</label>
           <select id="gender" name="gender" defaultValue="Мужской">
             <option value="Мужской">Мужской</option>
             <option value="Женский">Женский</option>

@@ -26,7 +26,7 @@
         </div>
         <div class="profile-info">
             <p class="profile-name">{{ $user->name }}</p>
-            <p><strong>Пол:</strong> {{ $user->gender ?? '—' }}</p>
+            <p><strong>Голос озвучивания:</strong> {{ $user->gender ?? '—' }}</p>
             <p><strong>Языки:</strong> {{ $user->language ?? '—' }}</p>
             <p><strong>Тембр:</strong> {{ $user->timbre ?? '—' }}</p>
             <p><strong>На сайте:</strong> с {{ $user->created_at->format('d.m.Y') }}</p>

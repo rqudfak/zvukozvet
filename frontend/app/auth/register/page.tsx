@@ -9,7 +9,11 @@ import Script from "next/script";
 export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [policyAccepted, setPolicyAccepted] = useState(false);
+  const [name, setName] = useState("");
+  const [login, setLogin] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -50,24 +54,61 @@ export default function RegisterPage() {
     }
   }
 
+  const isFormFilled =
+    name.trim() !== "" &&
+    login.trim() !== "" &&
+    email.trim() !== "" &&
+    password.trim() !== "" &&
+    passwordConfirmation.trim() !== "";
+
   return (
     <div className="auth-block">
       <h2>Создайте аккаунт</h2>
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-input">
-          <input id="name" name="name" required placeholder=" " />
+          <input
+            id="name"
+            name="name"
+            required
+            placeholder=" "
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
           <label htmlFor="name">Имя:</label>
         </div>
         <div className="form-input">
-          <input id="login" name="login" required placeholder=" " />
+          <input
+            id="login"
+            name="login"
+            required
+            placeholder=" "
+            value={login}
+            onChange={(event) => setLogin(event.target.value)}
+          />
           <label htmlFor="login">Логин:</label>
         </div>
         <div className="form-input">
-          <input id="email" name="email" type="email" required placeholder=" " />
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            placeholder=" "
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
           <label htmlFor="email">Почта:</label>
         </div>
         <div className="form-input">
-          <input id="password" name="password" type="password" required placeholder=" " />
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            placeholder=" "
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
           <label htmlFor="password">Пароль:</label>
         </div>
         <div className="form-input">
@@ -77,13 +118,15 @@ export default function RegisterPage() {
             type="password"
             required
             placeholder=" "
+            value={passwordConfirmation}
+            onChange={(event) => setPasswordConfirmation(event.target.value)}
           />
           <label htmlFor="password_confirmation">Повтор пароля:</label>
         </div>
         
         {error ? <p style={{ color: "#d11a2a" }}>{error}</p> : null}
         <div className="form-buttons">
-          <button className="btn-submit" type="submit" id="submit-btn" disabled={loading || !policyAccepted}>
+          <button className="btn-submit" type="submit" id="submit-btn" disabled={loading || !isFormFilled}>
             Создать аккаунт
           </button>
           <Link className="btn-switch" href="/auth/login">

@@ -16,27 +16,53 @@ export default function NotificationsPage() {
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [openingId, setOpeningId] = useState<string | null>(null);
+  const [readingAll, setReadingAll] = useState(false);
 
-  useEffect(() => {
+  async function loadNotifications() {
     const token = localStorage.getItem("auth_token");
     if (!token) {
       router.replace("/auth/login");
       return;
     }
 
-    fetch(`${API_URL}/notifications`, {
+    const response = await fetch(`${API_URL}/notifications`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error("Fetch failed");
+    });
+
+    if (!response.ok) {
+      throw new Error("Fetch failed");
+    }
+    const payload = (await response.json()) as { data: NotificationItem[] };
+    setItems(payload.data ?? []);
+  }
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function initialLoad() {
+      try {
+        await loadNotifications();
+        if (!isCancelled) {
+          setError(null);
         }
-        return response.json() as Promise<{ data: NotificationItem[] }>;
-      })
-      .then((payload) => setItems(payload.data ?? []))
-      .catch(() => setError("Не удалось загрузить уведомления."));
+      } catch {
+        if (!isCancelled) {
+          setError("Не удалось загрузить уведомления.");
+        }
+      }
+    }
+
+    initialLoad();
+    const interval = setInterval(() => {
+      loadNotifications().catch(() => null);
+    }, 5000);
+
+    return () => {
+      isCancelled = true;
+      clearInterval(interval);
+    };
   }, [router]);
 
   async function openNotification(itemId: string) {
@@ -68,9 +94,46 @@ export default function NotificationsPage() {
     }
   }
 
+  async function markAllRead() {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      router.replace("/auth/login");
+      return;
+    }
+
+    setReadingAll(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_URL}/notifications/read-all`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error("failed");
+      }
+      await loadNotifications();
+    } catch {
+      setError("Не удалось отметить уведомления как прочитанные.");
+    } finally {
+      setReadingAll(false);
+    }
+  }
+
+  const unreadCount = items.filter((item) => !item.read_at).length;
+
   return (
     <div className="profile-card">
       <h2 className="page-title">Уведомления</h2>
+      <div style={{ marginBottom: 12 }}>
+        <button
+          type="button"
+          className="btn-submit"
+          onClick={markAllRead}
+          disabled={readingAll || unreadCount === 0}
+        >
+          Прочитать все
+        </button>
+      </div>
       {error ? <p>{error}</p> : null}
       {items.map((item) => (
         <div

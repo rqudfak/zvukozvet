@@ -46,7 +46,7 @@
             <strong>Языки:</strong> {{ $announcement->languages }}
         </div>
         <div class="info-item">
-            <strong>Пол:</strong> {{ $announcement->gender }}
+            <strong>Голос озвучивания:</strong> {{ $announcement->gender }}
         </div>
         <div class="info-item">
             <strong>Срок:</strong> {{ $announcement->duration }}

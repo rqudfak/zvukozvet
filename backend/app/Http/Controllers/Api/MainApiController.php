@@ -325,6 +325,52 @@ class MainApiController extends Controller
         return response()->json(['url' => $url]);
     }
 
+    public function notificationsReadAll(Request $request)
+    {
+        $request->user()->unreadNotifications->markAsRead();
+
+        return response()->json(['message' => 'Все уведомления отмечены как прочитанные']);
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        if ($request->user()->id !== $user->id) {
+            return response()->json(['message' => 'Редактировать можно только свой профиль'], 403);
+        }
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|in:Мужской,Женский,Не указано',
+            'language' => 'required|string|max:255',
+            'timbre' => 'required|in:Тенор,Баритон,Бас,Сопрано,Меццо-сопрано,Контральто,Не указано',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && $user->avatar !== 'defult.png') {
+                Storage::disk('public')->delete('avatars/' . $user->avatar);
+            }
+            $file = $request->file('avatar');
+            $filename = $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('avatars', $filename, 'public');
+            $data['avatar'] = $filename;
+        } else {
+            unset($data['avatar']);
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            'message' => 'Профиль обновлён',
+            'user' => $user->fresh(),
+        ]);
+    }
+
+    public function updateMyProfile(Request $request)
+    {
+        return $this->updateUser($request, $request->user());
+    }
+
     public function enableTwoFactor(Request $request)
     {
         $request->validate([

@@ -144,7 +144,7 @@
                     <span class="detail-value">{{ $announcement->languages }}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Пол:</span>
+                    <span class="detail-label">Голос озвучивания:</span>
                     <span class="detail-value">{{ $announcement->gender }}</span>
                 </div>
                 <div class="detail-item">
