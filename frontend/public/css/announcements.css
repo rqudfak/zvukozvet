@@ -330,6 +330,7 @@
 .filter-radio-group {
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
 }
 
 .filter-radio {

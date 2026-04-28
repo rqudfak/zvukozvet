@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildStorageUrl } from "@/lib/media";
 
@@ -71,6 +71,7 @@ type UserPayload = {
   is_following: boolean;
   subscriptions_count: number;
   subscribers_count: number;
+  subscriptions: { id: number; name: string; avatar?: string | null }[];
   subscriptions_announcements: (MyAnnouncement & { user?: { id: number; name: string } })[];
   subscribers: { id: number; name: string; avatar?: string | null }[];
 };
@@ -107,23 +108,44 @@ export default function UserPage() {
   const [subscriptionsPage, setSubscriptionsPage] = useState(1);
   const [subscribersPage, setSubscribersPage] = useState(1);
 
-  async function refreshProfile() {
+  const refreshProfile = useCallback(async (tokenOverride?: string | null) => {
     try {
-      const data = await fetchApi<UserPayload>(`/users/${params.id}`);
+      const token =
+        tokenOverride !== undefined ? tokenOverride : typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+      const data = await fetchApi<UserPayload>(
+        `/users/${params.id}`,
+        token
+          ? {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          : undefined,
+      );
       setPayload(data);
     } catch {
+      if (tokenOverride) {
+        try {
+          const fallbackData = await fetchApi<UserPayload>(`/users/${params.id}`);
+          setPayload(fallbackData);
+          return;
+        } catch {
+          setPayload(null);
+          return;
+        }
+      }
+
       setPayload(null);
     }
-  }
+  }, [params.id]);
 
   useEffect(() => {
-    fetchApi<UserPayload>(`/users/${params.id}`)
-      .then(setPayload)
-      .catch(() => setPayload(null));
-
     const token = localStorage.getItem("auth_token");
+    refreshProfile(token);
+
     if (!token) {
       setIsAuthorized(false);
+      setCanEdit(false);
       return;
     }
 
@@ -145,7 +167,7 @@ export default function UserPage() {
         setIsAuthorized(false);
         setCanEdit(false);
       });
-  }, [params.id]);
+  }, [params.id, refreshProfile]);
 
   useEffect(() => {
     setPortfolioPage(1);
@@ -222,7 +244,7 @@ export default function UserPage() {
       setPortfolioAudio(null);
       setPortfolioDescription("");
       setPortfolioMessage(data.message ?? "Запись добавлена.");
-      await refreshProfile();
+      await refreshProfile(token);
     } catch {
       setPortfolioMessage("Ошибка сервера при добавлении записи.");
     }
@@ -247,7 +269,7 @@ export default function UserPage() {
         return;
       }
       setPortfolioMessage(data?.message ?? "Запись удалена.");
-      await refreshProfile();
+      await refreshProfile(token);
     } catch {
       setPortfolioMessage("Ошибка сервера при удалении записи.");
     }
@@ -388,7 +410,12 @@ export default function UserPage() {
               </Link>
             ) : null}
             {!canEdit && isAuthorized ? (
-              <button type="button" className="btn-edit-profile" onClick={toggleFollow} disabled={followLoading}>
+              <button
+                type="button"
+                className={`btn-edit-profile${payload.is_following ? " is-following" : ""}`}
+                onClick={toggleFollow}
+                disabled={followLoading}
+              >
                 {payload.is_following ? "Отписаться" : "Подписаться"}
               </button>
             ) : null}
@@ -482,24 +509,20 @@ export default function UserPage() {
               Мои отклики
             </button>
           ) : null}
-          {canEdit ? (
-            <button
-              type="button"
-              className={`profile-tab ${activeTab === "subscriptions" ? "active" : ""}`}
-              onClick={() => setActiveTab("subscriptions")}
-            >
-              Подписки ({payload.subscriptions_count})
-            </button>
-          ) : null}
-          {canEdit ? (
-            <button
-              type="button"
-              className={`profile-tab ${activeTab === "subscribers" ? "active" : ""}`}
-              onClick={() => setActiveTab("subscribers")}
-            >
-              Подписчики ({payload.subscribers_count})
-            </button>
-          ) : null}
+          <button
+            type="button"
+            className={`profile-tab ${activeTab === "subscriptions" ? "active" : ""}`}
+            onClick={() => setActiveTab("subscriptions")}
+          >
+            Подписки ({payload.subscriptions_count})
+          </button>
+          <button
+            type="button"
+            className={`profile-tab ${activeTab === "subscribers" ? "active" : ""}`}
+            onClick={() => setActiveTab("subscribers")}
+          >
+            Подписчики ({payload.subscribers_count})
+          </button>
           <button
             type="button"
             className={`profile-tab ${activeTab === "reviews" ? "active" : ""}`}
@@ -706,81 +729,65 @@ export default function UserPage() {
           </div>
         )}
 
-        {canEdit ? (
-          <div className={`profile-tab-content ${activeTab === "subscriptions" ? "active" : ""}`}>
-            <div className="my-announcements-list">
-              <Pagination
-                page={subscriptionsPage}
-                total={payload.subscriptions_announcements.length}
-                onChange={setSubscriptionsPage}
-                positionClass="pagination-top"
-              />
-              {payload.subscriptions_announcements.length === 0 ? (
-                <p className="profile-empty">У авторов, на которых вы подписаны, пока нет действующих объявлений.</p>
-              ) : (
-                paginate(payload.subscriptions_announcements, subscriptionsPage).map((announcement) => (
-                  <div key={announcement.id} className="my-announcement-item">
-                    <div className="my-announcement-top">
-                      <Link className="my-announcement-title" href={`/announcements/${announcement.id}`}>
-                        {announcement.title}
-                      </Link>
-                      <span className="my-announcement-date">{formatDate(announcement.created_at)}</span>
-                    </div>
-                    <div className="my-announcement-meta">
-                      <span className="my-announcement-status">
-                        Автор:{" "}
-                        {announcement.user ? (
-                          <Link href={`/users/${announcement.user.id}`}>{announcement.user.name}</Link>
-                        ) : (
-                          "Пользователь"
-                        )}
-                      </span>
-                    </div>
-                    <div className="my-announcement-desc">{announcement.description ?? ""}</div>
+        <div className={`profile-tab-content ${activeTab === "subscriptions" ? "active" : ""}`}>
+          <div className="my-announcements-list">
+            <Pagination
+              page={subscriptionsPage}
+              total={payload.subscriptions.length}
+              onChange={setSubscriptionsPage}
+              positionClass="pagination-top"
+            />
+            {payload.subscriptions.length === 0 ? (
+              <p className="profile-empty">Подписок пока нет.</p>
+            ) : (
+              paginate(payload.subscriptions, subscriptionsPage).map((subscription) => (
+                <div key={subscription.id} className="my-announcement-item">
+                  <div className="my-announcement-top">
+                    <Link className="my-announcement-title" href={`/users/${subscription.id}`}>
+                      {subscription.name}
+                    </Link>
                   </div>
-                ))
-              )}
-              <Pagination
-                page={subscriptionsPage}
-                total={payload.subscriptions_announcements.length}
-                onChange={setSubscriptionsPage}
-                positionClass="pagination-bottom"
-              />
-            </div>
+                </div>
+              ))
+            )}
+            <Pagination
+              page={subscriptionsPage}
+              total={payload.subscriptions.length}
+              onChange={setSubscriptionsPage}
+              positionClass="pagination-bottom"
+            />
           </div>
-        ) : null}
+        </div>
 
-        {canEdit ? (
-          <div className={`profile-tab-content ${activeTab === "subscribers" ? "active" : ""}`}>
-            <div className="my-announcements-list">
-              <Pagination
-                page={subscribersPage}
-                total={payload.subscribers.length}
-                onChange={setSubscribersPage}
-                positionClass="pagination-top"
-              />
-              {payload.subscribers.length === 0 ? (
-                <p className="profile-empty">Подписчиков пока нет.</p>
-              ) : (
-                paginate(payload.subscribers, subscribersPage).map((subscriber) => (
-                  <div key={subscriber.id} className="my-announcement-item">
-                    <div className="my-announcement-top">
-                      <Link className="my-announcement-title" href={`/users/${subscriber.id}`}>
-                        {subscriber.name}
-                      </Link>
-                    </div>
+        <div className={`profile-tab-content ${activeTab === "subscribers" ? "active" : ""}`}>
+          <div className="my-announcements-list">
+            <Pagination
+              page={subscribersPage}
+              total={payload.subscribers.length}
+              onChange={setSubscribersPage}
+              positionClass="pagination-top"
+            />
+            {payload.subscribers.length === 0 ? (
+              <p className="profile-empty">Подписчиков пока нет.</p>
+            ) : (
+              paginate(payload.subscribers, subscribersPage).map((subscriber) => (
+                <div key={subscriber.id} className="my-announcement-item">
+                  <div className="my-announcement-top">
+                    <Link className="my-announcement-title" href={`/users/${subscriber.id}`}>
+                      {subscriber.name}
+                    </Link>
                   </div>
-                ))
-              )}
-              <Pagination
-                page={subscribersPage}
-                total={payload.subscribers.length}
-                onChange={setSubscribersPage}
-                positionClass="pagination-bottom"
-              />
-            </div>
+                </div>
+              ))
+            )}
+            <Pagination
+              page={subscribersPage}
+              total={payload.subscribers.length}
+              onChange={setSubscribersPage}
+              positionClass="pagination-bottom"
+            />
           </div>
-        ) : null}
+        </div>
 
         <div className={`profile-tab-content ${activeTab === "reviews" ? "active" : ""}`}>
           <div className="reviews-list">
