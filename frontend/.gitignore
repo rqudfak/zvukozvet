@@ -20,7 +20,7 @@
 # production
 /build
 .env.local
-/lib/
+lib/
 
 # misc
 .DS_Store
