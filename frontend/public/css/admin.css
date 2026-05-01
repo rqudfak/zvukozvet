@@ -21,8 +21,12 @@
 .admin-table th,
 .admin-table td {
     padding: 12px;
-    text-align: center;
+    text-align: left;
     border-bottom: 1px solid #eee;
+}
+
+.admin-genres-tables .admin-table th, .admin-genres-tables .admin-table td {
+    text-align: center;
 }
 
 .admin-table th {
@@ -33,6 +37,26 @@
 
 .admin-table tr:hover {
     background-color: #f8f9fa;
+}
+
+.admin-table-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.btn-reset-filters {
+    border: 1px solid #d4d4df;
+    background: #fff;
+    color: #4f4b78;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-reset-filters:hover {
+    background: #f7f6fd;
 }
 
 .admin-table a {
@@ -381,6 +405,106 @@
 
 .genre-action-btn-delete:hover {
     background-image: url("/img/delete-hover.svg");
+}
+
+.admin-table-header-cell {
+    position: relative;
+    white-space: nowrap;
+}
+
+.admin-filter-trigger {
+    margin-left: 6px;
+    border: none;
+    background: transparent;
+    color: #6b678f;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.admin-filter-trigger.active {
+    color: #F1642E;
+}
+
+.admin-filter-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    width: 280px;
+    z-index: 30;
+    background: #fbfaf3;
+    border: 1px solid #d7d5e3;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    padding: 10px;
+    text-align: left;
+}
+
+.admin-filter-menu-action {
+    display: block;
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    color: #44406b;
+    padding: 7px 4px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.admin-filter-menu-action:hover {
+    background: #ece9fa;
+}
+
+.admin-filter-menu-section-title {
+    font-size: 13px;
+    color: #5f5b85;
+    margin: 10px 0 6px;
+}
+
+.admin-filter-search {
+    width: 92%;
+    border: 1px solid #d3d1df;
+    border-radius: 6px;
+    padding: 7px 9px;
+    margin-bottom: 8px;
+}
+
+.admin-filter-checkboxes {
+    max-height: 160px;
+    overflow: auto;
+    border: 1px solid #dddbe8;
+    border-radius: 6px;
+    background: #fff;
+    padding: 6px;
+}
+
+.admin-filter-checkbox {
+    display: block;
+    color: #47436e;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.admin-filter-checkbox:last-child {
+    margin-bottom: 0;
+}
+
+.admin-filter-checkbox input {
+    margin-right: 6px;
+}
+
+.admin-filter-menu-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.admin-filter-menu-footer .btn-submit,
+.admin-filter-menu-footer .btn-cancel {
+    padding: 5px 12px;
+    font-size: 13px;
 }
 
 @media (max-width: 1024px) {

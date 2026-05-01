@@ -539,14 +539,17 @@ class MainApiController extends Controller
 
     public function adminAnnouncements(Request $request)
     {
-        $query = Announcement::query()->with('user:id,name')->orderBy('updated_at', 'desc');
+        $query = Announcement::query()
+            ->with('user:id,name')
+            ->orderByRaw("CASE WHEN status = 'Новое' THEN 0 ELSE 1 END")
+            ->orderBy('updated_at', 'desc');
         if ($request->filled('search')) {
             $term = mb_strtolower($request->string('search')->toString(), 'UTF-8');
             $query->whereRaw('LOWER(title) LIKE ?', ['%' . $term . '%']);
         }
 
         return response()->json([
-            'items' => $query->paginate(20)->withQueryString(),
+            'items' => $query->paginate(10)->withQueryString(),
             'statuses' => AdminController::ANNOUNCEMENT_STATUSES,
         ]);
     }
@@ -559,7 +562,7 @@ class MainApiController extends Controller
             $query->whereRaw('LOWER(login) LIKE ?', ['%' . $term . '%']);
         }
 
-        return response()->json($query->paginate(20)->withQueryString());
+        return response()->json($query->paginate(10)->withQueryString());
     }
 
     public function adminGenres()

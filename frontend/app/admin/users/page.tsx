@@ -16,6 +16,8 @@ type UserRow = {
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserRow[]>([]);
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
   const [banUserId, setBanUserId] = useState<number | null>(null);
   const [durationDays, setDurationDays] = useState("1");
   const [banReason, setBanReason] = useState("");
@@ -23,12 +25,14 @@ export default function AdminUsersPage() {
   async function loadData() {
     const token = localStorage.getItem("auth_token");
     if (!token) return;
-    const response = await fetch(`${API_URL}/admin/users`, {
+    const response = await fetch(`${API_URL}/admin/users?page=${page}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) return;
-    const payload = (await response.json()) as { data: UserRow[] };
+    const payload = (await response.json()) as { data: UserRow[]; current_page?: number; last_page?: number };
     setUsers(payload.data ?? []);
+    setPage(payload.current_page ?? 1);
+    setLastPage(payload.last_page ?? 1);
   }
 
   useEffect(() => {
@@ -36,7 +40,29 @@ export default function AdminUsersPage() {
       void loadData();
     }, 0);
     return () => clearTimeout(timer);
-  }, []);
+  }, [page]);
+
+  function Pagination() {
+    if (lastPage <= 1) return null;
+    const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
+    return (
+      <div className="pagination">
+        <nav>
+          {pages.map((currentPage) =>
+            currentPage === page ? (
+              <span key={currentPage} aria-current="page">
+                {currentPage}
+              </span>
+            ) : (
+              <button key={currentPage} type="button" onClick={() => setPage(currentPage)}>
+                {currentPage}
+              </button>
+            ),
+          )}
+        </nav>
+      </div>
+    );
+  }
 
   async function submitBan() {
     if (!banUserId || !banReason.trim()) return;
@@ -73,6 +99,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
       <div className="admin-table-container">
+        <Pagination />
         <table className="admin-table">
           <thead>
             <tr>
@@ -109,6 +136,7 @@ export default function AdminUsersPage() {
             ))}
           </tbody>
         </table>
+        <Pagination />
       </div>
 
       {banUserId ? (
