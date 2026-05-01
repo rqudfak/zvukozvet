@@ -176,10 +176,9 @@ export default function AdminAnnouncementsPage() {
 
     return (
       <th key={key} className="admin-table-header-cell">
-        <span>{label}</span>
         <button
           type="button"
-          className={`admin-filter-trigger ${isFiltered || isSorted ? "active" : ""}`}
+          className={`admin-header-trigger ${isFiltered || isSorted ? "active" : ""}`}
           aria-label={`Фильтр по полю ${label}`}
           onClick={(event) => {
             event.stopPropagation();
@@ -190,15 +189,24 @@ export default function AdminAnnouncementsPage() {
             openFilterMenu(key);
           }}
         >
-          ▼
+          <span>{label}</span>
+          <span className="admin-filter-trigger">▼</span>
         </button>
 
         {isActive ? (
           <div className="admin-filter-menu" ref={filterMenuRef} onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="admin-filter-menu-action" onClick={() => setDraftSortDirection("asc")}>
+            <button
+              type="button"
+              className={`admin-filter-menu-action ${draftSortDirection === "asc" ? "active" : ""}`}
+              onClick={() => setDraftSortDirection("asc")}
+            >
               Сортировка от А до Я
             </button>
-            <button type="button" className="admin-filter-menu-action" onClick={() => setDraftSortDirection("desc")}>
+            <button
+              type="button"
+              className={`admin-filter-menu-action ${draftSortDirection === "desc" ? "active" : ""}`}
+              onClick={() => setDraftSortDirection("desc")}
+            >
               Сортировка от Я до А
             </button>
 

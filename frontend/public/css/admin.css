@@ -412,18 +412,26 @@
     white-space: nowrap;
 }
 
-.admin-filter-trigger {
-    margin-left: 6px;
+.admin-header-trigger {
     border: none;
     background: transparent;
-    color: #6b678f;
-    font-size: 11px;
+    color: #4a4a4a;
+    font-weight: 600;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
     padding: 0;
 }
 
-.admin-filter-trigger.active {
+.admin-header-trigger.active {
     color: #F1642E;
+}
+
+.admin-filter-trigger {
+    color: inherit;
+    font-size: 11px;
 }
 
 .admin-filter-menu {
@@ -453,6 +461,10 @@
 }
 
 .admin-filter-menu-action:hover {
+    background: #f1effa;
+}
+
+.admin-filter-menu-action.active {
     background: #ece9fa;
 }
 
