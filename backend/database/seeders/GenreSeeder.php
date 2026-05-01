@@ -14,7 +14,7 @@ class GenreSeeder extends Seeder
     public function run(): void
     {
         $genres = [
-            ['name' => 'Детектив', 'type' => 'Книга', 'color' => '#C4C3E3', 'icon' => null],
+            ['name' => 'Детектив', 'type' => 'Книга', 'color' => '#C4C3E3', 'icon' => 'detective.svg'],
             ['name' => 'Драма', 'type' => 'Книга', 'color' => '#F1642E', 'icon' => null],
             ['name' => 'Комедия', 'type' => 'Книга', 'color' => '#FFC44B', 'icon' => null],
             ['name' => 'Повесть', 'type' => 'Книга', 'color' => '#A3B565', 'icon' => null],
@@ -31,7 +31,7 @@ class GenreSeeder extends Seeder
             ['name' => 'Стратегия', 'type' => 'Видеоигра', 'color' => '#C4C3E3', 'icon' => null],
             ['name' => 'Фэнтези', 'type' => 'Видеоигра', 'color' => '#FFC44B', 'icon' => null],
             ['name' => 'Хоррор', 'type' => 'Видеоигра', 'color' => '#F1642E', 'icon' => null],
-            ['name' => 'Экшен', 'type' => 'Видеоигра', 'color' => '#FFC44B', 'icon' => null],
+            ['name' => 'Экшен', 'type' => 'Видеоигра', 'color' => '#FFC44B', 'icon' => 'action.svg'],
         ];
         foreach ($genres as $genre) {
             Genre::updateOrCreate(

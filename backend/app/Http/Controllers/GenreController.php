@@ -29,17 +29,14 @@ class GenreController extends Controller
             'name'  => 'required|string|max:255|unique:genres,name',
             'type'  => 'required|in:Книга,Видеоигра',
             'color' => 'required|string|max:20',
-            'icon'  => 'nullable|image|mimes:png,jpg,jpeg,webp,gif|max:2048',
+            'icon'  => 'nullable|image|mimes:png,jpg,jpeg,webp,gif,svg|max:2048',
         ], [
             'name.required' => 'Это поле обязательно для ввода',
             'name.unique'   => 'Жанр с таким названием уже существует',
         ]);
 
         if ($request->hasFile('icon')) {
-            $file = $request->file('icon');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/genres'), $filename);
-            $data['icon'] = $filename;
+            $data['icon'] = Genre::storeUploadedIcon($request->file('icon'));
         }
 
         $genre = Genre::create($data);
@@ -65,17 +62,15 @@ class GenreController extends Controller
             'name'  => 'required|string|max:255|unique:genres,name,' . $genre->id,
             'type'  => 'required|in:Книга,Видеоигра',
             'color' => 'required|string|max:20',
-            'icon'  => 'nullable|image|mimes:png,jpg,jpeg,webp,gif|max:2048',
+            'icon'  => 'nullable|image|mimes:png,jpg,jpeg,webp,gif,svg|max:2048',
         ], [
             'name.required' => 'Это поле обязательно для ввода',
             'name.unique'   => 'Жанр с таким названием уже существует',
         ]);
 
         if ($request->hasFile('icon')) {
-            $file = $request->file('icon');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/genres'), $filename);
-            $data['icon'] = $filename;
+            Genre::deleteStoredIcon($genre->icon);
+            $data['icon'] = Genre::storeUploadedIcon($request->file('icon'));
         }
 
         $genre->update($data);
@@ -85,6 +80,7 @@ class GenreController extends Controller
 
     public function destroy(Genre $genre)
     {
+        Genre::deleteStoredIcon($genre->icon);
         $genre->delete();
 
         return redirect()->route('genres.index')->with('success', 'Жанр удалён');

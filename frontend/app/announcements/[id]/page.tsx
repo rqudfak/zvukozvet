@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
-import { buildStorageUrl } from "@/lib/media";
+import { buildGenreIconUrl, buildStorageUrl } from "@/lib/media";
 import { setSuccessFlash } from "@/lib/flash";
 
 type Announcement = {
@@ -241,7 +241,7 @@ export default function AnnouncementDetailPage({
           <div className="announcement-detail-meta">
             {announcement.genre_icon ? (
               <img
-                src={`http://localhost:8000/images/genres/${announcement.genre_icon}`}
+                src={buildGenreIconUrl(announcement.genre_icon) ?? undefined}
                 alt={announcement.genre}
                 className="genre-icon-large"
                 data-hide-on-error

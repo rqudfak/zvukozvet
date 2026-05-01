@@ -168,9 +168,34 @@ class MainApiController extends Controller
             $query->whereRaw('LOWER(title) LIKE ?', ['%' . $term . '%']);
         }
 
-        return response()->json(
-            $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString()
-        );
+        $paginator = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $iconsByGenreName = Genre::query()
+            ->whereIn('name', $paginator->getCollection()->pluck('genre')->unique()->filter()->all())
+            ->pluck('icon', 'name');
+        $paginator->getCollection()->transform(function (Announcement $announcement) use ($iconsByGenreName) {
+            $this->hydrateAnnouncementGenreIcon($announcement, $iconsByGenreName);
+
+            return $announcement;
+        });
+
+        return response()->json($paginator);
+    }
+
+    /**
+     * Подставить актуальную иконку жанра из справочника (в т.ч. если в объявлении поле пустое).
+     *
+     * @param  \Illuminate\Support\Collection<string, string|null>|null  $iconsByGenreName
+     */
+    private function hydrateAnnouncementGenreIcon(Announcement $announcement, $iconsByGenreName = null): void
+    {
+        if ($iconsByGenreName !== null) {
+            $icon = $iconsByGenreName->get($announcement->genre);
+        } else {
+            $icon = Genre::query()->where('name', $announcement->genre)->value('icon');
+        }
+        if ($icon) {
+            $announcement->setAttribute('genre_icon', $icon);
+        }
     }
 
     public function announcement(Request $request, Announcement $announcement)
@@ -191,6 +216,7 @@ class MainApiController extends Controller
         }
 
         $announcement->load('user:id,name');
+        $this->hydrateAnnouncementGenreIcon($announcement);
 
         $responses = collect();
         $userResponse = null;
@@ -513,14 +539,17 @@ class MainApiController extends Controller
 
     public function adminAnnouncements(Request $request)
     {
-        $query = Announcement::query()->with('user:id,name')->orderBy('updated_at', 'desc');
+        $query = Announcement::query()
+            ->with('user:id,name')
+            ->orderByRaw("CASE WHEN status = 'Новое' THEN 0 ELSE 1 END")
+            ->orderBy('updated_at', 'desc');
         if ($request->filled('search')) {
             $term = mb_strtolower($request->string('search')->toString(), 'UTF-8');
             $query->whereRaw('LOWER(title) LIKE ?', ['%' . $term . '%']);
         }
 
         return response()->json([
-            'items' => $query->paginate(20)->withQueryString(),
+            'items' => $query->paginate(10)->withQueryString(),
             'statuses' => AdminController::ANNOUNCEMENT_STATUSES,
         ]);
     }
@@ -533,7 +562,7 @@ class MainApiController extends Controller
             $query->whereRaw('LOWER(login) LIKE ?', ['%' . $term . '%']);
         }
 
-        return response()->json($query->paginate(20)->withQueryString());
+        return response()->json($query->paginate(10)->withQueryString());
     }
 
     public function adminGenres()
@@ -690,14 +719,16 @@ class MainApiController extends Controller
             'name' => 'required|string|max:255|unique:genres,name',
             'type' => 'required|in:Книга,Видеоигра',
             'color' => 'required|string|max:20',
-            'icon' => 'nullable|image|mimes:png,jpg,jpeg,webp,gif|max:2048',
+            'icon' => 'nullable|image|mimes:png,jpg,jpeg,webp,gif,svg|max:2048',
+        ], [
+            'name.required' => 'Это поле обязательно для ввода',
+            'name.unique' => 'Жанр с таким названием уже существует',
+            'type.required' => 'Это поле обязательно для ввода',
+            'color.required' => 'Это поле обязательно для ввода',
         ]);
 
         if ($request->hasFile('icon')) {
-            $file = $request->file('icon');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/genres'), $filename);
-            $data['icon'] = $filename;
+            $data['icon'] = Genre::storeUploadedIcon($request->file('icon'));
         }
 
         $genre = Genre::query()->create($data);
@@ -716,14 +747,17 @@ class MainApiController extends Controller
             'name' => 'required|string|max:255|unique:genres,name,' . $genre->id,
             'type' => 'required|in:Книга,Видеоигра',
             'color' => 'required|string|max:20',
-            'icon' => 'nullable|image|mimes:png,jpg,jpeg,webp,gif|max:2048',
+            'icon' => 'nullable|image|mimes:png,jpg,jpeg,webp,gif,svg|max:2048',
+        ], [
+            'name.required' => 'Это поле обязательно для ввода',
+            'name.unique' => 'Жанр с таким названием уже существует',
+            'type.required' => 'Это поле обязательно для ввода',
+            'color.required' => 'Это поле обязательно для ввода',
         ]);
 
         if ($request->hasFile('icon')) {
-            $file = $request->file('icon');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/genres'), $filename);
-            $data['icon'] = $filename;
+            Genre::deleteStoredIcon($genre->icon);
+            $data['icon'] = Genre::storeUploadedIcon($request->file('icon'));
         }
 
         $genre->update($data);
@@ -732,6 +766,7 @@ class MainApiController extends Controller
 
     public function adminDeleteGenre(Genre $genre)
     {
+        Genre::deleteStoredIcon($genre->icon);
         $genre->delete();
         return response()->json(['message' => 'Жанр удалён']);
     }

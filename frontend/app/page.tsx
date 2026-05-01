@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { fetchApi } from "@/lib/api";
+import { buildGenreIconUrl } from "@/lib/media";
 import CreateAnnouncementButton from "@/components/CreateAnnouncementButton";
 import AnnouncementsFilters from "@/components/AnnouncementsFilters";
 
@@ -145,7 +146,7 @@ export default async function Home({
                   <div className="genre-icon-container" style={{ backgroundColor: announcement.color }}>
                     {announcement.genre_icon ? (
                       <img
-                        src={`${process.env.NEXT_PUBLIC_API_URL}/images/genres/${announcement.genre_icon}`}
+                        src={buildGenreIconUrl(announcement.genre_icon) ?? undefined}
                         alt={announcement.genre}
                         className="genre-icon"
                         data-hide-on-error

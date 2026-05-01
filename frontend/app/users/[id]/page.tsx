@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildStorageUrl } from "@/lib/media";
 
@@ -107,6 +107,11 @@ export default function UserPage() {
   const [reviewsPage, setReviewsPage] = useState(1);
   const [subscriptionsPage, setSubscriptionsPage] = useState(1);
   const [subscribersPage, setSubscribersPage] = useState(1);
+  const [playingPortfolioItemId, setPlayingPortfolioItemId] = useState<number | null>(null);
+  const [portfolioDurations, setPortfolioDurations] = useState<Record<number, string>>({});
+  const [portfolioProgress, setPortfolioProgress] = useState<Record<number, number>>({});
+  const [isSeeking, setIsSeeking] = useState<Record<number, boolean>>({});
+  const portfolioAudioRefs = useRef<Record<number, HTMLAudioElement | null>>({});
 
   const refreshProfile = useCallback(async (tokenOverride?: string | null) => {
     try {
@@ -352,6 +357,79 @@ export default function UserPage() {
     );
   }
 
+  function formatDuration(seconds?: number): string {
+    if (typeof seconds !== "number" || !Number.isFinite(seconds) || seconds <= 0) {
+      return "--:--";
+    }
+    const totalSeconds = Math.floor(seconds);
+    const minutes = Math.floor(totalSeconds / 60);
+    const remainingSeconds = totalSeconds % 60;
+    return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+  }
+
+  function handlePortfolioAudioLoaded(itemId: number, durationSeconds: number) {
+    setPortfolioDurations((previous) => ({
+      ...previous,
+      [itemId]: formatDuration(durationSeconds),
+    }));
+  }
+
+  function togglePortfolioPlayback(itemId: number) {
+    const targetAudio = portfolioAudioRefs.current[itemId];
+    if (!targetAudio) return;
+
+    Object.entries(portfolioAudioRefs.current).forEach(([id, audio]) => {
+      if (!audio) return;
+      if (Number(id) !== itemId) {
+        audio.pause();
+      }
+    });
+
+    if (targetAudio.paused) {
+      void targetAudio.play().then(() => {
+        setPlayingPortfolioItemId(itemId);
+      }).catch(() => {
+        setPlayingPortfolioItemId(null);
+      });
+      return;
+    }
+
+    targetAudio.pause();
+    setPlayingPortfolioItemId(null);
+  }
+
+  function seekPortfolioItem(itemId: number, percentValue: number, shouldStartPlayback: boolean) {
+    const targetAudio = portfolioAudioRefs.current[itemId];
+    if (!targetAudio || !Number.isFinite(targetAudio.duration) || targetAudio.duration <= 0) return;
+
+    Object.entries(portfolioAudioRefs.current).forEach(([id, audio]) => {
+      if (!audio) return;
+      if (Number(id) !== itemId) {
+        audio.pause();
+      }
+    });
+
+    const clampedPercent = Math.min(100, Math.max(0, percentValue));
+    targetAudio.currentTime = targetAudio.duration * (clampedPercent / 100);
+    setPortfolioProgress((previous) => ({ ...previous, [itemId]: clampedPercent }));
+
+    if (targetAudio.paused && shouldStartPlayback) {
+      void targetAudio
+        .play()
+        .then(() => {
+          setPlayingPortfolioItemId(itemId);
+        })
+        .catch(() => {
+          setPlayingPortfolioItemId(null);
+        });
+      return;
+    }
+
+    if (!targetAudio.paused) {
+      setPlayingPortfolioItemId(itemId);
+    }
+  }
+
   if (!payload) {
     return <div className="profile-card">Загрузка профиля...</div>;
   }
@@ -542,8 +620,10 @@ export default function UserPage() {
         <div className={`profile-tab-content ${activeTab === "portfolio" ? "active" : ""}`}>
           {canEdit ? (
             <div className="portfolio-upload">
-              <div className="portfolio-form">
+              <div className="portfolio-form-label">
                 <label className="portfolio-upload-label">+ Загрузить запись</label>
+              </div>
+              <div className="portfolio-form-input">
                 <input
                   type="file"
                   accept=".mp3,.wav,.ogg,.m4a"
@@ -595,7 +675,62 @@ export default function UserPage() {
                   <p className="portfolio-item-desc">{item.description || "—"}</p>
                   {item.audio_path ? (
                     <div className="portfolio-item-audio">
-                      <audio controls src={buildStorageUrl(item.audio_path) ?? undefined} />
+                      <audio
+                        ref={(node) => {
+                          portfolioAudioRefs.current[item.id] = node;
+                        }}
+                        preload="metadata"
+                        src={buildStorageUrl(item.audio_path) ?? undefined}
+                        onEnded={() => {
+                          setPlayingPortfolioItemId((previous) => (previous === item.id ? null : previous));
+                          setPortfolioProgress((previous) => ({ ...previous, [item.id]: 0 }));
+                        }}
+                        onTimeUpdate={(event) => {
+                          const audio = event.currentTarget;
+                          if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+                          if (isSeeking[item.id]) return;
+                          const nextProgress = (audio.currentTime / audio.duration) * 100;
+                          setPortfolioProgress((previous) => ({ ...previous, [item.id]: nextProgress }));
+                        }}
+                        onLoadedMetadata={(event) => {
+                          handlePortfolioAudioLoaded(item.id, event.currentTarget.duration);
+                        }}
+                        className="portfolio-native-audio"
+                      />
+                      <div className="portfolio-audio-player">
+                        <button
+                          type="button"
+                          className={`portfolio-audio-play ${playingPortfolioItemId === item.id ? "is-playing" : ""}`}
+                          onClick={() => togglePortfolioPlayback(item.id)}
+                          aria-label={playingPortfolioItemId === item.id ? "Пауза" : "Воспроизвести"}
+                        >
+                          {playingPortfolioItemId === item.id ? "❚❚" : "▶"}
+                        </button>
+                        <input
+                          type="range"
+                          className="portfolio-audio-seek"
+                          min={0}
+                          max={100}
+                          step={0.1}
+                          value={portfolioProgress[item.id] ?? 0}
+                          onMouseDown={() => {
+                            setIsSeeking((previous) => ({ ...previous, [item.id]: true }));
+                          }}
+                          onTouchStart={() => {
+                            setIsSeeking((previous) => ({ ...previous, [item.id]: true }));
+                          }}
+                          onInput={(event) => {
+                            const percent = Number(event.currentTarget.value);
+                            seekPortfolioItem(item.id, percent, false);
+                          }}
+                          onChange={(event) => {
+                            const percent = Number(event.currentTarget.value);
+                            setIsSeeking((previous) => ({ ...previous, [item.id]: false }));
+                            seekPortfolioItem(item.id, percent, true);
+                          }}
+                        />
+                        <span className="portfolio-audio-duration">{portfolioDurations[item.id] ?? "--:--"}</span>
+                      </div>
                     </div>
                   ) : null}
                 </div>
