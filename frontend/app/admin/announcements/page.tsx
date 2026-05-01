@@ -123,6 +123,11 @@ export default function AdminAnnouncementsPage() {
     });
   }, [items, columnFilters, sortField, sortDirection]);
 
+  const hasActiveFilters = useMemo(
+    () => (Object.keys(columnFilters) as ColumnKey[]).some((key) => (columnFilters[key]?.length ?? 0) > 0),
+    [columnFilters],
+  );
+
   function openFilterMenu(column: ColumnKey) {
     const allValues = columnValues[column];
     const selected = columnFilters[column] ?? allValues;
@@ -268,6 +273,7 @@ export default function AdminAnnouncementsPage() {
 
   function Pagination() {
     if (lastPage <= 1) return null;
+    if (hasActiveFilters && displayedItems.length < 10) return null;
     const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
     return (
       <div className="pagination">
@@ -330,11 +336,11 @@ export default function AdminAnnouncementsPage() {
       </div>
       <div className="admin-table-container">
         <div className="admin-table-toolbar">
+          <Pagination />
           <button type="button" className="btn-reset-filters" onClick={resetSortAndFilters}>
             Сбросить сортировку и фильтры
           </button>
         </div>
-        <Pagination />
         <table className="admin-table">
           <thead>
             <tr>

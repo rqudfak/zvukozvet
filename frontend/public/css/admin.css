@@ -41,8 +41,24 @@
 
 .admin-table-toolbar {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
     margin-bottom: 10px;
+}
+
+.admin-table-toolbar .pagination {
+    margin: 0;
+}
+
+.admin-table-toolbar .pagination nav {
+    align-items: center;
+}
+
+.admin-table-toolbar .pagination nav > * {
+    line-height: 1;
+    min-height: 20px;
 }
 
 .btn-reset-filters {
@@ -146,7 +162,11 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     text-decoration: none;
-    color: #333;
+    color: #504E76;
+}
+.admin-table-toolbar .pagination nav span,
+.admin-table-toolbar .pagination nav button {
+    font-size: 14px;
 }
 
 .admin-pagination a:hover {
