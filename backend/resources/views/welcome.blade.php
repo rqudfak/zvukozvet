@@ -120,8 +120,8 @@
             <div class="announcement-type-genre-section">
                 <div class="genre-icon-container" style="background-color: {{ $announcement->color }}">
                     @if($announcement->genre_icon)
-                        <img src="{{ asset('images/genres/' . $announcement->genre_icon) }}" 
-                             alt="{{ $announcement->genre }}" 
+                        <img src="{{ \App\Models\Genre::publicUrlForStoredIcon($announcement->genre_icon) }}"
+                             alt="{{ $announcement->genre }}"
                              class="genre-icon"
                              data-hide-on-error>
                     @endif

@@ -136,95 +136,229 @@
 
 /* Портфолио */
 .portfolio-upload {
-    margin-bottom: 20px;
+    margin-bottom: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.portfolio-form {
+.portfolio-form-label, .portfolio-form-input {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    justify-content: center;
 }
 
 .portfolio-upload-label {
     cursor: pointer;
-    color: #F1642E;
-    font-weight: 600;
+    color: #5a5687;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1;
+    padding-right: 6px;
 }
 
 .portfolio-file-input {
-    max-width: 220px;
+    max-width: 260px;
 }
 
 .portfolio-desc-input {
     flex: 1;
-    min-width: 200px;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    min-width: 220px;
+    padding: 10px 14px;
+    border: 1px solid #d4d4e5;
+    border-radius: 8px;
+    color: #5a5687;
 }
 
 .portfolio-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 22px;
 }
 
 .portfolio-item {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: #f9f9f9;
-    border-radius: 8px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 8px 0 0;
+    background: transparent;
+    border-radius: 0;
     position: relative;
 }
 
 .portfolio-item-date {
-    font-size: 13px;
-    color: #666;
+    font-size: 14px;
+    font-weight: 600;
+    color: #a9a9bf;
 }
 
 .portfolio-item-desc {
-    flex: 1;
+    flex: initial;
     margin: 0;
-    font-size: 14px;
-    color: #4a4a4a;
+    margin-bottom: 6px;
+    font-size: 16px;
+    line-height: 1.15;
+    color: #5a5687;
+    padding-right: 60px;
+    white-space: pre-line;
 }
 
 .portfolio-item-audio {
-    flex: 1 1 100%;
+    width: 100%;
 }
 
-.portfolio-item-audio audio {
-    width: 100%;
-    max-width: 400px;
-    height: 36px;
+.portfolio-native-audio {
+    display: none;
 }
 
 .portfolio-item-delete {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 8px;
+    right: 0;
 }
 
 .btn-delete-small {
-    width: 28px;
-    height: 28px;
+    width: 40px;
+    height: 40px;
     border: none;
-    background: #eee;
-    color: #666;
-    border-radius: 4px;
+    background: transparent;
+    color: #a7a6bb;
+    border-radius: 50%;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 42px;
+    font-weight: 300;
     line-height: 1;
     padding: 0;
+    transition: color 0.2s ease;
 }
 
 .btn-delete-small:hover {
-    background: #e74c3c;
-    color: white;
+    background: transparent;
+    color: #726e9a;
+}
+
+.portfolio-audio-player {
+    border: 2px solid #625e8e;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 18px;
+    color: #5a5687;
+}
+
+.portfolio-audio-play {
+    border: none;
+    background: transparent;
+    color: #625e8e;
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.portfolio-audio-play.is-playing {
+    font-size: 24px;
+}
+
+.portfolio-audio-seek {
+    flex: 1;
+    appearance: none;
+    height: 6px;
+    border-radius: 999px;
+    background: #c8c6de;
+    outline: none;
+    cursor: pointer;
+}
+
+.portfolio-audio-seek::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: #c8c6de;
+}
+
+.portfolio-audio-seek::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #625e8e;
+    border: none;
+    margin-top: -4px;
+}
+
+.portfolio-audio-seek::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: #c8c6de;
+}
+
+.portfolio-audio-seek::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #625e8e;
+    border: none;
+}
+
+.portfolio-audio-duration {
+    font-size: 16px;
+    font-weight: 500;
+    color: #5a5687;
+}
+
+@media (max-width: 900px) {
+    .portfolio-upload-label,
+    .portfolio-upload-label::after {
+        font-size: 26px;
+    }
+
+    .portfolio-item-date {
+        font-size: 18px;
+    }
+
+    .portfolio-item-desc {
+        font-size: 24px;
+    }
+
+    .portfolio-audio-duration {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 640px) {
+    .portfolio-upload-label,
+    .portfolio-upload-label::after {
+        font-size: 20px;
+    }
+
+    .portfolio-item-desc {
+        font-size: 18px;
+    }
+
+    .portfolio-audio-player {
+        min-height: 52px;
+        gap: 10px;
+        padding: 0 12px;
+    }
+
+    .portfolio-audio-play {
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
+    }
+
+    .portfolio-audio-duration {
+        font-size: 16px;
+    }
 }
 
 /* Отзывы */

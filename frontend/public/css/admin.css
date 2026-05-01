@@ -10,6 +10,9 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.admin-table-container h2 {
+    margin-bottom: 20px;
+}
 .admin-table {
     width: 100%;
     border-collapse: collapse;
@@ -18,7 +21,7 @@
 .admin-table th,
 .admin-table td {
     padding: 12px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #eee;
 }
 
@@ -54,7 +57,7 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin: 20px 0;
 }
 
 .admin-tab {
@@ -309,4 +312,85 @@
 .btn-ban-open:hover,
 .btn-edit-genre:hover {
     background: #d95528;
+}
+
+.admin-genres-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.admin-genres-tables {
+    flex: 2 1 640px;
+    min-width: 0;
+}
+
+.admin-genres-form {
+    flex: 1 1 320px;
+}
+
+.genre-form-error {
+    display: block;
+    margin-top: -5px;
+    margin-bottom: -5px;
+    color: #d32f2f;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.announcement-form .genre-name-input-error {
+    border-color: #d32f2f !important;
+    box-shadow: 0 0 0 1px rgba(211, 47, 47, 0.15);
+}
+
+.genre-actions-cell {
+    white-space: nowrap;
+}
+
+.genre-action-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 20px 20px;
+    cursor: pointer;
+    margin-right: 8px;
+    padding: 0;
+    vertical-align: middle;
+}
+
+.genre-action-btn:last-child {
+    margin-right: 0;
+}
+
+.genre-action-btn-edit {
+    background-image: url("/img/edit.svg");
+}
+
+.genre-action-btn-edit:hover {
+    background-image: url("/img/edit-hover.svg");
+}
+
+.genre-action-btn-delete {
+    background-image: url("/img/delete.svg");
+}
+
+.genre-action-btn-delete:hover {
+    background-image: url("/img/delete-hover.svg");
+}
+
+@media (max-width: 1024px) {
+    .admin-genres-form {
+        order: 1;
+        flex: 1 1 100%;
+    }
+
+    .admin-genres-tables {
+        order: 2;
+        flex: 1 1 100%;
+    }
 }

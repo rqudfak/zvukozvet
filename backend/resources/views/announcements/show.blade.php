@@ -8,8 +8,8 @@
     <div class="announcement-detail-header" style="border-left: 4px solid {{ $announcement->color }}">
         <div class="announcement-detail-meta">
             @if($announcement->genre_icon)
-                <img src="{{ asset('images/genres/' . $announcement->genre_icon) }}" 
-                     alt="{{ $announcement->genre }}" 
+                <img src="{{ \App\Models\Genre::publicUrlForStoredIcon($announcement->genre_icon) }}"
+                     alt="{{ $announcement->genre }}"
                      class="genre-icon-large"
                      data-hide-on-error>
             @endif

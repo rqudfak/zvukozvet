@@ -41,7 +41,7 @@
             <label for="icon">Иконка жанра (png/jpg/webp)</label>
             @if($genre->icon)
                 <div style="margin-bottom:8px;">
-                    <img src="{{ asset('images/genres/' . $genre->icon) }}" alt="{{ $genre->name }}" width="48" height="48">
+                    <img src="{{ \App\Models\Genre::publicUrlForStoredIcon($genre->icon) }}" alt="{{ $genre->name }}" width="48" height="48">
                 </div>
             @endif
             <input type="file" id="icon" name="icon" accept="image/*">

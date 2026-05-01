@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+function initSecurityUi() {
     document.querySelectorAll('[data-confirm]').forEach(function (el) {
         el.addEventListener('click', function (event) {
             if (!window.confirm(el.getAttribute('data-confirm') || 'Подтвердить действие?')) {
@@ -41,4 +41,10 @@ document.addEventListener('DOMContentLoaded', function () {
             img.style.display = 'none';
         });
     });
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSecurityUi);
+} else {
+    initSecurityUi();
+}

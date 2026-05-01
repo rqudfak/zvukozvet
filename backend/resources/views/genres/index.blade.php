@@ -80,7 +80,7 @@
                     </td>
                     <td>
                         @if($genre->icon)
-                            <img src="{{ asset('images/genres/' . $genre->icon) }}" alt="{{ $genre->name }}" width="32" height="32">
+                            <img src="{{ \App\Models\Genre::publicUrlForStoredIcon($genre->icon) }}" alt="{{ $genre->name }}" width="32" height="32">
                         @else
                             —
                         @endif
@@ -122,7 +122,7 @@
                     </td>
                     <td>
                         @if($genre->icon)
-                            <img src="{{ asset('images/genres/' . $genre->icon) }}" alt="{{ $genre->name }}" width="32" height="32">
+                            <img src="{{ \App\Models\Genre::publicUrlForStoredIcon($genre->icon) }}" alt="{{ $genre->name }}" width="32" height="32">
                         @else
                             —
                         @endif
