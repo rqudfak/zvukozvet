@@ -79,7 +79,7 @@ export default function AnnouncementsFilters({
       <div className="filter-divider"></div>
 
       <div className="filter-section">
-        <h3 className="filter-title">Пол</h3>
+        <h3 className="filter-title">Голос озвучивания</h3>
         <div className="filter-radio-group">
           <label className="filter-radio">
             <input
