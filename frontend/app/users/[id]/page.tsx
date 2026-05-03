@@ -445,8 +445,8 @@ export default function UserPage() {
             <img
               src={
                 payload.user.avatar
-                    ? buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/images/defult.png"
-                    : "http://localhost:8000/images/defult.png"
+                ? buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/images/defult.png"
+                : '${API_URL?.replace(/\/api\/?$/, "")}/images/defult.png'
               }
               alt="Аватар"
               className="profile-avatar"
@@ -979,7 +979,7 @@ export default function UserPage() {
                   >
                     {achievement.icon ? (
                       <img
-                        src={`http://localhost:8000/images/achievements/${achievement.icon}`}
+                        src={`${API_URL?.replace(/\/api\/?$/, "")}/images/achievements/${achievement.icon}`}
                         alt=""
                         className="achievement-icon"
                       />
