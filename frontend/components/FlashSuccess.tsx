@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { consumeSuccessFlash } from "@/lib/flash";
+import { consumeSuccessFlash, SUCCESS_TOAST_EVENT } from "@/lib/flash";
 
 export default function FlashSuccess() {
   const pathname = usePathname();
@@ -15,6 +15,17 @@ export default function FlashSuccess() {
     }, 0);
     return () => clearTimeout(timer);
   }, [pathname]);
+
+  useEffect(() => {
+    function onToast(e: Event) {
+      const detail = (e as CustomEvent<{ message: string }>).detail;
+      if (detail?.message) {
+        setMessage(detail.message);
+      }
+    }
+    window.addEventListener(SUCCESS_TOAST_EVENT, onToast);
+    return () => window.removeEventListener(SUCCESS_TOAST_EVENT, onToast);
+  }, []);
 
   if (!message) return null;
 

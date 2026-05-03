@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://45.9.40.4/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function fetchApi<T>(
   endpoint: string,

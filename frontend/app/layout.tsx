@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
 import HeaderNav from "@/components/HeaderNav";
+import SiteFooter from "@/components/SiteFooter";
 import FlashSuccess from "@/components/FlashSuccess";
 
 export const metadata: Metadata = {
@@ -44,11 +45,7 @@ export default function RootLayout({
           </div>
         </main>
 
-        <footer>
-          <div className="center">
-            <p>2026 год. Все права защищены</p>
-          </div>
-        </footer>
+        <SiteFooter />
       </body>
     </html>
   );

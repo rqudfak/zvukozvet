@@ -10,6 +10,7 @@ use App\Models\AnnouncementResponse;
 use App\Models\Genre;
 use App\Models\PortfolioItem;
 use App\Models\Review;
+use App\Notifications\AnnouncementDeletedByAdmin;
 use App\Notifications\AnnouncementStatusUpdated;
 use App\Notifications\NewGenreAdded;
 use App\Notifications\NewFollowedAuthorAnnouncement;
@@ -33,8 +34,52 @@ class MainApiController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|regex:/^[\p{Cyrillic} ]+$/u',
             'login' => 'required|alpha_num|min:4|unique:users',
-            'email' => 'required|email|unique:users',
+            'email' => ['required', 'email', 'unique:users',
+                function ($attribute, $value, $fail) {
+                    if (!preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $value)) {
+                        $fail('Email содержит недопустимые символы. Разрешены: буквы, цифры и ._%+-');
+
+                        return;
+                    }
+
+                    if (preg_match('/[._%+-]{2,}/', $value)) {
+                        $fail('Email не может содержать последовательность специальных символов.');
+
+                        return;
+                    }
+
+                    if (preg_match('/^[._%+-]|[._%+-]$/', explode('@', $value)[0])) {
+                        $fail('Локальная часть email не может начинаться или заканчиваться специальными символами.');
+
+                        return;
+                    }
+
+                    $domain = substr($value, strpos($value, '@') + 1);
+                    if (strpos($domain, '.') === false) {
+                        $fail('Введите корректный email адрес с точкой в домене.');
+                    }
+                    if (strpos($domain, '..') !== false) {
+                        $fail('Домен не может содержать двойные точки.');
+                    }
+                },
+            ],
             'password' => 'required|min:6|confirmed',
+        ], [
+            'name.required' => 'Это поле обязательно для ввода',
+            'name.regex' => 'Можно использовать только кириллицу',
+
+            'login.required' => 'Это поле обязательно для ввода',
+            'login.alpha_num' => 'Можно использовать только латинские буквы и цифры',
+            'login.min' => 'Введите не менее 4 символов',
+            'login.unique' => 'Пользователь с таким логином уже существует',
+
+            'email.required' => 'Это поле обязательно для ввода',
+            'email.email' => 'Введите корректный email адрес.',
+            'email.unique' => 'Пользователь с такой почтой уже существует',
+
+            'password.required' => 'Это поле обязательно для ввода',
+            'password.min' => 'Введите не менее 6 символов',
+            'password.confirmed' => 'Пароли не совпадают',
         ]);
 
         $user = User::query()->create([
@@ -98,11 +143,20 @@ class MainApiController extends Controller
     {
         $request->validate([
             'email' => 'required|email|exists:users,email',
+        ], [
+            'email.required' => 'Это поле обязательно для ввода',
+            'email.email' => 'Введите корректный email адрес.',
+            'email.exists' => 'Пользователь с такой почтой не зарегистрирован.',
         ]);
 
         $status = Password::sendResetLink($request->only('email'));
         if ($status !== Password::RESET_LINK_SENT) {
-            return response()->json(['message' => __($status)], 422);
+            $message = match ($status) {
+                Password::RESET_THROTTLED => 'Слишком много запросов. Подождите немного и попробуйте снова.',
+                default => 'Не удалось отправить ссылку. Попробуйте позже.',
+            };
+
+            return response()->json(['message' => $message], 422);
         }
 
         return response()->json([
@@ -116,6 +170,13 @@ class MainApiController extends Controller
             'token' => 'required',
             'email' => 'required|email',
             'password' => 'required|min:6|confirmed',
+        ], [
+            'token.required' => 'Отсутствует токен сброса пароля.',
+            'email.required' => 'Это поле обязательно для ввода',
+            'email.email' => 'Введите корректный email адрес.',
+            'password.required' => 'Это поле обязательно для ввода',
+            'password.min' => 'Введите не менее 6 символов',
+            'password.confirmed' => 'Пароли не совпадают',
         ]);
 
         $status = Password::reset(
@@ -131,7 +192,14 @@ class MainApiController extends Controller
         );
 
         if ($status !== Password::PASSWORD_RESET) {
-            return response()->json(['message' => __($status)], 422);
+            $message = match ($status) {
+                Password::INVALID_TOKEN => 'Ссылка для сброса недействительна или истекла. Запросите новую ссылку на странице восстановления пароля.',
+                Password::INVALID_USER => 'Пользователь с таким email не найден.',
+                Password::RESET_THROTTLED => 'Слишком много попыток. Попробуйте позже.',
+                default => 'Не удалось сменить пароль.',
+            };
+
+            return response()->json(['message' => $message], 422);
         }
 
         return response()->json(['message' => 'Пароль успешно изменён.']);
@@ -159,8 +227,13 @@ class MainApiController extends Controller
             $query->whereIn('type', $types);
         }
 
-        if ($request->filled('gender')) {
-            $query->where('gender', $request->string('gender'));
+        $allowedGenders = ['Мужской', 'Женский', 'Детский'];
+        $gendersFromForm = array_values(array_filter((array) $request->input('genders', []), static fn ($v) => is_string($v) && $v !== ''));
+        $gendersLegacy = $request->filled('gender') ? [$request->string('gender')->toString()] : [];
+        $genders = array_values(array_unique(array_merge($gendersFromForm, $gendersLegacy)));
+        $genders = array_values(array_intersect($allowedGenders, $genders));
+        if ($genders !== []) {
+            $query->whereIn('gender', $genders);
         }
 
         if ($request->filled('search')) {
@@ -390,11 +463,74 @@ class MainApiController extends Controller
         ], 201);
     }
 
+    public function updateAnnouncement(Request $request, Announcement $announcement)
+    {
+        if ($request->user()->isBanned()) {
+            return response()->json([
+                'message' => 'Заблокированные пользователи не могут редактировать объявления.',
+            ], 403);
+        }
+
+        if ($announcement->user_id !== $request->user()->id) {
+            return response()->json([
+                'message' => 'У вас нет прав для редактирования этого объявления.',
+            ], 403);
+        }
+
+        if ($announcement->responses()->where('status', 'Принято')->exists()) {
+            return response()->json([
+                'message' => 'Нельзя редактировать объявление с принятым откликом.',
+            ], 403);
+        }
+
+        $messages = [
+            'title.required' => 'Укажите название объявления.',
+            'title.max' => 'Название не должно превышать 255 символов.',
+            'type.required' => 'Выберите тип.',
+            'type.in' => 'Тип должен быть «Книга» или «Видеоигра».',
+            'genre.required' => 'Выберите жанр.',
+            'languages.required' => 'Укажите языки.',
+            'gender.required' => 'Выберите голос озвучивания.',
+            'gender.in' => 'Выберите голос: Мужской, Женский или Детский.',
+            'duration.required' => 'Выберите длительность роли.',
+            'duration.in' => 'Выберите «Кратковременная роль» или «Долгосрочная роль».',
+            'description.required' => 'Введите описание.',
+            'fragment.required' => 'Введите текст для озвучивания.',
+        ];
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'type' => 'required|in:Книга,Видеоигра',
+            'genre' => 'required|string',
+            'languages' => 'required|string',
+            'gender' => 'required|in:Мужской,Женский,Детский',
+            'duration' => 'required|in:Кратковременная роль,Долгосрочная роль',
+            'description' => 'required|string',
+            'fragment' => 'required|string',
+        ], $messages);
+
+        $validated['color'] = Announcement::getColorByGenre($validated['genre']);
+        $validated['genre_icon'] = Announcement::getIconByGenre($validated['genre']);
+        $validated['status'] = 'Новое';
+
+        $announcement->update($validated);
+        $announcement->refresh();
+        $this->hydrateAnnouncementGenreIcon($announcement);
+
+        return response()->json([
+            'message' => 'Объявление обновлено и повторно отправлено на модерацию.',
+            'announcement' => $announcement,
+        ]);
+    }
+
     public function notifications(Request $request)
     {
-        return response()->json(
-            $request->user()->notifications()->orderBy('created_at', 'desc')->paginate(20)
-        );
+        $paginator = $request->user()->notifications()->orderBy('created_at', 'desc')->paginate(10);
+
+        return response()->json(array_merge(
+            $paginator->toArray(),
+            ['unread_total' => $request->user()->unreadNotifications()->count()],
+        ));
     }
 
     public function notificationGo(Request $request, string $id)
@@ -691,9 +827,26 @@ class MainApiController extends Controller
         return response()->json(['message' => 'Статус объявления обновлён']);
     }
 
-    public function adminDeleteAnnouncement(Announcement $announcement)
+    public function adminDeleteAnnouncement(Request $request, Announcement $announcement)
     {
+        $data = $request->validate([
+            'reason' => 'required|in:' . implode(',', [
+                AnnouncementDeletedByAdmin::REASON_RULE_VIOLATION,
+                AnnouncementDeletedByAdmin::REASON_DUPLICATE,
+                AnnouncementDeletedByAdmin::REASON_CATEGORY_MISMATCH,
+            ]),
+        ]);
+
+        $announcement->loadMissing('user');
+        $title = $announcement->title;
+        $author = $announcement->user;
+
+        if ($author) {
+            $author->notify(new AnnouncementDeletedByAdmin($title, $data['reason']));
+        }
+
         $announcement->delete();
+
         return response()->json(['message' => 'Объявление удалено']);
     }
 

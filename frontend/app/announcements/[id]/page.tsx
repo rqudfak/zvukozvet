@@ -239,14 +239,6 @@ export default function AnnouncementDetailPage({
           style={{ borderLeft: `4px solid ${announcement.color ?? "#504E76"}` }}
         >
           <div className="announcement-detail-meta">
-            {announcement.genre_icon ? (
-              <img
-                src={buildGenreIconUrl(announcement.genre_icon) ?? undefined}
-                alt={announcement.genre}
-                className="genre-icon-large"
-                data-hide-on-error
-              />
-            ) : null}
             <div>
               <span className="announcement-type">{announcement.type}</span>{" "}
               <span className="announcement-genre">{announcement.genre}</span>
@@ -255,12 +247,18 @@ export default function AnnouncementDetailPage({
 
           {canEdit ? (
             <div className="announcement-actions">
-              <Link href={`/announcements/${announcement.id}/edit`} className="btn-submit">
-                Редактировать
-              </Link>
-              <button type="button" className="btn-submit">
-                Удалить
-              </button>
+              <Link
+                href={`/announcements/${announcement.id}/edit`}
+                className="announcement-action-icon announcement-action-icon--edit"
+                aria-label="Редактировать объявление"
+                title="Редактировать"
+              />
+              <button
+                type="button"
+                className="announcement-action-icon announcement-action-icon--delete"
+                aria-label="Удалить объявление"
+                title="Удалить"
+              />
             </div>
           ) : null}
         </div>
@@ -313,14 +311,14 @@ export default function AnnouncementDetailPage({
       {pageError ? <div className="announcement-detail">{pageError}</div> : null}
 
       {!isAuthorized ? (
-        <div className="announcement-detail" style={{ marginTop: 25 }}>
+        <div className="announcement-detail" style={{ marginTop: 25, marginBottom: 30 }}>
           Чтобы откликнуться на объявление, пожалуйста, <Link href="/auth/login"><span className="announcement-detail-link">войдите</span></Link> или{" "}
           <Link href="/auth/register"><span className="announcement-detail-link">зарегистрируйтесь</span></Link>.
         </div>
       ) : null}
 
       {isAuthorized && !isAuthor ? (
-        <div className="announcement-detail" style={{ marginTop: 25 }}>
+        <div className="announcement-detail" style={{ marginTop: 25, marginBottom: 30 }}>
           <h3>Отклик на объявление</h3>
           {userResponse ? (
             <>
@@ -379,7 +377,7 @@ export default function AnnouncementDetailPage({
       ) : null}
 
       {isAuthor ? (
-        <div className="announcement-detail" style={{ marginTop: 25 }}>
+        <div className="announcement-detail" style={{ marginTop: 25, marginBottom: 30 }}>
           <h3>Отклики пользователей ({responses.length})</h3>
           {responses.length ? (
             responses.map((response) => (

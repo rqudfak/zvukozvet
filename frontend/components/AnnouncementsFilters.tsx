@@ -12,7 +12,7 @@ type AnnouncementsFiltersProps = {
   typeBookChecked: boolean;
   typeGameChecked: boolean;
   selectedGenres: string[];
-  selectedGender: string;
+  selectedGenders: string[];
   selectedSearch: string;
 };
 
@@ -21,7 +21,7 @@ export default function AnnouncementsFilters({
   typeBookChecked,
   typeGameChecked,
   selectedGenres,
-  selectedGender,
+  selectedGenders,
   selectedSearch,
 }: AnnouncementsFiltersProps) {
   function submitCurrentForm(target: EventTarget & HTMLInputElement) {
@@ -80,33 +80,33 @@ export default function AnnouncementsFilters({
 
       <div className="filter-section">
         <h3 className="filter-title">Голос озвучивания</h3>
-        <div className="filter-radio-group">
-          <label className="filter-radio">
+        <div className="filter-tags">
+          <label className="filter-tag">
             <input
-              type="radio"
-              name="gender"
+              type="checkbox"
+              name="genders[]"
               value="Мужской"
-              defaultChecked={selectedGender === "Мужской"}
+              defaultChecked={selectedGenders.includes("Мужской")}
               onChange={(event) => submitCurrentForm(event.currentTarget)}
             />
             <span>Мужской</span>
           </label>
-          <label className="filter-radio">
+          <label className="filter-tag">
             <input
-              type="radio"
-              name="gender"
+              type="checkbox"
+              name="genders[]"
               value="Женский"
-              defaultChecked={selectedGender === "Женский"}
+              defaultChecked={selectedGenders.includes("Женский")}
               onChange={(event) => submitCurrentForm(event.currentTarget)}
             />
             <span>Женский</span>
           </label>
-          <label className="filter-radio">
+          <label className="filter-tag">
             <input
-              type="radio"
-              name="gender"
+              type="checkbox"
+              name="genders[]"
               value="Детский"
-              defaultChecked={selectedGender === "Детский"}
+              defaultChecked={selectedGenders.includes("Детский")}
               onChange={(event) => submitCurrentForm(event.currentTarget)}
             />
             <span>Детский</span>
