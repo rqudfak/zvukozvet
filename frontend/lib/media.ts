@@ -1,6 +1,6 @@
 import { API_URL } from "@/lib/api";
 
-const PUBLIC_API_BASE = API_URL.replace(/\/api\/?$/, "");
+const PUBLIC_API_BASE = API_URL?.replace(/\/api\/?$/, "") || "http://45.9.40.4";
 
 export function buildStorageUrl(rawPath?: string | null): string | null {
   if (!rawPath) return null;
