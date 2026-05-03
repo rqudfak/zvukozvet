@@ -142,7 +142,6 @@ nav li a:active, nav li a:hover, .btn-auth:active, .btn-auth:hover {
 }
 
 .notif-item-text {
-    color: #333;
     font-weight: 600;
 }
 
@@ -208,7 +207,8 @@ h2 {
 
 .alert {
     padding: 15px;
-    margin-bottom: 20px;
+    margin-top: 30px;
+    margin-bottom: -20px;
     border-radius: 5px;
 }
 .alert-success {

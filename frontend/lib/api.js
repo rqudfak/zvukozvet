@@ -1,5 +1,5 @@
 // frontend/lib/api.js
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://45.9.40.4/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function fetchAPI(endpoint, options = {}) {
   const response = await fetch(`${API_URL}${endpoint}`, {

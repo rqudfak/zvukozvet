@@ -1,5 +1,5 @@
 .admin-header {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .admin-table-container {
@@ -41,11 +41,28 @@
 
 .admin-table-toolbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
     margin-bottom: 10px;
+}
+
+.admin-table-toolbar .btn-reset-filters {
+    margin-left: auto;
+}
+
+.admin-table-toolbar.notifications-page-toolbar .btn-submit {
+    margin-left: auto;
+}
+
+.notifications-pagination-bottom {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.notifications-pagination-bottom .pagination {
+    margin: 0;
 }
 
 .admin-table-toolbar .pagination {
@@ -64,10 +81,10 @@
 .btn-reset-filters {
     border: 1px solid #d4d4df;
     background: #fff;
-    color: #4f4b78;
+    color: #504E76;
     border-radius: 6px;
     padding: 7px 12px;
-    font-size: 13px;
+    font-size: 14px;
     cursor: pointer;
 }
 
@@ -97,14 +114,14 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-    margin: 20px 0;
+    margin-bottom: 20px;
+    margin-top: 30px;
 }
 
 .admin-tab {
     display: inline-block;
     padding: 10px 16px;
     background: #f0f0f0;
-    color: #333;
     text-decoration: none;
     border-radius: 6px;
     font-weight: 500;
@@ -126,7 +143,6 @@
 
 .admin-dashboard-info {
     margin: 20px 0;
-    color: #666;
 }
 
 .admin-search {
@@ -206,11 +222,6 @@
     background: #b71c1c;
 }
 
-.admin-badge {
-    color: #666;
-    font-size: 13px;
-}
-
 .banned-until {
     color: #c62828;
     font-size: 13px;
@@ -286,7 +297,6 @@
     font-size: 1.5rem;
     line-height: 1;
     cursor: pointer;
-    color: #666;
     padding: 0 4px;
 }
 
@@ -307,7 +317,6 @@
 }
 
 .modal-body label {
-    display: block;
     margin-bottom: 4px;
     font-weight: 500;
 }
@@ -336,12 +345,69 @@
     border-top: 1px solid #eee;
 }
 
+.modal-delete-announce-title {
+    margin: 0 0 16px 0;
+    line-height: 1.45;
+    color: #333;
+}
+
+.modal-field-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.modal-reason-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-reason-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 400;
+    line-height: 1.35;
+}
+
+.modal-reason-option input {
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.modal-delete-error {
+    margin: 12px 0 0 0;
+    color: #b71c1c;
+    font-size: 14px;
+}
+
 .modal-ban-login {
     margin: 0 0 14px 0;
     font-weight: 500;
 }
 
-.btn-ban-open,
+.btn-ban-open {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 4px;
+    background-color: transparent;
+    background-image: url("/img/ban.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 20px 20px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.btn-ban-open:hover {
+    background-image: url("/img/ban-hover.svg");
+}
+
 .btn-edit-genre {
     padding: 6px 12px;
     margin-right: 6px;
@@ -353,7 +419,6 @@
     font-size: 13px;
 }
 
-.btn-ban-open:hover,
 .btn-edit-genre:hover {
     background: #d95528;
 }
@@ -387,6 +452,10 @@
 .announcement-form .genre-name-input-error {
     border-color: #d32f2f !important;
     box-shadow: 0 0 0 1px rgba(211, 47, 47, 0.15);
+}
+
+.announcement-form .btn-submit{
+    margin: 0 auto;
 }
 
 .genre-actions-cell {
@@ -466,6 +535,12 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     padding: 10px;
     text-align: left;
+}
+
+/* Узкие левые колонки: меню растёт вправо от левого края ячейки, не уезжает за таблицу */
+.admin-table-header-cell.admin-table-header-cell--filter-menu-right .admin-filter-menu {
+    left: 0;
+    right: auto;
 }
 
 .admin-filter-menu-action {

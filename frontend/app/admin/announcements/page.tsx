@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { API_URL } from "@/lib/api";
+import { emitSuccessToast } from "@/lib/flash";
 
 type Announcement = {
   id: number;
@@ -16,6 +17,14 @@ type Announcement = {
 type ColumnKey = "title" | "type" | "genre" | "status" | "author";
 type SortDirection = "asc" | "desc";
 type ColumnFilters = Record<ColumnKey, string[] | null>;
+
+const DELETE_REASONS = [
+  { value: "rule_violation", label: "Нарушение правил публикации" },
+  { value: "duplicate", label: "Дублирование объявлений" },
+  { value: "category_mismatch", label: "Несоответствие категории" },
+] as const;
+
+type AdminDeleteReason = (typeof DELETE_REASONS)[number]["value"];
 
 export default function AdminAnnouncementsPage() {
   const [items, setItems] = useState<Announcement[]>([]);
@@ -35,7 +44,11 @@ export default function AdminAnnouncementsPage() {
   const [draftSortDirection, setDraftSortDirection] = useState<SortDirection | null>(null);
   const [draftSearch, setDraftSearch] = useState("");
   const [draftSelection, setDraftSelection] = useState<string[]>([]);
-  const filterMenuRef = useRef<HTMLDivElement | null>(null);
+  const filterMenuRef = useRef<HTMLTableCellElement | null>(null);
+  const [announceToDelete, setAnnounceToDelete] = useState<Announcement | null>(null);
+  const [deleteReason, setDeleteReason] = useState<AdminDeleteReason>("rule_violation");
+  const [deleteSubmitting, setDeleteSubmitting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   async function loadData() {
     const token = localStorage.getItem("auth_token");
@@ -180,7 +193,7 @@ export default function AdminAnnouncementsPage() {
     const isSorted = sortField === key;
 
     return (
-      <th key={key} className="admin-table-header-cell">
+      <th key={key} ref={isActive ? filterMenuRef : undefined} className="admin-table-header-cell">
         <button
           type="button"
           className={`admin-header-trigger ${isFiltered || isSorted ? "active" : ""}`}
@@ -199,7 +212,7 @@ export default function AdminAnnouncementsPage() {
         </button>
 
         {isActive ? (
-          <div className="admin-filter-menu" ref={filterMenuRef} onClick={(event) => event.stopPropagation()}>
+          <div className="admin-filter-menu" onClick={(event) => event.stopPropagation()}>
             <button
               type="button"
               className={`admin-filter-menu-action ${draftSortDirection === "asc" ? "active" : ""}`}
@@ -297,31 +310,66 @@ export default function AdminAnnouncementsPage() {
   async function updateStatus(id: number, status: string) {
     const token = localStorage.getItem("auth_token");
     if (!token) return;
-    await fetch(`${API_URL}/admin/announcements/${id}/status`, {
+    const response = await fetch(`${API_URL}/admin/announcements/${id}/status`, {
       method: "PATCH",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
+    const payload = (await response.json().catch(() => ({}))) as { message?: string };
+    if (response.ok) {
+      emitSuccessToast(payload.message ?? "Статус объявления обновлён");
+    }
     await loadData();
   }
 
-  async function deleteAnnouncement(id: number) {
+  function openDeleteModal(item: Announcement) {
+    setDeleteError(null);
+    setDeleteReason("rule_violation");
+    setAnnounceToDelete(item);
+  }
+
+  function closeDeleteModal() {
+    if (deleteSubmitting) return;
+    setAnnounceToDelete(null);
+    setDeleteError(null);
+  }
+
+  async function confirmDeleteAnnouncement() {
+    if (!announceToDelete) return;
     const token = localStorage.getItem("auth_token");
     if (!token) return;
-    await fetch(`${API_URL}/admin/announcements/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    await loadData();
+    setDeleteSubmitting(true);
+    setDeleteError(null);
+    try {
+      const response = await fetch(`${API_URL}/admin/announcements/${announceToDelete.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ reason: deleteReason }),
+      });
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as { message?: string } | null;
+        setDeleteError(data?.message ?? "Не удалось удалить объявление.");
+        return;
+      }
+      const okPayload = (await response.json().catch(() => ({}))) as { message?: string };
+      emitSuccessToast(okPayload.message ?? "Объявление удалено");
+      setAnnounceToDelete(null);
+      await loadData();
+    } finally {
+      setDeleteSubmitting(false);
+    }
   }
 
   return (
     <>
       <div className="admin-header">
-        <h2>Объявления</h2>
         <div className="admin-tabs">
           <Link href="/admin" className="admin-tab">
-            Главная админки
+            Статистика
           </Link>
           <Link href="/admin/genres" className="admin-tab">
             Жанры
@@ -333,6 +381,7 @@ export default function AdminAnnouncementsPage() {
             Пользователи
           </Link>
         </div>
+        <h2>Объявления</h2>
       </div>
       <div className="admin-table-container">
         <div className="admin-table-toolbar">
@@ -378,7 +427,7 @@ export default function AdminAnnouncementsPage() {
                     className="genre-action-btn genre-action-btn-delete"
                     title="Удалить"
                     aria-label="Удалить"
-                    onClick={() => deleteAnnouncement(item.id)}
+                    onClick={() => openDeleteModal(item)}
                   />
                 </td>
               </tr>
@@ -387,6 +436,52 @@ export default function AdminAnnouncementsPage() {
         </table>
         <Pagination />
       </div>
+
+      {announceToDelete ? (
+        <div className="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="delete-announcement-title">
+          <div className="modal-backdrop" onClick={closeDeleteModal} />
+          <div className="modal-box">
+            <div className="modal-header">
+              <h3 id="delete-announcement-title">Удалить объявление</h3>
+              <button type="button" className="modal-close" onClick={closeDeleteModal} disabled={deleteSubmitting}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-delete-announce-title">
+                «{announceToDelete.title}» будет удалено безвозвратно. Укажите причину – автор получит уведомление.
+              </p>
+              <div className="form-group">
+                <span className="modal-field-label">Причина удаления</span>
+                <div className="modal-reason-list">
+                  {DELETE_REASONS.map((option) => (
+                    <label key={option.value} className="modal-reason-option">
+                      <input
+                        type="radio"
+                        name="delete_reason"
+                        value={option.value}
+                        checked={deleteReason === option.value}
+                        onChange={() => setDeleteReason(option.value)}
+                        disabled={deleteSubmitting}
+                      />
+                      <span>{option.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              {deleteError ? <p className="modal-delete-error">{deleteError}</p> : null}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn-cancel" onClick={closeDeleteModal} disabled={deleteSubmitting}>
+                Отмена
+              </button>
+              <button type="button" className="btn-submit" onClick={confirmDeleteAnnouncement} disabled={deleteSubmitting}>
+                {deleteSubmitting ? "Удаление…" : "Удалить"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

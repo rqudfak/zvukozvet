@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/lib/api";
+import { emitSuccessToast } from "@/lib/flash";
 import { buildGenreIconUrl } from "@/lib/media";
 
 type Genre = {
@@ -25,6 +26,8 @@ export default function AdminGenresPage() {
   const [createGenreError, setCreateGenreError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Genre | null>(null);
   const [editingIcon, setEditingIcon] = useState<File | null>(null);
+  const [genreToDelete, setGenreToDelete] = useState<Genre | null>(null);
+  const [deleteSubmitting, setDeleteSubmitting] = useState(false);
 
   function openGenreEdit(genre: Genre) {
     setEditing(genre);
@@ -83,6 +86,8 @@ export default function AdminGenresPage() {
       }
       return;
     }
+    const payload = (await response.json().catch(() => ({}))) as { message?: string };
+    emitSuccessToast(payload.message ?? "Жанр добавлен");
     setName("");
     setType("Книга");
     setColor(DEFAULT_COLOR);
@@ -91,14 +96,37 @@ export default function AdminGenresPage() {
     await loadData();
   }
 
-  async function deleteGenre(id: number) {
+  function openDeleteConfirm(genre: Genre) {
+    setGenreToDelete(genre);
+  }
+
+  function closeDeleteConfirm() {
+    if (deleteSubmitting) return;
+    setGenreToDelete(null);
+  }
+
+  async function confirmDeleteGenre() {
+    if (!genreToDelete) return;
     const token = localStorage.getItem("auth_token");
     if (!token) return;
-    await fetch(`${API_URL}/admin/genres/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    await loadData();
+    const id = genreToDelete.id;
+    setDeleteSubmitting(true);
+    try {
+      const response = await fetch(`${API_URL}/admin/genres/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const payload = (await response.json().catch(() => ({}))) as { message?: string };
+      if (!response.ok) return;
+      emitSuccessToast(payload.message ?? "Жанр удалён");
+      if (editing?.id === id) {
+        closeGenreEdit();
+      }
+      setGenreToDelete(null);
+      await loadData();
+    } finally {
+      setDeleteSubmitting(false);
+    }
   }
 
   async function updateGenre() {
@@ -127,6 +155,8 @@ export default function AdminGenresPage() {
       window.alert(msg);
       return;
     }
+    const payload = (await response.json().catch(() => ({}))) as { message?: string };
+    emitSuccessToast(payload.message ?? "Жанр обновлён");
     closeGenreEdit();
     await loadData();
   }
@@ -135,7 +165,7 @@ export default function AdminGenresPage() {
     <>
       <div className="admin-tabs" style={{ marginBottom: 20 }}>
         <Link href="/admin" className="admin-tab">
-          Главная админки
+          Статистика
         </Link>
         <Link href="/admin/genres" className="admin-tab admin-tab-active">
           Жанры
@@ -190,7 +220,7 @@ export default function AdminGenresPage() {
                         className="genre-action-btn genre-action-btn-delete"
                         title="Удалить"
                         aria-label="Удалить"
-                        onClick={() => deleteGenre(genre.id)}
+                        onClick={() => openDeleteConfirm(genre)}
                       />
                     </td>
                   </tr>
@@ -239,7 +269,7 @@ export default function AdminGenresPage() {
                         className="genre-action-btn genre-action-btn-delete"
                         title="Удалить"
                         aria-label="Удалить"
-                        onClick={() => deleteGenre(genre.id)}
+                        onClick={() => openDeleteConfirm(genre)}
                       />
                     </td>
                   </tr>
@@ -359,7 +389,7 @@ export default function AdminGenresPage() {
                   accept=".png,.jpg,.jpeg,.webp,.svg,image/png,image/jpeg,image/webp,image/svg+xml"
                   onChange={(e) => setEditingIcon(e.target.files?.[0] ?? null)}
                 />
-                <p style={{ margin: "6px 0 0 0", fontSize: 13, color: "#666" }}>
+                <p style={{ margin: "6px 0 0 0", fontSize: 13 }}>
                   Оставьте поле пустым, чтобы не менять иконку.
                 </p>
               </div>
@@ -370,6 +400,33 @@ export default function AdminGenresPage() {
               </button>
               <button type="button" className="btn-submit" onClick={updateGenre}>
                 Сохранить
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {genreToDelete ? (
+        <div className="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="delete-genre-title">
+          <div className="modal-backdrop" onClick={closeDeleteConfirm} />
+          <div className="modal-box">
+            <div className="modal-header">
+              <h3 id="delete-genre-title">Удаление жанра</h3>
+              <button type="button" className="modal-close" onClick={closeDeleteConfirm} disabled={deleteSubmitting}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-delete-announce-title" style={{ marginBottom: 0 }}>
+                Вы уверены, что хотите удалить жанр?
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn-cancel" onClick={closeDeleteConfirm} disabled={deleteSubmitting}>
+                Отмена
+              </button>
+              <button type="button" className="btn-submit" onClick={confirmDeleteGenre} disabled={deleteSubmitting}>
+                {deleteSubmitting ? "Удаление…" : "Удалить"}
               </button>
             </div>
           </div>
