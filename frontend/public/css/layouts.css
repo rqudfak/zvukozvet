@@ -216,3 +216,154 @@ h2 {
     color: #155724;
     border: 1px solid #c3e6cb;
 }
+
+/* ——— Подвал сайта ——— */
+.site-footer {
+    margin-top: auto;
+    background: #504E76;
+    color: #fff;
+    padding: 48px 20px 28px;
+    font-size: 15px;
+}
+
+.site-footer-inner {
+    max-width: 1190px;
+}
+
+.site-footer-grid {
+    display: grid;
+    grid-template-columns: minmax(200px, 1.4fr) repeat(3, minmax(140px, 1fr));
+    gap: 36px 28px;
+    align-items: start;
+}
+
+/* гость: бренд + навигация + аккаунт + инфо (4 колонки данных) */
+/* авторизован: бренд + навигация + инфо — без блока «Аккаунт» */
+.site-footer-grid.site-footer-grid--auth {
+    grid-template-columns: minmax(200px, 1.4fr) repeat(2, minmax(140px, 1fr));
+}
+
+.site-footer-brand {
+    padding-right: 16px;
+}
+
+.site-footer-logo {
+    display: inline-block;
+    font-family: "Source Code Pro", monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffc44b;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+}
+
+.site-footer-logo:hover {
+    color: #ffd978;
+}
+
+.site-footer-tagline {
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.55;
+    font-weight: 500;
+    max-width: 320px;
+}
+
+.site-footer-heading {
+    font-family: "Source Code Pro", monospace;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 14px;
+    font-weight: 700;
+}
+
+.site-footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.site-footer-links a {
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.site-footer-links a:hover {
+    color: #f1642e;
+}
+
+.site-footer-bottom {
+    margin-top: 40px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    text-align: center;
+}
+
+.site-footer-copy {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    .site-footer-grid,
+    .site-footer-grid.site-footer-grid--auth {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .site-footer-brand {
+        grid-column: 1 / -1;
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 520px) {
+    .site-footer {
+        padding: 36px 16px 24px;
+    }
+
+    .site-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+/* прижать футер к низу при коротком контенте */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* Вертикальное центрирование форм только на страницах с .auth-page (логин, регистрация, сброс пароля).
+   Остальные страницы не трогаем — иначе контент «прилипает» к центру из-за flex у main/.center */
+main:has(.auth-page) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+main:has(.auth-page) > .center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%;
+}
+
+.auth-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 16px;
+    width: 100%;
+    box-sizing: border-box;
+}

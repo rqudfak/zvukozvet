@@ -24,10 +24,10 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $url = url(route('password.reset', [
-            'token' => $this->token,
-            'email' => $notifiable->getEmailForPasswordReset(),
-        ], false));
+        $email = $notifiable->getEmailForPasswordReset();
+        $base = config('app.frontend_url', 'http://localhost:3000');
+        $url = $base . '/auth/reset-password/' . rawurlencode($this->token)
+            . '?email=' . rawurlencode((string) $email);
 
         $passwordsConfig = config('auth.passwords.' . config('auth.defaults.passwords'));
         $expireMinutes = $passwordsConfig['expire'] ?? 10;

@@ -105,7 +105,8 @@ export default function RegisterPage() {
     passwordConfirmation.trim() !== "";
 
   return (
-    <div className="auth-block">
+    <div className="auth-page">
+      <div className="auth-block">
       <h2>Создайте аккаунт</h2>
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-input">
@@ -209,6 +210,7 @@ export default function RegisterPage() {
         </div>
       </form>
       <Script src="/js/auth.js" strategy="afterInteractive" />
+      </div>
     </div>
   );
 }

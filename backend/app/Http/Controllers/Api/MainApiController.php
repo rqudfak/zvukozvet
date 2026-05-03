@@ -227,8 +227,13 @@ class MainApiController extends Controller
             $query->whereIn('type', $types);
         }
 
-        if ($request->filled('gender')) {
-            $query->where('gender', $request->string('gender'));
+        $allowedGenders = ['Мужской', 'Женский', 'Детский'];
+        $gendersFromForm = array_values(array_filter((array) $request->input('genders', []), static fn ($v) => is_string($v) && $v !== ''));
+        $gendersLegacy = $request->filled('gender') ? [$request->string('gender')->toString()] : [];
+        $genders = array_values(array_unique(array_merge($gendersFromForm, $gendersLegacy)));
+        $genders = array_values(array_intersect($allowedGenders, $genders));
+        if ($genders !== []) {
+            $query->whereIn('gender', $genders);
         }
 
         if ($request->filled('search')) {
@@ -456,6 +461,66 @@ class MainApiController extends Controller
             'message' => 'Объявление отправлено на модерацию!',
             'announcement' => $announcement,
         ], 201);
+    }
+
+    public function updateAnnouncement(Request $request, Announcement $announcement)
+    {
+        if ($request->user()->isBanned()) {
+            return response()->json([
+                'message' => 'Заблокированные пользователи не могут редактировать объявления.',
+            ], 403);
+        }
+
+        if ($announcement->user_id !== $request->user()->id) {
+            return response()->json([
+                'message' => 'У вас нет прав для редактирования этого объявления.',
+            ], 403);
+        }
+
+        if ($announcement->responses()->where('status', 'Принято')->exists()) {
+            return response()->json([
+                'message' => 'Нельзя редактировать объявление с принятым откликом.',
+            ], 403);
+        }
+
+        $messages = [
+            'title.required' => 'Укажите название объявления.',
+            'title.max' => 'Название не должно превышать 255 символов.',
+            'type.required' => 'Выберите тип.',
+            'type.in' => 'Тип должен быть «Книга» или «Видеоигра».',
+            'genre.required' => 'Выберите жанр.',
+            'languages.required' => 'Укажите языки.',
+            'gender.required' => 'Выберите голос озвучивания.',
+            'gender.in' => 'Выберите голос: Мужской, Женский или Детский.',
+            'duration.required' => 'Выберите длительность роли.',
+            'duration.in' => 'Выберите «Кратковременная роль» или «Долгосрочная роль».',
+            'description.required' => 'Введите описание.',
+            'fragment.required' => 'Введите текст для озвучивания.',
+        ];
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'type' => 'required|in:Книга,Видеоигра',
+            'genre' => 'required|string',
+            'languages' => 'required|string',
+            'gender' => 'required|in:Мужской,Женский,Детский',
+            'duration' => 'required|in:Кратковременная роль,Долгосрочная роль',
+            'description' => 'required|string',
+            'fragment' => 'required|string',
+        ], $messages);
+
+        $validated['color'] = Announcement::getColorByGenre($validated['genre']);
+        $validated['genre_icon'] = Announcement::getIconByGenre($validated['genre']);
+        $validated['status'] = 'Новое';
+
+        $announcement->update($validated);
+        $announcement->refresh();
+        $this->hydrateAnnouncementGenreIcon($announcement);
+
+        return response()->json([
+            'message' => 'Объявление обновлено и повторно отправлено на модерацию.',
+            'announcement' => $announcement,
+        ]);
     }
 
     public function notifications(Request $request)

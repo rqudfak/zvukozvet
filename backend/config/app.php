@@ -57,6 +57,11 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    /*
+    | URL фронтенда (Next.js): ссылки из писем, например сброс пароля.
+    */
+    'frontend_url' => rtrim(env('FRONTEND_URL', 'http://localhost:3000'), '/'),
+
     'asset_url' => env('ASSET_URL'),
 
     /*

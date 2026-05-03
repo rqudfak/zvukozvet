@@ -81,7 +81,8 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="auth-block">
+    <div className="auth-page">
+      <div className="auth-block">
       <h2>Восстановление пароля</h2>
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-group">
@@ -106,6 +107,7 @@ export default function ForgotPasswordPage() {
           Отправить ссылку
         </button>
       </form>
+      </div>
     </div>
   );
 }

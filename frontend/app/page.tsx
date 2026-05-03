@@ -78,7 +78,14 @@ export default async function Home({
   const typeGameChecked =
     selectedTypes.includes("Видеоигра") ||
     selectedGenres.some((genre) => gameGenreNames.includes(genre));
-  const selectedGender = (resolved.gender as string) ?? "";
+  const selectedGenders = Array.from(
+    new Set(
+      [
+        ...valueToArray(resolved.gender as string | string[] | undefined),
+        ...valueToArray(resolved["genders[]"] as string | string[] | undefined),
+      ].filter((value): value is string => typeof value === "string" && value.length > 0),
+    ),
+  );
   const selectedSearch = (resolved.search as string) ?? "";
 
   return (
@@ -118,7 +125,7 @@ export default async function Home({
             typeBookChecked={typeBookChecked}
             typeGameChecked={typeGameChecked}
             selectedGenres={selectedGenres}
-            selectedGender={selectedGender}
+            selectedGenders={selectedGenders}
             selectedSearch={selectedSearch}
           />
         </div>

@@ -100,7 +100,8 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="auth-block">
+    <div className="auth-page">
+      <div className="auth-block">
       <h2>Сброс пароля</h2>
       <form onSubmit={handleSubmit} className="auth-form">
         <input type="hidden" name="token" value={token} readOnly />
@@ -170,6 +171,7 @@ function ResetPasswordForm() {
           </Link>
         </div>
       </form>
+      </div>
     </div>
   );
 }
@@ -178,8 +180,10 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="auth-block">
-          <p>Загрузка…</p>
+        <div className="auth-page">
+          <div className="auth-block">
+            <p>Загрузка…</p>
+          </div>
         </div>
       }
     >

@@ -22,6 +22,53 @@
     gap: 15px;
 }
 
+.announcement-detail-header .announcement-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* Иконки «Редактировать» / «Удалить» (public/img/edit*.svg, delete*.svg) */
+.announcement-action-icon {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 28px 28px;
+    cursor: pointer;
+    box-sizing: border-box;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.announcement-action-icon:focus-visible {
+    outline: 2px solid #F1642E;
+    outline-offset: 2px;
+}
+
+.announcement-action-icon--edit {
+    background-image: url(/img/edit.svg);
+}
+
+.announcement-action-icon--edit:hover {
+    background-image: url(/img/edit-hover.svg);
+}
+
+.announcement-action-icon--delete {
+    background-image: url(/img/delete.svg);
+}
+
+.announcement-action-icon--delete:hover {
+    background-image: url(/img/delete-hover.svg);
+}
+
 .genre-icon-large {
     width: 50px;
     height: 50px;

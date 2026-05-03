@@ -3,6 +3,7 @@
 }
 
 .admin-table-container {
+    margin-bottom: 30px;
     overflow-x: auto;
     background: white;
     border-radius: 8px;
