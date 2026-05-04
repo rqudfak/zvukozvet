@@ -68,6 +68,9 @@ export default function AnnouncementDetailPage({
   const [responseError, setResponseError] = useState<string | null>(null);
   const [responseToDelete, setResponseToDelete] = useState<ResponseItem | null>(null);
   const [responseDeleteSubmitting, setResponseDeleteSubmitting] = useState(false);
+  const [announcementDeleteOpen, setAnnouncementDeleteOpen] = useState(false);
+  const [announcementDeleteSubmitting, setAnnouncementDeleteSubmitting] = useState(false);
+  const [announcementDeleteError, setAnnouncementDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     params.then(async ({ id }) => {
@@ -190,6 +193,43 @@ export default function AnnouncementDetailPage({
     }
   }
 
+  function openAnnouncementDeleteConfirm() {
+    setAnnouncementDeleteError(null);
+    setAnnouncementDeleteOpen(true);
+  }
+
+  function closeAnnouncementDeleteConfirm() {
+    if (announcementDeleteSubmitting) return;
+    setAnnouncementDeleteOpen(false);
+    setAnnouncementDeleteError(null);
+  }
+
+  async function confirmDeleteAnnouncement() {
+    if (!announcement) return;
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
+    setAnnouncementDeleteSubmitting(true);
+    setAnnouncementDeleteError(null);
+    try {
+      const response = await fetch(`/api/announcements/${announcement.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      });
+      const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+      if (!response.ok) {
+        setAnnouncementDeleteError(payload?.message ?? "Не удалось удалить объявление.");
+        return;
+      }
+      setAnnouncementDeleteOpen(false);
+      setSuccessFlash(payload?.message ?? "Объявление успешно удалено!");
+      window.location.href = "/";
+    } catch {
+      setAnnouncementDeleteError("Сервер недоступен. Попробуйте позже.");
+    } finally {
+      setAnnouncementDeleteSubmitting(false);
+    }
+  }
+
   async function updateResponseStatus(responseId: number, status: string) {
     if (!announcement) return;
     const token = localStorage.getItem("auth_token");
@@ -281,6 +321,7 @@ export default function AnnouncementDetailPage({
                 className="announcement-action-icon announcement-action-icon--delete"
                 aria-label="Удалить объявление"
                 title="Удалить"
+                onClick={openAnnouncementDeleteConfirm}
               />
             </div>
           ) : null}
@@ -492,6 +533,58 @@ export default function AnnouncementDetailPage({
           ) : (
             <p>Откликов пока нет.</p>
           )}
+        </div>
+      ) : null}
+
+      {announcementDeleteOpen ? (
+        <div
+          className="modal modal-open"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-announcement-title"
+        >
+          <div className="modal-backdrop" onClick={closeAnnouncementDeleteConfirm} />
+          <div className="modal-box">
+            <div className="modal-header">
+              <h3 id="delete-announcement-title">Удаление объявления</h3>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={closeAnnouncementDeleteConfirm}
+                disabled={announcementDeleteSubmitting}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-delete-announce-title" style={{ marginBottom: 0 }}>
+                Вы уверены, что хотите удалить объявление?
+              </p>
+              {announcementDeleteError ? (
+                <p className="modal-delete-error" style={{ marginTop: 12, marginBottom: 0 }}>
+                  {announcementDeleteError}
+                </p>
+              ) : null}
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={closeAnnouncementDeleteConfirm}
+                disabled={announcementDeleteSubmitting}
+              >
+                Отмена
+              </button>
+              <button
+                type="button"
+                className="btn-submit"
+                onClick={() => void confirmDeleteAnnouncement()}
+                disabled={announcementDeleteSubmitting}
+              >
+                {announcementDeleteSubmitting ? "Удаление…" : "Удалить"}
+              </button>
+            </div>
+          </div>
         </div>
       ) : null}
 

@@ -625,6 +625,27 @@ class MainApiController extends Controller
         ]);
     }
 
+    public function deleteAnnouncement(Request $request, Announcement $announcement)
+    {
+        if ($request->user()->isBanned()) {
+            return response()->json([
+                'message' => 'Заблокированные пользователи не могут удалять объявления.',
+            ], 403);
+        }
+
+        if ($announcement->user_id !== $request->user()->id) {
+            return response()->json([
+                'message' => 'У вас нет прав для удаления этого объявления.',
+            ], 403);
+        }
+
+        $announcement->delete();
+
+        return response()->json([
+            'message' => 'Объявление успешно удалено!',
+        ]);
+    }
+
     public function notifications(Request $request)
     {
         $paginator = $request->user()->notifications()->orderBy('created_at', 'desc')->paginate(10);

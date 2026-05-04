@@ -175,6 +175,8 @@
 .form-container {
     max-width: 400px;
     margin: 0 auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
     background: white;
     border-radius: 8px;
     padding: 30px;
@@ -240,6 +242,7 @@
 .form-actions {
     display: flex;
     gap: 10px;
+    margin: 0 auto;
     margin-top: 10px;
 }
 
