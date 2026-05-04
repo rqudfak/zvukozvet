@@ -152,7 +152,7 @@ class MainApiController extends Controller
         $status = Password::sendResetLink($request->only('email'));
         if ($status !== Password::RESET_LINK_SENT) {
             $message = match ($status) {
-                Password::RESET_THROTTLED => 'Слишком много запросов. Подождите немного и попробуйте снова.',
+                Password::RESET_THROTTLED => 'Повторная отправка ссылки возможна не чаще одного раза в 10 минут. Попробуйте позже.',
                 default => 'Не удалось отправить ссылку. Попробуйте позже.',
             };
 

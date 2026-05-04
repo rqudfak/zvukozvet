@@ -167,7 +167,7 @@ function ResetPasswordForm() {
             Сохранить пароль
           </button>
           <Link className="btn-switch" href="/auth/login">
-            Войти
+            Войти по логину
           </Link>
         </div>
       </form>
