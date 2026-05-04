@@ -32,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/{user}', [MainApiController::class, 'updateUser']);
     Route::post('/announcements', [MainApiController::class, 'createAnnouncement']);
     Route::put('/announcements/{announcement}', [MainApiController::class, 'updateAnnouncement']);
+    Route::delete('/announcements/{announcement}', [MainApiController::class, 'deleteAnnouncement']);
     Route::post('/announcements/{announcement}/responses', [MainApiController::class, 'storeResponse']);
     Route::delete('/announcements/{announcement}/responses/{response}', [MainApiController::class, 'deleteResponse']);
     Route::patch('/announcements/{announcement}/responses/{response}/status', [MainApiController::class, 'updateResponseStatus']);
