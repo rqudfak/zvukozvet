@@ -157,6 +157,15 @@
     box-sizing: border-box;
 }
 
+/* общая ошибка входа (в т.ч. блокировка после неудачных попыток) */
+.auth-form .login-error {
+    margin: -10px 0 12px 0;
+    color: #d11a2a;
+    max-width: 350px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .auth-form .forgot-password-error {
     margin: 0;
     color: #d11a2a;
