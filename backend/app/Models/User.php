@@ -34,6 +34,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_code',
     ];
 
     protected $casts = [
@@ -73,8 +74,8 @@ class User extends Authenticatable
     // Проверка 2FA кода
     public function validateTwoFactorCode($code)
     {
-        return $this->two_factor_code === $code 
-            && $this->two_factor_expires_at 
+        return (string) $this->two_factor_code === (string) $code
+            && $this->two_factor_expires_at
             && $this->two_factor_expires_at->isFuture();
     }
 
