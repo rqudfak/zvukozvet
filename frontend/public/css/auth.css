@@ -157,3 +157,13 @@
     box-sizing: border-box;
 }
 
+.auth-form .forgot-password-error {
+    margin: 0;
+    color: #d11a2a;
+    max-width: 350px;
+    text-align: justify;
+    font-size: 13px;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+

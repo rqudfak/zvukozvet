@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
           />
         </div>
         {fieldErrors.email ? <span className="field-error">{fieldErrors.email}</span> : null}
-        {error ? <p style={{ color: "#d11a2a" }}>{error}</p> : null}
+        {error ? <p className="forgot-password-error">{error}</p> : null}
         {status ? <p style={{ color: "#1b7d33", maxWidth: "320px" }}>{status}</p> : null}
         <div className="form-buttons">
           <button className="btn-submit" type="submit" disabled={loading}>
