@@ -66,6 +66,8 @@ export default function AnnouncementDetailPage({
   const [loading, setLoading] = useState(false);
   const [pageError, setPageError] = useState<string | null>(null);
   const [responseError, setResponseError] = useState<string | null>(null);
+  const [responseToDelete, setResponseToDelete] = useState<ResponseItem | null>(null);
+  const [responseDeleteSubmitting, setResponseDeleteSubmitting] = useState(false);
 
   useEffect(() => {
     params.then(async ({ id }) => {
@@ -165,6 +167,27 @@ export default function AnnouncementDetailPage({
     setResponseError(null);
     setSuccessFlash("Отклик удалён");
     await refreshAnnouncement();
+  }
+
+  function openDeleteMyResponseConfirm(response: ResponseItem) {
+    setResponseError(null);
+    setResponseToDelete(response);
+  }
+
+  function closeDeleteMyResponseConfirm() {
+    if (responseDeleteSubmitting) return;
+    setResponseToDelete(null);
+  }
+
+  async function confirmDeleteMyResponse() {
+    if (!responseToDelete) return;
+    setResponseDeleteSubmitting(true);
+    try {
+      await deleteMyResponse(responseToDelete.id);
+      setResponseToDelete(null);
+    } finally {
+      setResponseDeleteSubmitting(false);
+    }
   }
 
   async function updateResponseStatus(responseId: number, status: string) {
@@ -325,20 +348,22 @@ export default function AnnouncementDetailPage({
               <p>
                 <strong>Ваш текущий отклик:</strong>
               </p>
-              <div className="response-item">
-                {userResponse.message ? <p>{userResponse.message}</p> : null}
-                <audio controls src={buildStorageUrl(userResponse.audio_path) ?? undefined} />
-                <p>Статус: {userResponse.status}</p>
+              <div className="response-item response-item-user">
                 {userResponse.status !== "Принято" ? (
                   <button
                     type="button"
-                    className="btn-submit"
-                    style={{ marginTop: 10 }}
-                    onClick={() => deleteMyResponse(userResponse.id)}
+                    className="response-delete-cross"
+                    aria-label="Удалить отклик"
+                    title="Удалить отклик"
+                    onClick={() => openDeleteMyResponseConfirm(userResponse)}
                   >
-                    Удалить отклик
+                    ×
                   </button>
                 ) : null}
+                {userResponse.message ? <p>{userResponse.message}</p> : null}
+                <audio controls src={buildStorageUrl(userResponse.audio_path) ?? undefined} />
+                <p>Статус: {userResponse.status}</p>
+                {responseError ? <p className="error">{responseError}</p> : null}
               </div>
             </>
           ) : (
@@ -467,6 +492,48 @@ export default function AnnouncementDetailPage({
           ) : (
             <p>Откликов пока нет.</p>
           )}
+        </div>
+      ) : null}
+
+      {responseToDelete ? (
+        <div className="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="delete-response-title">
+          <div className="modal-backdrop" onClick={closeDeleteMyResponseConfirm} />
+          <div className="modal-box">
+            <div className="modal-header">
+              <h3 id="delete-response-title">Удаление отклика</h3>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={closeDeleteMyResponseConfirm}
+                disabled={responseDeleteSubmitting}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-delete-announce-title" style={{ marginBottom: 0 }}>
+                Вы точно хотите удалить отклик?
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={closeDeleteMyResponseConfirm}
+                disabled={responseDeleteSubmitting}
+              >
+                Отмена
+              </button>
+              <button
+                type="button"
+                className="btn-submit"
+                onClick={confirmDeleteMyResponse}
+                disabled={responseDeleteSubmitting}
+              >
+                {responseDeleteSubmitting ? "Удаление…" : "Удалить"}
+              </button>
+            </div>
+          </div>
         </div>
       ) : null}
     </>

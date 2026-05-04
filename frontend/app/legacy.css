@@ -35,6 +35,7 @@ nav ul {
 nav li a,
 .btn-auth {
   color: #fff;
+  cursor: pointer;
 }
 
 h1 a {

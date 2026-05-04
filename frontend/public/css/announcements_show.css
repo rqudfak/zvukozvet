@@ -129,6 +129,24 @@
     border-radius: 6px;
     background-color: #f9f9f9;
 }
+.response-item-user {
+    position: relative;
+}
+.response-delete-cross {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    border: none;
+    background: transparent;
+    color: #7f7f7f;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+}
+.response-delete-cross:hover {
+    color: #d11a2a;
+}
 .response-item audio {
     margin-top: 8px;
 }
