@@ -1,7 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { API_URL } from "@/lib/api";
+
+const FORGOT_PASSWORD_COOLDOWN_MS = 10 * 60 * 1000;
+
+function forgotPasswordStorageKey(email: string): string {
+  return `forgot_password_last_sent:${email.trim().toLowerCase()}`;
+}
 
 type ForgotFieldKey = "email";
 
@@ -43,10 +50,24 @@ export default function ForgotPasswordPage() {
     setError(null);
     setFieldErrors({});
     setStatus(null);
-    setLoading(true);
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const emailRaw = String(formData.get("email") ?? "").trim();
+    if (emailRaw) {
+      const lastSent = Number(localStorage.getItem(forgotPasswordStorageKey(emailRaw)));
+      if (lastSent > 0) {
+        const elapsed = Date.now() - lastSent;
+        if (elapsed < FORGOT_PASSWORD_COOLDOWN_MS) {
+          setError(
+            "Повторная отправка ссылки возможна не чаще одного раза в 10 минут. Попробуйте позже.",
+          );
+          return;
+        }
+      }
+    }
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${API_URL}/forgot-password`, {
@@ -71,6 +92,9 @@ export default function ForgotPasswordPage() {
       }
 
       setStatus(payload?.message ?? "Ссылка отправлена.");
+      if (emailRaw) {
+        localStorage.setItem(forgotPasswordStorageKey(emailRaw), String(Date.now()));
+      }
       form.reset();
       setEmail("");
     } catch {
@@ -103,9 +127,14 @@ export default function ForgotPasswordPage() {
         {fieldErrors.email ? <span className="field-error">{fieldErrors.email}</span> : null}
         {error ? <p style={{ color: "#d11a2a" }}>{error}</p> : null}
         {status ? <p style={{ color: "#1b7d33", maxWidth: "320px" }}>{status}</p> : null}
-        <button className="btn-submit" type="submit" disabled={loading}>
-          Отправить ссылку
-        </button>
+        <div className="form-buttons">
+          <button className="btn-submit" type="submit" disabled={loading}>
+            Отправить ссылку
+          </button>
+          <Link className="btn-switch" href="/auth/login">
+            Вернуться назад
+          </Link>
+        </div>
       </form>
       </div>
     </div>
