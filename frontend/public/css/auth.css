@@ -167,3 +167,64 @@
     box-sizing: border-box;
 }
 
+/* Двухфакторное подтверждение входа (Next.js /auth/2fa) */
+.auth-block .two-factor-info {
+    max-width: 320px;
+    width: 100%;
+    box-sizing: border-box;
+    background: #e7f3ff;
+    border: 1px solid #b8daff;
+    color: #004085;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.auth-block .two-factor-info p {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.auth-block .two-factor-info p:last-child {
+    margin-bottom: 0;
+}
+
+.auth-block .two-factor-footer {
+    text-align: center;
+    margin-top: 20px;
+    max-width: 320px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.auth-block .two-factor-link-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+}
+
+.auth-block .two-factor-link-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.auth-block .two-factor-footer-sep {
+    margin: 0 10px;
+    color: #6c757d;
+}
+
+.auth-block .two-factor-back-link {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.auth-block .two-factor-back-link:hover {
+    text-decoration: underline;
+}
+

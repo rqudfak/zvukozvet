@@ -27,17 +27,28 @@ export default function LoginPage() {
           password: formData.get("password"),
         }),
       });
-      const payload = await response.json();
+      const payload = (await response.json().catch(() => null)) as {
+        message?: string;
+        token?: string;
+        two_factor_required?: boolean;
+        two_factor_pending_token?: string;
+      } | null;
 
       if (!response.ok) {
-        setError(payload.message ?? "Ошибка входа");
+        setError(payload?.message ?? "Ошибка входа");
         return;
       }
 
-      if (payload.token) {
+      if (payload?.two_factor_required && payload.two_factor_pending_token) {
+        sessionStorage.setItem("login_2fa_pending_token", payload.two_factor_pending_token);
+        window.location.href = "/auth/2fa";
+        return;
+      }
+
+      if (payload?.token) {
         localStorage.setItem("auth_token", payload.token);
       }
-      setSuccessFlash(payload.message ?? "Вы успешно вошли в аккаунт!");
+      setSuccessFlash(payload?.message ?? "Вы успешно вошли в аккаунт!");
       window.location.href = "/";
     } catch {
       setError("Сервер недоступен. Попробуйте позже.");

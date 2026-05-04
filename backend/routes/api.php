@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('/register', [MainApiController::class, 'register']);
 Route::post('/login', [MainApiController::class, 'login']);
+Route::post('/login/2fa/verify', [MainApiController::class, 'verifyLoginTwoFactor']);
+Route::post('/login/2fa/resend', [MainApiController::class, 'resendLoginTwoFactor']);
 Route::post('/forgot-password', [MainApiController::class, 'forgotPassword']);
 Route::post('/reset-password', [MainApiController::class, 'resetPassword']);
 

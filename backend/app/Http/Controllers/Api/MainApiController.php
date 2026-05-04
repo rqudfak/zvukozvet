@@ -11,6 +11,7 @@ use App\Models\Genre;
 use App\Models\PortfolioItem;
 use App\Models\Review;
 use App\Notifications\AnnouncementDeletedByAdmin;
+use App\Notifications\SendTwoFactorCode;
 use App\Notifications\AnnouncementStatusUpdated;
 use App\Notifications\NewGenreAdded;
 use App\Notifications\NewFollowedAuthorAnnouncement;
@@ -21,6 +22,8 @@ use App\Models\User;
 use App\Services\AchievementService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
@@ -130,12 +133,111 @@ class MainApiController extends Controller
         }
 
         $user->resetLoginAttempts();
+
+        if ($user->two_factor_enabled) {
+            $user->generateTwoFactorCode();
+            $user->notify(new SendTwoFactorCode($user->two_factor_code));
+
+            $pendingToken = Crypt::encryptString(json_encode([
+                'user_id' => $user->id,
+                'expires_at' => now()->addMinutes(15)->timestamp,
+            ], JSON_THROW_ON_ERROR));
+
+            return response()->json([
+                'message' => 'Код подтверждения отправлен на вашу почту.',
+                'two_factor_required' => true,
+                'two_factor_pending_token' => $pendingToken,
+            ]);
+        }
+
         $token = $user->createToken('frontend')->plainTextToken;
 
         return response()->json([
             'message' => 'Вы успешно вошли в аккаунт!',
             'token' => $token,
             'user' => $user,
+        ]);
+    }
+
+    public function verifyLoginTwoFactor(Request $request)
+    {
+        $request->validate([
+            'two_factor_pending_token' => 'required|string',
+            'code' => 'required|digits:6',
+        ], [
+            'two_factor_pending_token.required' => 'Сессия подтверждения недействительна. Войдите снова.',
+            'code.required' => 'Введите код из письма.',
+            'code.digits' => 'Код должен состоять из 6 цифр.',
+        ]);
+
+        $payload = $this->parseLoginTwoFactorPendingToken($request->input('two_factor_pending_token'));
+        if ($payload === null) {
+            return response()->json([
+                'message' => 'Сессия подтверждения истекла или недействительна. Войдите снова.',
+            ], 422);
+        }
+
+        $user = User::query()->find($payload['user_id']);
+        if (!$user || !$user->two_factor_enabled) {
+            return response()->json([
+                'message' => 'Сессия подтверждения истекла или недействительна. Войдите снова.',
+            ], 422);
+        }
+
+        if (!$user->validateTwoFactorCode((string) $request->input('code'))) {
+            return response()->json([
+                'message' => 'Неверный или истёкший код подтверждения.',
+                'errors' => [
+                    'code' => ['Неверный или истёкший код подтверждения.'],
+                ],
+            ], 422);
+        }
+
+        $user->resetTwoFactorCode();
+        $token = $user->createToken('frontend')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Вы успешно вошли в аккаунт!',
+            'token' => $token,
+            'user' => $user,
+        ]);
+    }
+
+    public function resendLoginTwoFactor(Request $request)
+    {
+        $request->validate([
+            'two_factor_pending_token' => 'required|string',
+        ], [
+            'two_factor_pending_token.required' => 'Сессия подтверждения недействительна. Войдите снова.',
+        ]);
+
+        $payload = $this->parseLoginTwoFactorPendingToken($request->input('two_factor_pending_token'));
+        if ($payload === null) {
+            return response()->json([
+                'message' => 'Сессия подтверждения истекла или недействительна. Войдите снова.',
+            ], 422);
+        }
+
+        $user = User::query()->find($payload['user_id']);
+        if (!$user || !$user->two_factor_enabled) {
+            return response()->json([
+                'message' => 'Сессия подтверждения истекла или недействительна. Войдите снова.',
+            ], 422);
+        }
+
+        $cacheKey = 'login_2fa_resend:' . $user->id;
+        if (Cache::has($cacheKey)) {
+            return response()->json([
+                'message' => 'Повторная отправка кода возможна не чаще одного раза в минуту. Подождите немного.',
+            ], 422);
+        }
+
+        Cache::put($cacheKey, true, 60);
+        $user->generateTwoFactorCode();
+        $user->notify(new SendTwoFactorCode($user->two_factor_code));
+
+        return response()->json([
+            'message' => 'Новый код подтверждения отправлен на вашу почту.',
         ]);
     }
 
@@ -1000,5 +1102,38 @@ class MainApiController extends Controller
         $request->user()->followingUsers()->detach($user->id);
 
         return response()->json(['message' => 'Подписка отменена.']);
+    }
+
+    /**
+     * @return array{user_id: int, expires_at: int}|null
+     */
+    private function parseLoginTwoFactorPendingToken(?string $token): ?array
+    {
+        if (!is_string($token) || $token === '') {
+            return null;
+        }
+
+        try {
+            $raw = Crypt::decryptString($token);
+            $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if (!is_array($data) || !isset($data['user_id'], $data['expires_at'])) {
+            return null;
+        }
+
+        $userId = (int) $data['user_id'];
+        $expiresAt = (int) $data['expires_at'];
+        if ($userId < 1 || $expiresAt < 1) {
+            return null;
+        }
+
+        if (now()->getTimestamp() > $expiresAt) {
+            return null;
+        }
+
+        return ['user_id' => $userId, 'expires_at' => $expiresAt];
     }
 }
