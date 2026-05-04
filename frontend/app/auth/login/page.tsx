@@ -62,7 +62,7 @@ export default function LoginPage() {
       <div className="auth-block">
       <h2>Войдите в аккаунт</h2>
       <form onSubmit={handleSubmit} className="auth-form">
-        {error ? <p style={{ color: "#d11a2a", marginBottom: 12 , marginTop: -10}}>{error}</p> : null}
+        {error ? <p className="login-error">{error}</p> : null}
         <div className="form-input">
           <input id="login" name="login" required placeholder=" " />
           <label htmlFor="login">Логин:</label>
