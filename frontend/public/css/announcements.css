@@ -271,6 +271,7 @@
 .filters-container {
     width: 21%;
     padding: 20px;
+    margin-bottom: 30px;
     background-color: #C4C3E3;
     border-radius: 5px;
     align-self: flex-start;
