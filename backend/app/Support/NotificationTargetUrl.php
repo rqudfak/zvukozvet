@@ -25,7 +25,18 @@ final class NotificationTargetUrl
 
     private static function extractAnnouncementId(string $url): ?int
     {
-        if (!preg_match('#/announcements/(\d+)(?:/|$|\?|#)#', $url, $matches)) {
+        $parts = parse_url($url);
+        $path = '';
+        if (is_array($parts) && isset($parts['path']) && is_string($parts['path'])) {
+            $path = $parts['path'];
+        }
+
+        if ($path === '') {
+            return null;
+        }
+
+        // Только path: иначе id из query (например ?redirect=.../announcements/5) ломал проверку.
+        if (!preg_match('#/announcements/(\d+)(?:/|$|\?|#)#', $path, $matches)) {
             return null;
         }
 
