@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Controller;
+use App\Support\NotificationTargetUrl;
 use App\Models\Achievement;
 use App\Models\Announcement;
 use App\Models\AnnouncementResponse;
@@ -664,11 +665,9 @@ class MainApiController extends Controller
         }
 
         $url = data_get($notification->data, 'url');
-        if (!is_string($url) || $url === '') {
-            $url = '/notifications';
-        }
+        $resolved = NotificationTargetUrl::resolve(is_string($url) ? $url : null);
 
-        return response()->json(['url' => $url]);
+        return response()->json(['url' => $resolved]);
     }
 
     public function notificationsReadAll(Request $request)

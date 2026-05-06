@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\NotificationTargetUrl;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -33,6 +34,11 @@ class NotificationController extends Controller
 
         $url = data_get($notification->data, 'url', route('notifications.index'));
         if (!is_string($url) || $url === '') {
+            return redirect()->route('notifications.index');
+        }
+
+        $url = NotificationTargetUrl::resolve($url);
+        if ($url === '/notifications') {
             return redirect()->route('notifications.index');
         }
 
