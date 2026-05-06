@@ -674,7 +674,7 @@ class MainApiController extends Controller
             if ($path !== '' && preg_match('#/announcements/(\d+)(?:/|$|\?|#)#', $path, $matches)) {
                 $announcementId = (int) $matches[1];
                 if ($announcementId > 0 && !Announcement::query()->whereKey($announcementId)->exists()) {
-                    return response()->json(['url' => '/']);
+                    return response()->json(['url' => '/notifications']);
                 }
             }
         } catch (\Throwable) {

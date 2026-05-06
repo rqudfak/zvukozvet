@@ -1,6 +1,7 @@
  "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildGenreIconUrl, buildStorageUrl } from "@/lib/media";
@@ -52,6 +53,7 @@ export default function AnnouncementDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const router = useRouter();
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [canEdit, setCanEdit] = useState(false);
@@ -73,18 +75,43 @@ export default function AnnouncementDetailPage({
   const [announcementDeleteError, setAnnouncementDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     params.then(async ({ id }) => {
+      setPageError(null);
       const token = localStorage.getItem("auth_token");
-      const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+      const headers: HeadersInit = {
+        Accept: "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
       try {
-        const payload = await fetchApi<{
+        const response = await fetch(`${API_URL}/announcements/${id}`, {
+          headers,
+          cache: "no-store",
+        });
+
+        if (cancelled) return;
+
+        if (response.status === 404) {
+          router.replace("/notifications");
+          return;
+        }
+
+        if (!response.ok) {
+          setPageError("Не удалось загрузить объявление.");
+          return;
+        }
+
+        const payload = (await response.json()) as {
           announcement: Announcement;
           responses: ResponseItem[];
           user_response: ResponseItem | null;
           accepted_response_id?: number | null;
           existing_review?: ExistingReview | null;
           response_statuses?: string[];
-        }>(`/announcements/${id}`, { headers });
+        };
+
         setAnnouncement(payload.announcement);
         setResponses(payload.responses ?? []);
         setUserResponse(payload.user_response ?? null);
@@ -93,6 +120,7 @@ export default function AnnouncementDetailPage({
 
         if (token) {
           const meResponse = await fetch(`${API_URL}/user`, { headers: { Authorization: `Bearer ${token}` } });
+          if (cancelled) return;
           if (meResponse.ok) {
             const me = (await meResponse.json()) as CurrentUser;
             setCurrentUser(me);
@@ -100,10 +128,16 @@ export default function AnnouncementDetailPage({
           }
         }
       } catch {
-        setPageError("Не удалось загрузить объявление.");
+        if (!cancelled) {
+          setPageError("Не удалось загрузить объявление.");
+        }
       }
     });
-  }, [params]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [params, router]);
 
   async function refreshAnnouncement() {
     const id = announcement?.id;
@@ -286,6 +320,17 @@ export default function AnnouncementDetailPage({
     await refreshAnnouncement();
   }
 
+  if (pageError) {
+    return (
+      <div className="announcement-detail">
+        <p>{pageError}</p>
+        <Link href="/" className="btn-back">
+          ← Назад к списку
+        </Link>
+      </div>
+    );
+  }
+
   if (!announcement) {
     return <div className="announcement-detail">Загрузка объявления...</div>;
   }
@@ -371,8 +416,6 @@ export default function AnnouncementDetailPage({
           </Link>
         </div>
       </div>
-
-      {pageError ? <div className="announcement-detail">{pageError}</div> : null}
 
       {!isAuthorized ? (
         <div className="announcement-detail" style={{ marginTop: 25, marginBottom: 30 }}>
