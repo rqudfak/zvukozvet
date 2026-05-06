@@ -92,12 +92,16 @@ export default function NotificationsPage() {
     try {
       const response = await fetch(`${API_URL}/notifications/${itemId}/go`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       });
-      if (!response.ok) throw new Error("failed");
+      const payload = (await response.json().catch(() => null)) as { url?: string } | null;
 
-      const payload = (await response.json()) as { url?: string };
-      const targetUrl = payload.url ?? "/notifications";
+      if (!response.ok) {
+        setError("Не удалось открыть ссылку из уведомления.");
+        return;
+      }
+
+      const targetUrl = payload?.url ?? "/notifications";
 
       let targetPath = targetUrl;
       if (/^https?:\/\//.test(targetUrl)) {
@@ -105,6 +109,8 @@ export default function NotificationsPage() {
         targetPath = `${parsed.pathname}${parsed.search}`;
       }
       router.push(targetPath);
+    } catch {
+      setError("Не удалось открыть ссылку из уведомления.");
     } finally {
       setOpeningId(null);
     }

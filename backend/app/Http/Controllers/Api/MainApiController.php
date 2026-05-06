@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Controller;
-use App\Support\NotificationTargetUrl;
 use App\Models\Achievement;
 use App\Models\Announcement;
 use App\Models\AnnouncementResponse;
@@ -665,9 +664,24 @@ class MainApiController extends Controller
         }
 
         $url = data_get($notification->data, 'url');
-        $resolved = NotificationTargetUrl::resolve(is_string($url) ? $url : null);
+        if (!is_string($url) || $url === '') {
+            return response()->json(['url' => '/notifications']);
+        }
 
-        return response()->json(['url' => $resolved]);
+        try {
+            $parts = parse_url($url);
+            $path = (is_array($parts) && isset($parts['path']) && is_string($parts['path'])) ? $parts['path'] : '';
+            if ($path !== '' && preg_match('#/announcements/(\d+)(?:/|$|\?|#)#', $path, $matches)) {
+                $announcementId = (int) $matches[1];
+                if ($announcementId > 0 && !Announcement::query()->whereKey($announcementId)->exists()) {
+                    return response()->json(['url' => '/']);
+                }
+            }
+        } catch (\Throwable) {
+            // не меняем ссылку при любой ошибке разбора/проверки
+        }
+
+        return response()->json(['url' => $url]);
     }
 
     public function notificationsReadAll(Request $request)
