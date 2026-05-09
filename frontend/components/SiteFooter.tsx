@@ -65,7 +65,7 @@ export default function SiteFooter() {
             <h2 className="site-footer-heading">Информация</h2>
             <ul className="site-footer-links">
               <li>
-                <Link href="/">О нас</Link>
+                <Link href="/about">О нас</Link>
               </li>
               <li>
                 <Link href="/">Контакты</Link>
