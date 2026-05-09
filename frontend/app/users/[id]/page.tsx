@@ -11,10 +11,7 @@ type Review = {
   message: string;
   rating: number;
   created_at: string;
-  reviewer?: { 
-    name?: string;
-    avatar?: string | null; 
-  };
+  reviewer?: { name?: string };
 };
 
 type Achievement = {
@@ -942,17 +939,7 @@ export default function UserPage() {
                 <div key={review.id} className="review-item">
                   <div className="review-header">
                     <div className="review-user">
-                      {review.reviewer?.avatar ? (
-                      <img
-                        src={buildStorageUrl(`avatars/${review.reviewer.avatar}`) ?? "/images/defult.png"}
-                        alt="Аватар"
-                        className="review-avatar"
-                      />
-                      ) : (
-                      <div className="review-avatar-placeholder" aria-hidden="true">
-                        {review.reviewer?.name?.charAt(0)?.toUpperCase() || "?"}
-                      </div>
-              )}
+                      <div className="review-avatar" aria-hidden="true">◯</div>
                       <div className="review-meta">
                         <span className="review-author">{review.reviewer?.name ?? "Пользователь"}</span>
                         <span className="review-date">{formatDate(review.created_at)}</span>
