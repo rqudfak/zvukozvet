@@ -11,7 +11,7 @@ type Review = {
   message: string;
   rating: number;
   created_at: string;
-  reviewer?: { name?: string; avatar?: string | null };
+  reviewer?: { id?: number; name?: string; avatar?: string | null };
 };
 
 type Achievement = {
@@ -83,6 +83,12 @@ function formatDate(dateString?: string): string {
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   const yyyy = date.getFullYear();
   return `${dd}.${mm}.${yyyy}`;
+}
+
+function getAvatarInitial(name?: string): string {
+  const trimmedName = (name ?? "").trim();
+  if (!trimmedName) return "?";
+  return trimmedName.charAt(0).toUpperCase();
 }
 
 export default function UserPage() {
@@ -878,6 +884,17 @@ export default function UserPage() {
               paginate(payload.subscriptions, subscriptionsPage).map((subscription) => (
                 <div key={subscription.id} className="my-announcement-item">
                   <div className="my-announcement-top">
+                    {subscription.avatar ? (
+                      <img
+                        src={buildStorageUrl(`avatars/${subscription.avatar}`) ?? "/images/defult.png"}
+                        alt={subscription.name ? `Аватар ${subscription.name}` : "Аватар"}
+                        className="review-avatar"
+                      />
+                    ) : (
+                      <div className="review-avatar review-avatar-placeholder" aria-hidden="true">
+                        {getAvatarInitial(subscription.name)}
+                      </div>
+                    )}
                     <Link className="my-announcement-title" href={`/users/${subscription.id}`}>
                       {subscription.name}
                     </Link>
@@ -908,6 +925,17 @@ export default function UserPage() {
               paginate(payload.subscribers, subscribersPage).map((subscriber) => (
                 <div key={subscriber.id} className="my-announcement-item">
                   <div className="my-announcement-top">
+                    {subscriber.avatar ? (
+                      <img
+                        src={buildStorageUrl(`avatars/${subscriber.avatar}`) ?? "/images/defult.png"}
+                        alt={subscriber.name ? `Аватар ${subscriber.name}` : "Аватар"}
+                        className="review-avatar"
+                      />
+                    ) : (
+                      <div className="review-avatar review-avatar-placeholder" aria-hidden="true">
+                        {getAvatarInitial(subscriber.name)}
+                      </div>
+                    )}
                     <Link className="my-announcement-title" href={`/users/${subscriber.id}`}>
                       {subscriber.name}
                     </Link>
@@ -947,11 +975,17 @@ export default function UserPage() {
                         />
                       ) : (
                         <div className="review-avatar review-avatar-placeholder" aria-hidden="true">
-                          ◯
+                          {getAvatarInitial(review.reviewer?.name)}
                         </div>
                       )}
                       <div className="review-meta">
-                        <span className="review-author">{review.reviewer?.name ?? "Пользователь"}</span>
+                        {review.reviewer?.id ? (
+                          <Link className="review-author review-author-link" href={`/users/${review.reviewer.id}`}>
+                            {review.reviewer?.name ?? "Пользователь"}
+                          </Link>
+                        ) : (
+                          <span className="review-author">{review.reviewer?.name ?? "Пользователь"}</span>
+                        )}
                         <span className="review-date">{formatDate(review.created_at)}</span>
                       </div>
                     </div>
