@@ -130,6 +130,21 @@
     text-decoration: underline;
 }
 
+.announcement-detail-top-nav {
+    margin-bottom: 16px;
+}
+
+.announcement-edit-warning {
+    margin: 10px 0 18px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #fff2f1;
+    border: 1px solid #f6bdb8;
+    color: #b4342d;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
 
 /* Отклики */
 .response-item {
