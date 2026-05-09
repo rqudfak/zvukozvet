@@ -192,6 +192,11 @@ export default function AnnouncementDetailPage({
     setUserResponse(payload.user_response ?? null);
     setAcceptedResponseId(payload.accepted_response_id ?? null);
     setExistingReview(payload.existing_review ?? null);
+    setCanEdit(
+      currentUser !== null &&
+        currentUser.id === payload.announcement.user_id &&
+        (payload.accepted_response_id ?? null) === null,
+    );
   }
 
   async function submitResponse(e: React.FormEvent<HTMLFormElement>) {
@@ -228,6 +233,14 @@ export default function AnnouncementDetailPage({
     if (!announcement) return;
     const token = localStorage.getItem("auth_token");
     if (!token) return;
+    if (
+      acceptedResponseId !== null &&
+      userResponse?.id === responseId &&
+      userResponse.id !== acceptedResponseId
+    ) {
+      setResponseError("Объявление закрыто, удалить отклик нельзя.");
+      return;
+    }
     const response = await fetch(`${API_URL}/announcements/${announcement.id}/responses/${responseId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
@@ -380,6 +393,16 @@ export default function AnnouncementDetailPage({
   const isAuthor = currentUser?.id === announcement.user_id;
   const isAuthorized = Boolean(currentUser);
   const hasAcceptedResponse = acceptedResponseId !== null;
+  /** Чужой отклик уже принят — текущий пользователь остаётся с непринятым откликом */
+  const respondentLostBid =
+    isAuthorized &&
+    !isAuthor &&
+    userResponse !== null &&
+    hasAcceptedResponse &&
+    acceptedResponseId !== null &&
+    userResponse.id !== acceptedResponseId;
+  const canDeleteOwnResponse =
+    userResponse !== null && userResponse.status !== "Принято" && !respondentLostBid;
 
   return (
     <>
@@ -474,8 +497,11 @@ export default function AnnouncementDetailPage({
               <p>
                 <strong>Ваш текущий отклик:</strong>
               </p>
+              {respondentLostBid ? (
+                <p className="announcement-edit-warning">Объявление закрыто</p>
+              ) : null}
               <div className="response-item response-item-user">
-                {userResponse.status !== "Принято" ? (
+                {canDeleteOwnResponse ? (
                   <button
                     type="button"
                     className="response-delete-cross"
@@ -492,6 +518,8 @@ export default function AnnouncementDetailPage({
                 {responseError ? <p className="error">{responseError}</p> : null}
               </div>
             </>
+          ) : hasAcceptedResponse ? (
+            <p className="announcement-edit-warning">Объявление закрыто</p>
           ) : (
             <form className="announcement-form" style={{ marginTop: 15 }} onSubmit={submitResponse}>
               {responseError ? <p className="error">{responseError}</p> : null}
