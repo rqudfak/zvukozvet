@@ -389,6 +389,36 @@
     font-weight: 500;
 }
 
+.modal-body select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.modal-body select option {
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.modal-body select option:hover {
+    background-color: #C4C3E3 !important;
+}
+
+/* Для браузеров на WebKit (Chrome, Safari, Edge) */
+.modal-body select option:checked {
+    background-color: #dfdef1;
+    color: white;
+}
+
+/* Для Firefox */
+@-moz-document url-prefix() {
+    .modal-body select option:hover {
+        background-color: #C4C3E3 !important;
+    }
+}
+
 .btn-ban-open {
     width: 28px;
     height: 28px;
