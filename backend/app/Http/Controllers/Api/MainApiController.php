@@ -119,7 +119,7 @@ class MainApiController extends Controller
             $reasonText = $reason !== '' ? $reason : 'причина не указана';
 
             return response()->json([
-                'message' => "Ваш аккаунт забанен до {$until} по причине "{$reasonText}"",
+                'message' => 'Ваш аккаунт забанен до {$until} по причине "{$reasonText}"',
             ], 403);
         }
 
