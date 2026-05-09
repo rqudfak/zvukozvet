@@ -68,7 +68,7 @@ export default function SiteFooter() {
                 <Link href="/about">О нас</Link>
               </li>
               <li>
-                <Link href="/">Контакты</Link>
+                <Link href="/contacts">Контакты</Link>
               </li>
             </ul>
           </div>

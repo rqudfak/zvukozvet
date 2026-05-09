@@ -31,6 +31,7 @@ export default function RootLayout({
         <link rel="stylesheet" href="/css/profile.css" />
         <link rel="stylesheet" href="/css/admin.css" />
         <link rel="stylesheet" href="/css/about.css" />
+        <link rel="stylesheet" href="/css/contacts.css" />
       </head>
       <body>
         <Script src="/js/security.js" strategy="afterInteractive" />
