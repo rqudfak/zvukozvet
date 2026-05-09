@@ -211,12 +211,12 @@
 }
 
 .response-filter-dropdown-trigger:hover {
-    border-color: #504e76;
+    border-color: #C4C3E3;
 }
 
 .response-filter-dropdown-chevron {
     flex-shrink: 0;
-    font-size: 12px;
+    font-size: 20px;
     line-height: 1;
     opacity: 0.7;
 }
