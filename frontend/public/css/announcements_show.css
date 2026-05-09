@@ -99,6 +99,10 @@
     font-size: 14px;
     color: #3b3a57;
 }
+.info-item a {
+    color: #F1642E;
+    text-decoration: underline;
+}
 
 .announcement-detail-description {
     margin-bottom: 30px;
