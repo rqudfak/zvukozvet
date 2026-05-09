@@ -15,6 +15,12 @@ type UserRow = {
   banned_until?: string | null;
 };
 
+const BAN_DURATION_OPTIONS = [
+  { value: "1", label: "1 день" },
+  { value: "7", label: "7 дней" },
+  { value: "30", label: "30 дней" },
+] as const;
+
 type ColumnKey = "id" | "login" | "name" | "email" | "announcements_count" | "blocking";
 type SortDirection = "asc" | "desc";
 type ColumnFilters = Record<ColumnKey, string[] | null>;
@@ -34,6 +40,8 @@ export default function AdminUsersPage() {
   const [banUserId, setBanUserId] = useState<number | null>(null);
   const [durationDays, setDurationDays] = useState("1");
   const [banReason, setBanReason] = useState("");
+  const [banDurationMenuOpen, setBanDurationMenuOpen] = useState(false);
+  const banDurationMenuRef = useRef<HTMLDivElement | null>(null);
 
   const [sortField, setSortField] = useState<ColumnKey | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -82,6 +90,27 @@ export default function AdminUsersPage() {
     document.addEventListener("mousedown", onOutsideClick);
     return () => document.removeEventListener("mousedown", onOutsideClick);
   }, [activeFilterColumn]);
+
+  useEffect(() => {
+    if (!banDurationMenuOpen) return;
+    function handlePointerDown(event: MouseEvent) {
+      const node = banDurationMenuRef.current;
+      if (node && !node.contains(event.target as Node)) {
+        setBanDurationMenuOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setBanDurationMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [banDurationMenuOpen]);
 
   function getColumnValue(item: UserRow, key: ColumnKey): string {
     switch (key) {
@@ -338,6 +367,7 @@ export default function AdminUsersPage() {
       return;
     }
     emitSuccessToast(payload.message ?? "Пользователь заблокирован");
+    setBanDurationMenuOpen(false);
     setBanUserId(null);
     setBanReason("");
     setDurationDays("1");
@@ -402,7 +432,10 @@ export default function AdminUsersPage() {
                       className="btn-ban-open"
                       title="Забанить"
                       aria-label="Забанить"
-                      onClick={() => setBanUserId(user.id)}
+                      onClick={() => {
+                        setBanDurationMenuOpen(false);
+                        setBanUserId(user.id);
+                      }}
                     />
                   )}
                 </td>
@@ -415,26 +448,65 @@ export default function AdminUsersPage() {
 
       {banUserId ? (
         <div id="ban-modal" className="modal modal-open" aria-hidden="false">
-          <div className="modal-backdrop" onClick={() => setBanUserId(null)} />
+          <div
+            className="modal-backdrop"
+            onClick={() => {
+              setBanDurationMenuOpen(false);
+              setBanUserId(null);
+            }}
+          />
           <div className="modal-box">
             <div className="modal-header">
               <h3>Забанить пользователя</h3>
-              <button type="button" className="modal-close" onClick={() => setBanUserId(null)}>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={() => {
+                  setBanDurationMenuOpen(false);
+                  setBanUserId(null);
+                }}
+              >
                 &times;
               </button>
             </div>
             <div className="modal-body">
               <div className="form-group">
                 <label htmlFor="ban_duration_days">Срок блокировки</label>
-                <select
-                  id="ban_duration_days"
-                  value={durationDays}
-                  onChange={(e) => setDurationDays(e.target.value)}
-                >
-                  <option value="1">1 день</option>
-                  <option value="7">7 дней</option>
-                  <option value="30">30 дней</option>
-                </select>
+                <div className="ban-duration-dropdown" ref={banDurationMenuRef}>
+                  <button
+                    type="button"
+                    id="ban_duration_days"
+                    className="ban-duration-dropdown-trigger"
+                    aria-haspopup="listbox"
+                    aria-expanded={banDurationMenuOpen}
+                    onClick={() => setBanDurationMenuOpen((previous) => !previous)}
+                  >
+                    <span>
+                      {BAN_DURATION_OPTIONS.find((option) => option.value === durationDays)?.label ?? durationDays}
+                    </span>
+                    <span className="ban-duration-dropdown-chevron" aria-hidden="true">
+                      ▾
+                    </span>
+                  </button>
+                  {banDurationMenuOpen ? (
+                    <ul className="ban-duration-dropdown-menu" role="listbox">
+                      {BAN_DURATION_OPTIONS.map((option) => (
+                        <li
+                          key={option.value}
+                          role="option"
+                          aria-selected={durationDays === option.value}
+                          className={durationDays === option.value ? "is-active" : undefined}
+                          onClick={() => {
+                            setDurationDays(option.value);
+                            setBanDurationMenuOpen(false);
+                          }}
+                        >
+                          {option.label}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
               </div>
               <div className="form-group">
                 <label htmlFor="ban_reason">Причина блокировки</label>
@@ -449,7 +521,14 @@ export default function AdminUsersPage() {
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn-cancel" onClick={() => setBanUserId(null)}>
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={() => {
+                  setBanDurationMenuOpen(false);
+                  setBanUserId(null);
+                }}
+              >
                 Отмена
               </button>
               <button type="button" className="btn-submit" onClick={submitBan}>

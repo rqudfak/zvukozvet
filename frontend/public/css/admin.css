@@ -378,6 +378,10 @@
     flex-shrink: 0;
 }
 
+.modal-reason-option input[type="radio"] {
+    accent-color: #f1642e;
+}
+
 .modal-delete-error {
     margin: 12px 0 0 0;
     color: #b71c1c;
@@ -397,26 +401,74 @@
     box-sizing: border-box;
 }
 
-.modal-body select option {
+/* Кастомный выбор срока бана (admin/users): нативный <select> не даёт стилизовать пункты при hover */
+.ban-duration-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.ban-duration-dropdown-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    font-size: 14px;
     cursor: pointer;
+    font-family: inherit;
+    box-sizing: border-box;
 }
 
-.modal-body select option:hover {
-    background-color: #C4C3E3 !important;
+.ban-duration-dropdown-trigger:hover {
+    border-color: #c4c3e3;
 }
 
-/* Для браузеров на WebKit (Chrome, Safari, Edge) */
-.modal-body select option:checked {
-    background-color: #dfdef1;
-    color: white;
+.ban-duration-dropdown-chevron {
+    flex-shrink: 0;
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0.65;
 }
 
-/* Для Firefox */
-@-moz-document url-prefix() {
-    .modal-body select option:hover {
-        background-color: #C4C3E3 !important;
-    }
+.ban-duration-dropdown-menu {
+    position: absolute;
+    z-index: 50;
+    left: 0;
+    right: 0;
+    top: calc(100% + 4px);
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 8px 22px rgba(80, 78, 118, 0.12);
+    box-sizing: border-box;
+}
+
+.ban-duration-dropdown-menu li {
+    padding: 10px 14px;
+    cursor: pointer;
+    color: #333;
+    font-size: 14px;
+}
+
+.ban-duration-dropdown-menu li:hover {
+    background-color: #c4c3e3;
+}
+
+.ban-duration-dropdown-menu li.is-active {
+    background-color: #aeadc9;
+    font-weight: 600;
+}
+
+.ban-duration-dropdown-menu li.is-active:hover {
+    background-color: #c4c3e3;
 }
 
 .btn-ban-open {
