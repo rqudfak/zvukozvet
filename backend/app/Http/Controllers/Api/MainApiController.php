@@ -453,7 +453,7 @@ class MainApiController extends Controller
     {
         $user->load([
             'portfolioItems',
-            'reviewsReceived.reviewer:id,name',
+            'reviewsReceived.reviewer:id,name,avatar',
             'achievements',
         ]);
 

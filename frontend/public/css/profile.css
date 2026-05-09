@@ -394,6 +394,11 @@
     height: 34px;
     border-radius: 50%;
     border: 1px solid #d8d8e6;
+    object-fit: cover;
+    background: #f3f3f8;
+}
+
+.review-avatar-placeholder {
     color: #b6b6c8;
     display: inline-flex;
     align-items: center;
@@ -410,7 +415,6 @@
 
 .review-author {
     font-weight: 600;
-    color: #4a4a66;
 }
 
 .review-date {
@@ -419,10 +423,9 @@
 }
 
 .review-message {
-    margin: 6px 0 0;
+    margin: 14px 0 0;
     font-size: 16px;
     line-height: 1.25;
-    color: #2f2f44;
 }
 
 .review-rating {
