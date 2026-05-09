@@ -154,6 +154,16 @@
 .response-status-form {
     margin-top: 10px;
 }
+.announcement-responses-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+    margin-bottom: 6px;
+}
+.announcement-responses-filters .form-group {
+    margin-bottom: 0;
+}
 
 .review-star {
     color: #ddd;
