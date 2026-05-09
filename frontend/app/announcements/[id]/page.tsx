@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildGenreIconUrl, buildStorageUrl } from "@/lib/media";
 import { setSuccessFlash } from "@/lib/flash";
@@ -73,6 +73,18 @@ export default function AnnouncementDetailPage({
   const [announcementDeleteOpen, setAnnouncementDeleteOpen] = useState(false);
   const [announcementDeleteSubmitting, setAnnouncementDeleteSubmitting] = useState(false);
   const [announcementDeleteError, setAnnouncementDeleteError] = useState<string | null>(null);
+  const [authorResponseStatusFilter, setAuthorResponseStatusFilter] = useState("Все");
+  const [authorResponseSearch, setAuthorResponseSearch] = useState("");
+
+  const filteredAuthorResponses = useMemo(() => {
+    const needle = authorResponseSearch.trim().toLowerCase();
+    return responses.filter((response) => {
+      const statusOk = authorResponseStatusFilter === "Все" || response.status === authorResponseStatusFilter;
+      const name = (response.user?.name ?? "").toLowerCase();
+      const searchOk = needle === "" || name.includes(needle);
+      return statusOk && searchOk;
+    });
+  }, [responses, authorResponseStatusFilter, authorResponseSearch]);
 
   useEffect(() => {
     let cancelled = false;
@@ -487,9 +499,36 @@ export default function AnnouncementDetailPage({
 
       {isAuthor ? (
         <div className="announcement-detail" style={{ marginTop: 25, marginBottom: 30 }}>
-          <h3>Отклики пользователей ({responses.length})</h3>
-          {responses.length ? (
-            responses.map((response) => (
+          <h3>Отклики пользователей ({filteredAuthorResponses.length} из {responses.length})</h3>
+          <div className="announcement-responses-filters">
+            <div className="form-group">
+              <label htmlFor="author_response_status_filter">Статус</label>
+              <select
+                id="author_response_status_filter"
+                value={authorResponseStatusFilter}
+                onChange={(e) => setAuthorResponseStatusFilter(e.target.value)}
+              >
+                <option value="Все">Все</option>
+                {RESPONSE_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="author_response_search">Поиск по пользователю</label>
+              <input
+                id="author_response_search"
+                type="text"
+                placeholder="Введите имя пользователя"
+                value={authorResponseSearch}
+                onChange={(e) => setAuthorResponseSearch(e.target.value)}
+              />
+            </div>
+          </div>
+          {filteredAuthorResponses.length ? (
+            filteredAuthorResponses.map((response) => (
               <div key={response.id} className="response-item">
                 <p>
                   <strong>
@@ -574,7 +613,7 @@ export default function AnnouncementDetailPage({
               </div>
             ))
           ) : (
-            <p>Откликов пока нет.</p>
+            <p>{responses.length ? "По выбранным фильтрам откликов нет." : "Откликов пока нет."}</p>
           )}
         </div>
       ) : null}
