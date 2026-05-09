@@ -394,6 +394,11 @@
     height: 34px;
     border-radius: 50%;
     border: 1px solid #d8d8e6;
+    object-fit: cover;
+    background: #f3f3f8;
+}
+
+.review-avatar-placeholder {
     color: #b6b6c8;
     display: inline-flex;
     align-items: center;
