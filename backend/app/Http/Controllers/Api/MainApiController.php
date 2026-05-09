@@ -113,6 +113,16 @@ class MainApiController extends Controller
             return response()->json(['message' => 'Неправильный логин или пароль'], 422);
         }
 
+        if ($user->isBanned()) {
+            $until = $user->banned_until?->format('d.m.Y H:i');
+            $reason = trim((string) $user->ban_reason);
+            $reasonText = $reason !== '' ? $reason : 'причина не указана';
+
+            return response()->json([
+                'message' => "Ваш аккаунт забанен до {$until} по причине {$reasonText}",
+            ], 403);
+        }
+
         if ($user->isLocked()) {
             $minutes = ceil($user->getLockoutRemainingMinutes());
             return response()->json([

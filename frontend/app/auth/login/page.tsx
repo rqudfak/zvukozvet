@@ -62,7 +62,7 @@ export default function LoginPage() {
       <div className="auth-block">
       <h2>Войдите в аккаунт</h2>
       <form onSubmit={handleSubmit} className="auth-form">
-        {error ? <p className="login-error">{error}</p> : null}
+        {error ? <span className="field-error">{error}</span> : null}
         <div className="form-input">
           <input id="login" name="login" required placeholder=" " />
           <label htmlFor="login">Логин:</label>
