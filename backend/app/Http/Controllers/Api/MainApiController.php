@@ -119,7 +119,7 @@ class MainApiController extends Controller
             $reasonText = $reason !== '' ? $reason : 'причина не указана';
 
             return response()->json([
-                'message' => "Ваш аккаунт забанен до {$until} по причине {$reasonText}",
+                'message' => "Ваш аккаунт забанен до {$until} по причине "{$reasonText}"",
             ], 403);
         }
 
@@ -930,6 +930,20 @@ class MainApiController extends Controller
         $data = $request->validate([
             'status' => 'required|in:' . implode(',', AnnouncementResponse::STATUSES),
         ]);
+
+        $acceptedResponseId = AnnouncementResponse::query()
+            ->where('announcement_id', $announcement->id)
+            ->where('status', 'Принято')
+            ->value('id');
+        if (
+            $acceptedResponseId !== null &&
+            (int) $acceptedResponseId !== (int) $response->id &&
+            $data['status'] !== $response->status
+        ) {
+            return response()->json([
+                'message' => 'По этому объявлению уже есть принятый отклик. Статусы других откликов менять нельзя.',
+            ], 422);
+        }
 
         $wasAccepted = $response->status === 'Принято';
         $oldStatus = $response->status;

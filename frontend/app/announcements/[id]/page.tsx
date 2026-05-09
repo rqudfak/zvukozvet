@@ -280,7 +280,7 @@ export default function AnnouncementDetailPage({
     if (!announcement) return;
     const token = localStorage.getItem("auth_token");
     if (!token) return;
-    await fetch(`${API_URL}/announcements/${announcement.id}/responses/${responseId}/status`, {
+    const response = await fetch(`${API_URL}/announcements/${announcement.id}/responses/${responseId}/status`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -288,7 +288,13 @@ export default function AnnouncementDetailPage({
       },
       body: JSON.stringify({ status }),
     });
-    setSuccessFlash("Статус отклика обновлён");
+    const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+    if (!response.ok) {
+      setResponseError(payload?.message ?? "Не удалось обновить статус отклика.");
+      return;
+    }
+    setResponseError(null);
+    setSuccessFlash(payload?.message ?? "Статус отклика обновлён");
     await refreshAnnouncement();
   }
 
@@ -354,6 +360,11 @@ export default function AnnouncementDetailPage({
   return (
     <>
       <div className="announcement-detail">
+        <div className="announcement-detail-top-nav">
+          <Link href="/" className="btn-back">
+            ← Назад к списку
+          </Link>
+        </div>
         <div
           className="announcement-detail-header"
           style={{ borderLeft: `4px solid ${announcement.color ?? "#504E76"}` }}
@@ -384,7 +395,7 @@ export default function AnnouncementDetailPage({
           ) : null}
         </div>
         {isAuthor && hasAcceptedResponse ? (
-          <p style={{ marginTop: 8 }}>Редактирование недоступно: по объявлению уже принят отклик.</p>
+          <p className="announcement-edit-warning">Редактирование недоступно: по объявлению уже принят отклик.</p>
         ) : null}
 
         <h1 className="announcement-detail-title">{announcement.title}</h1>
@@ -422,11 +433,6 @@ export default function AnnouncementDetailPage({
           <div style={{ whiteSpace: "pre-line" }}>{announcement.fragment}</div>
         </div>
 
-        <div className="announcement-detail-footer">
-          <Link href="/" className="btn-back">
-            ← Назад к списку
-          </Link>
-        </div>
       </div>
 
       {!isAuthorized ? (

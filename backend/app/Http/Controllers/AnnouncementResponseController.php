@@ -95,6 +95,20 @@ class AnnouncementResponseController extends Controller
             'status' => 'required|in:' . implode(',', AnnouncementResponse::STATUSES),
         ]);
 
+        $acceptedResponseId = AnnouncementResponse::query()
+            ->where('announcement_id', $announcement->id)
+            ->where('status', 'Принято')
+            ->value('id');
+        if (
+            $acceptedResponseId !== null &&
+            (int) $acceptedResponseId !== (int) $response->id &&
+            $data['status'] !== $response->status
+        ) {
+            return back()->withErrors([
+                'status' => 'По этому объявлению уже есть принятый отклик. Статусы других откликов менять нельзя.',
+            ]);
+        }
+
         $wasAccepted = $response->status === 'Принято';
         $oldStatus = $response->status;
         $response->status = $data['status'];
