@@ -190,7 +190,9 @@
 .announcement-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+}
+.announcement-form .btn-submit {
+    margin-top: 20px;
 }
 
 .form-group {
