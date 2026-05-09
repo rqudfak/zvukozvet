@@ -85,12 +85,6 @@ function formatDate(dateString?: string): string {
   return `${dd}.${mm}.${yyyy}`;
 }
 
-function getAvatarInitial(name?: string): string {
-  const trimmedName = (name ?? "").trim();
-  if (!trimmedName) return "?";
-  return trimmedName.charAt(0).toUpperCase();
-}
-
 export default function UserPage() {
   const PAGE_SIZE = 10;
   const params = useParams<{ id: string }>();
@@ -450,14 +444,12 @@ export default function UserPage() {
           <div className="profile-avatar-wrap">
             {payload.user.avatar ? (
               <img
-                src={buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/images/defult.png"}
+                src={buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/img/default.png"}
                 alt={payload.user.name ? `Аватар ${payload.user.name}` : "Аватар"}
                 className="profile-avatar"
               />
             ) : (
-              <div className="profile-avatar profile-avatar-placeholder" aria-hidden="true">
-                {getAvatarInitial(payload.user.name)}
-              </div>
+              <img src="/img/default.png" alt="Аватар по умолчанию" className="profile-avatar" />
             )}
           </div>
           <div className="profile-info">
@@ -888,14 +880,12 @@ export default function UserPage() {
                   <div className="my-announcement-top">
                     {subscription.avatar ? (
                       <img
-                        src={buildStorageUrl(`avatars/${subscription.avatar}`) ?? "/images/defult.png"}
+                        src={buildStorageUrl(`avatars/${subscription.avatar}`) ?? "/img/default.png"}
                         alt={subscription.name ? `Аватар ${subscription.name}` : "Аватар"}
                         className="review-avatar"
                       />
                     ) : (
-                      <div className="review-avatar review-avatar-placeholder" aria-hidden="true">
-                        {getAvatarInitial(subscription.name)}
-                      </div>
+                      <img src="/img/default.png" alt="Аватар по умолчанию" className="review-avatar" />
                     )}
                     <Link className="my-announcement-title" href={`/users/${subscription.id}`}>
                       {subscription.name}
@@ -929,14 +919,12 @@ export default function UserPage() {
                   <div className="my-announcement-top">
                     {subscriber.avatar ? (
                       <img
-                        src={buildStorageUrl(`avatars/${subscriber.avatar}`) ?? "/images/defult.png"}
+                        src={buildStorageUrl(`avatars/${subscriber.avatar}`) ?? "/img/default.png"}
                         alt={subscriber.name ? `Аватар ${subscriber.name}` : "Аватар"}
                         className="review-avatar"
                       />
                     ) : (
-                      <div className="review-avatar review-avatar-placeholder" aria-hidden="true">
-                        {getAvatarInitial(subscriber.name)}
-                      </div>
+                      <img src="/img/default.png" alt="Аватар по умолчанию" className="review-avatar" />
                     )}
                     <Link className="my-announcement-title" href={`/users/${subscriber.id}`}>
                       {subscriber.name}
@@ -971,14 +959,12 @@ export default function UserPage() {
                     <div className="review-user">
                       {review.reviewer?.avatar ? (
                         <img
-                          src={buildStorageUrl(`avatars/${review.reviewer.avatar}`) ?? "/images/defult.png"}
+                          src={buildStorageUrl(`avatars/${review.reviewer.avatar}`) ?? "/img/default.png"}
                           alt={review.reviewer?.name ? `Аватар ${review.reviewer.name}` : "Аватар автора отзыва"}
                           className="review-avatar"
                         />
                       ) : (
-                        <div className="review-avatar review-avatar-placeholder" aria-hidden="true">
-                          {getAvatarInitial(review.reviewer?.name)}
-                        </div>
+                        <img src="/img/default.png" alt="Аватар по умолчанию" className="review-avatar" />
                       )}
                       <div className="review-meta">
                         {review.reviewer?.id ? (
