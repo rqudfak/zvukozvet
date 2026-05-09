@@ -29,6 +29,18 @@
     background: #eee;
 }
 
+.profile-avatar-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d8d8e6;
+    background: #f3f3f8;
+    color: #6f6f84;
+    font-size: 42px;
+    font-weight: 600;
+    line-height: 1;
+}
+
 .profile-info {
     flex: 1;
 }
@@ -524,7 +536,6 @@
 
 .my-announcement-top {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: 12px;
 }

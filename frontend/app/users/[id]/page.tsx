@@ -448,15 +448,17 @@ export default function UserPage() {
       <div className="profile-card">
         <div className="profile-header">
           <div className="profile-avatar-wrap">
-            <img
-              src={
-                payload.user.avatar
-                ? buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/images/defult.png"
-                : '${API_URL?.replace(/\/api\/?$/, "")}/images/defult.png'
-              }
-              alt="Аватар"
-              className="profile-avatar"
-            />
+            {payload.user.avatar ? (
+              <img
+                src={buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/images/defult.png"}
+                alt={payload.user.name ? `Аватар ${payload.user.name}` : "Аватар"}
+                className="profile-avatar"
+              />
+            ) : (
+              <div className="profile-avatar profile-avatar-placeholder" aria-hidden="true">
+                {getAvatarInitial(payload.user.name)}
+              </div>
+            )}
           </div>
           <div className="profile-info">
             <p className="profile-name">{payload.user.name}</p>
