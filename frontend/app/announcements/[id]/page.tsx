@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildGenreIconUrl, buildStorageUrl } from "@/lib/media";
 import { setSuccessFlash } from "@/lib/flash";
@@ -30,7 +30,7 @@ type ResponseItem = {
   message?: string | null;
   audio_path: string;
   status: string;
-  user?: { id: number; name: string };
+  user?: { id: number; name: string; avatar?: string | null };
 };
 
 type CurrentUser = { id: number; role?: string };
@@ -75,6 +75,8 @@ export default function AnnouncementDetailPage({
   const [announcementDeleteError, setAnnouncementDeleteError] = useState<string | null>(null);
   const [authorResponseStatusFilter, setAuthorResponseStatusFilter] = useState("Все");
   const [authorResponseSearch, setAuthorResponseSearch] = useState("");
+  const [authorResponseStatusMenuOpen, setAuthorResponseStatusMenuOpen] = useState(false);
+  const authorResponseStatusMenuRef = useRef<HTMLDivElement | null>(null);
 
   const filteredAuthorResponses = useMemo(() => {
     const needle = authorResponseSearch.trim().toLowerCase();
@@ -85,6 +87,27 @@ export default function AnnouncementDetailPage({
       return statusOk && searchOk;
     });
   }, [responses, authorResponseStatusFilter, authorResponseSearch]);
+
+  useEffect(() => {
+    if (!authorResponseStatusMenuOpen) return;
+    function handlePointerDown(event: MouseEvent) {
+      const node = authorResponseStatusMenuRef.current;
+      if (node && !node.contains(event.target as Node)) {
+        setAuthorResponseStatusMenuOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setAuthorResponseStatusMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [authorResponseStatusMenuOpen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -509,18 +532,39 @@ export default function AnnouncementDetailPage({
           <div className="announcement-responses-filters">
             <div className="form-group">
               <label htmlFor="author_response_status_filter">Статус</label>
-              <select
-                id="author_response_status_filter"
-                value={authorResponseStatusFilter}
-                onChange={(e) => setAuthorResponseStatusFilter(e.target.value)}
-              >
-                <option value="Все">Все</option>
-                {RESPONSE_STATUSES.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
+              <div className="response-filter-dropdown" ref={authorResponseStatusMenuRef}>
+                <button
+                  type="button"
+                  id="author_response_status_filter"
+                  className="response-filter-dropdown-trigger"
+                  aria-haspopup="listbox"
+                  aria-expanded={authorResponseStatusMenuOpen}
+                  onClick={() => setAuthorResponseStatusMenuOpen((previous) => !previous)}
+                >
+                  <span>{authorResponseStatusFilter}</span>
+                  <span className="response-filter-dropdown-chevron" aria-hidden="true">
+                    ▾
+                  </span>
+                </button>
+                {authorResponseStatusMenuOpen ? (
+                  <ul className="response-filter-dropdown-menu" role="listbox">
+                    {["Все", ...RESPONSE_STATUSES].map((status) => (
+                      <li
+                        key={status}
+                        role="option"
+                        aria-selected={authorResponseStatusFilter === status}
+                        className={authorResponseStatusFilter === status ? "is-active" : undefined}
+                        onClick={() => {
+                          setAuthorResponseStatusFilter(status);
+                          setAuthorResponseStatusMenuOpen(false);
+                        }}
+                      >
+                        {status}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
             </div>
             <div className="form-group">
               <label htmlFor="author_response_search">Поиск по пользователю</label>
@@ -536,11 +580,24 @@ export default function AnnouncementDetailPage({
           {filteredAuthorResponses.length ? (
             filteredAuthorResponses.map((response) => (
               <div key={response.id} className="response-item">
-                <p>
-                  <strong>
-                    <Link href={`/users/${response.user?.id}`}>{response.user?.name ?? "Пользователь"}</Link>
-                  </strong>
-                </p>
+                <div className="response-user-line">
+                  <div className="response-user-row">
+                    <img
+                      className="response-user-avatar"
+                      src={
+                        response.user?.avatar
+                          ? (buildStorageUrl(`avatars/${response.user.avatar}`) ?? "/img/default.png")
+                          : "/img/default.png"
+                      }
+                      alt={
+                        response.user?.name ? `Аватар ${response.user.name}` : "Аватар по умолчанию"
+                      }
+                    />
+                    <strong>
+                      <Link href={`/users/${response.user?.id}`}>{response.user?.name ?? "Пользователь"}</Link>
+                    </strong>
+                  </div>
+                </div>
                 {response.message ? <p>{response.message}</p> : null}
                 <audio controls src={buildStorageUrl(response.audio_path) ?? undefined} />
                 <div className="response-status-form" style={{ marginTop: 8 }}>

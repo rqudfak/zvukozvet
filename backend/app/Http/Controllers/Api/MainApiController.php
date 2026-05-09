@@ -411,7 +411,7 @@ class MainApiController extends Controller
         if ($user) {
             if ($user->id === $announcement->user_id) {
                 $responses = $announcement->responses()
-                    ->with('user:id,name')
+                    ->with('user:id,name,avatar')
                     ->where('user_id', '!=', $announcement->user_id)
                     ->orderBy('created_at', 'desc')
                     ->get();
@@ -424,7 +424,7 @@ class MainApiController extends Controller
                 }
             } else {
                 $userResponse = $announcement->responses()
-                    ->with('user:id,name')
+                    ->with('user:id,name,avatar')
                     ->where('user_id', $user->id)
                     ->first();
             }
