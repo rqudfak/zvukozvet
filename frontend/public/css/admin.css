@@ -471,6 +471,90 @@
     background-color: #c4c3e3;
 }
 
+/* Выбор статуса объявления / отклика (кастомный список вместо <select>) */
+.status-dropdown {
+    position: relative;
+    width: 100%;
+    min-width: 140px;
+}
+
+.status-dropdown-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.status-dropdown-trigger:hover:not(:disabled) {
+    border-color: #c4c3e3;
+}
+
+.status-dropdown-trigger:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.status-dropdown-value {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.status-dropdown-chevron {
+    flex-shrink: 0;
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0.65;
+}
+
+.status-dropdown-menu {
+    position: absolute;
+    z-index: 45;
+    left: 0;
+    right: 0;
+    top: calc(100% + 4px);
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 8px 22px rgba(80, 78, 118, 0.12);
+    box-sizing: border-box;
+}
+
+.status-dropdown-menu li {
+    padding: 10px 14px;
+    cursor: pointer;
+    color: #333;
+    font-size: 14px;
+}
+
+.status-dropdown-menu li:hover {
+    background-color: #c4c3e3;
+}
+
+.status-dropdown-menu li.is-selected {
+    background-color: rgba(80, 78, 118, 0.08);
+}
+
+.status-dropdown-menu li.is-selected:hover {
+    background-color: #c4c3e3;
+}
+
 .btn-ban-open {
     width: 28px;
     height: 28px;

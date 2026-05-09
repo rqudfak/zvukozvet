@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { API_URL } from "@/lib/api";
 import { emitSuccessToast } from "@/lib/flash";
+import StatusDropdown from "@/components/StatusDropdown";
 
 type Announcement = {
   id: number;
@@ -410,13 +411,11 @@ export default function AdminAnnouncementsPage() {
                 <td>{item.type}</td>
                 <td>{item.genre}</td>
                 <td>
-                  <select value={item.status} onChange={(e) => updateStatus(item.id, e.target.value)}>
-                    {statuses.map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
+                  <StatusDropdown
+                    value={item.status}
+                    options={statuses}
+                    onChange={(status) => updateStatus(item.id, status)}
+                  />
                 </td>
                 <td>
                   {item.user?.id ? <Link href={`/users/${item.user.id}`}>{item.user.name}</Link> : "—"}
