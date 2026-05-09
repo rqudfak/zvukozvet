@@ -143,7 +143,7 @@ export default function HeaderNav() {
             </li>
           ) : null}
           <li>
-            <Link href="/">О нас</Link>
+            <Link href="/about">О нас</Link>
           </li>
           <li>
             <Link href="/">Контакты</Link>
