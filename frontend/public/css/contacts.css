@@ -1,0 +1,18 @@
+.contacts-mail-link {
+    color: #f1642e;
+    font-weight: 700;
+}
+
+.contacts-mail-link:hover {
+    text-decoration: underline;
+}
+
+.contacts-list {
+    margin: 0 0 16px;
+    padding-left: 22px;
+    line-height: 1.65;
+}
+
+.contacts-list li {
+    margin-bottom: 10px;
+}

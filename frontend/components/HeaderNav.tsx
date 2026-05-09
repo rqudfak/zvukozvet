@@ -146,7 +146,7 @@ export default function HeaderNav() {
             <Link href="/about">О нас</Link>
           </li>
           <li>
-            <Link href="/">Контакты</Link>
+            <Link href="/contacts">Контакты</Link>
           </li>
         </ul>
         <ul className="header-nav-auth">
