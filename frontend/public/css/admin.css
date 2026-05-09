@@ -463,7 +463,7 @@
 }
 
 .ban-duration-dropdown-menu li.is-active {
-    background-color: #aeadc9;
+    background-color: rgba(80, 78, 118, 0.08);
     font-weight: 600;
 }
 
