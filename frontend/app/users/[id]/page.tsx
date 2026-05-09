@@ -938,20 +938,25 @@ export default function UserPage() {
               paginate(payload.user.reviews_received ?? [], reviewsPage).map((review) => (
                 <div key={review.id} className="review-item">
                   <div className="review-header">
-                    <span className="review-author">{review.reviewer?.name ?? "Пользователь"}</span>
-                    <span className="review-date">{formatDate(review.created_at)}</span>
+                    <div className="review-user">
+                      <div className="review-avatar" aria-hidden="true">◯</div>
+                      <div className="review-meta">
+                        <span className="review-author">{review.reviewer?.name ?? "Пользователь"}</span>
+                        <span className="review-date">{formatDate(review.created_at)}</span>
+                      </div>
+                    </div>
+                    <div className="review-rating">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          className={`review-star ${star <= review.rating ? "filled" : ""}`}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <p className="review-message">{review.message}</p>
-                  <div className="review-rating">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        className={`review-star ${star <= review.rating ? "filled" : ""}`}
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </div>
                 </div>
               ))
             )}
