@@ -910,6 +910,15 @@ class MainApiController extends Controller
             return response()->json(['message' => 'Принятый отклик нельзя удалить.'], 422);
         }
 
+        $acceptedOther = AnnouncementResponse::query()
+            ->where('announcement_id', $announcement->id)
+            ->where('status', 'Принято')
+            ->where('id', '!=', $response->id)
+            ->exists();
+        if ($acceptedOther) {
+            return response()->json(['message' => 'Объявление закрыто, удалить отклик нельзя.'], 422);
+        }
+
         if ($response->audio_path) {
             Storage::disk('public')->delete($response->audio_path);
         }

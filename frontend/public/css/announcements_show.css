@@ -366,3 +366,40 @@
 .review-star.filled {
     color: #F1642E;
 }
+
+.review-rating-stars-field {
+    margin-bottom: 12px;
+}
+
+.review-rating-field-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444365;
+}
+
+.review-rating-star-picker {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.review-star-picker-btn {
+    border: none;
+    background: transparent;
+    padding: 4px 2px;
+    cursor: pointer;
+    font-size: 32px;
+    line-height: 1;
+    color: #ddd;
+    transition: color 0.15s ease, transform 0.12s ease;
+}
+
+.review-star-picker-btn:hover {
+    color: #f6b59a;
+    transform: scale(1.08);
+}
+
+.review-star-picker-btn.filled {
+    color: #f1642e;
+}

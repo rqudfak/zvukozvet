@@ -65,7 +65,7 @@ export default function AnnouncementDetailPage({
   const [message, setMessage] = useState("");
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [reviewMessage, setReviewMessage] = useState("");
-  const [reviewRating, setReviewRating] = useState("5");
+  const [reviewRating, setReviewRating] = useState(5);
   const [loading, setLoading] = useState(false);
   const [pageError, setPageError] = useState<string | null>(null);
   const [responseError, setResponseError] = useState<string | null>(null);
@@ -233,11 +233,7 @@ export default function AnnouncementDetailPage({
     if (!announcement) return;
     const token = localStorage.getItem("auth_token");
     if (!token) return;
-    if (
-      acceptedResponseId !== null &&
-      userResponse?.id === responseId &&
-      userResponse.id !== acceptedResponseId
-    ) {
+    if (acceptedResponseId !== null && responseId !== acceptedResponseId) {
       setResponseError("Объявление закрыто, удалить отклик нельзя.");
       return;
     }
@@ -348,7 +344,7 @@ export default function AnnouncementDetailPage({
       body: JSON.stringify({
         announcement_id: announcement.id,
         message: reviewMessage,
-        rating: Number(reviewRating),
+        rating: reviewRating,
       }),
     });
     const payload = (await response.json().catch(() => null)) as { message?: string } | null;
@@ -357,7 +353,7 @@ export default function AnnouncementDetailPage({
       return;
     }
     setReviewMessage("");
-    setReviewRating("5");
+    setReviewRating(5);
     setSuccessFlash(payload?.message ?? "Отзыв добавлен");
     await refreshAnnouncement();
   }
@@ -393,16 +389,19 @@ export default function AnnouncementDetailPage({
   const isAuthor = currentUser?.id === announcement.user_id;
   const isAuthorized = Boolean(currentUser);
   const hasAcceptedResponse = acceptedResponseId !== null;
-  /** Чужой отклик уже принят — текущий пользователь остаётся с непринятым откликом */
-  const respondentLostBid =
-    isAuthorized &&
-    !isAuthor &&
-    userResponse !== null &&
+  /** Принят чужой отклик — свой удалить нельзя (для победителя удаление скрыто статусом «Принято»). */
+  const lockedOutByOtherAcceptance =
     hasAcceptedResponse &&
     acceptedResponseId !== null &&
+    userResponse !== null &&
     userResponse.id !== acceptedResponseId;
+  const nonAuthorClosedBanner =
+    isAuthorized &&
+    !isAuthor &&
+    hasAcceptedResponse &&
+    (userResponse === null || userResponse.id !== acceptedResponseId);
   const canDeleteOwnResponse =
-    userResponse !== null && userResponse.status !== "Принято" && !respondentLostBid;
+    userResponse !== null && userResponse.status !== "Принято" && !lockedOutByOtherAcceptance;
 
   return (
     <>
@@ -441,6 +440,9 @@ export default function AnnouncementDetailPage({
             </div>
           ) : null}
         </div>
+        {nonAuthorClosedBanner ? (
+          <p className="announcement-edit-warning">Объявление закрыто</p>
+        ) : null}
         {isAuthor && hasAcceptedResponse ? (
           <p className="announcement-edit-warning">Редактирование недоступно: по объявлению уже принят отклик.</p>
         ) : null}
@@ -497,9 +499,6 @@ export default function AnnouncementDetailPage({
               <p>
                 <strong>Ваш текущий отклик:</strong>
               </p>
-              {respondentLostBid ? (
-                <p className="announcement-edit-warning">Объявление закрыто</p>
-              ) : null}
               <div className="response-item response-item-user">
                 {canDeleteOwnResponse ? (
                   <button
@@ -518,9 +517,7 @@ export default function AnnouncementDetailPage({
                 {responseError ? <p className="error">{responseError}</p> : null}
               </div>
             </>
-          ) : hasAcceptedResponse ? (
-            <p className="announcement-edit-warning">Объявление закрыто</p>
-          ) : (
+          ) : hasAcceptedResponse ? null : (
             <form className="announcement-form" style={{ marginTop: 15 }} onSubmit={submitResponse}>
               {responseError ? <p className="error">{responseError}</p> : null}
               <div className="form-group">
@@ -667,6 +664,28 @@ export default function AnnouncementDetailPage({
                     <div className="review-form-wrap" style={{ marginTop: 12 }}>
                       <strong>Оставить отзыв пользователю {response.user?.name ?? "пользователь"}</strong>
                       <div className="announcement-form" style={{ marginTop: 8 }}>
+                        <div className="form-group review-rating-stars-field">
+                          <span className="review-rating-field-label" id="review_rating_label">
+                            Оценка
+                          </span>
+                          <div
+                            className="review-rating-star-picker"
+                            role="group"
+                            aria-labelledby="review_rating_label"
+                          >
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                className={`review-star-picker-btn ${star <= reviewRating ? "filled" : ""}`}
+                                aria-label={`Оценка ${star} из 5`}
+                                onClick={() => setReviewRating(star)}
+                              >
+                                ★
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                         <div className="form-group">
                           <label htmlFor="review_message">Сообщение</label>
                           <textarea
@@ -676,20 +695,6 @@ export default function AnnouncementDetailPage({
                             value={reviewMessage}
                             onChange={(e) => setReviewMessage(e.target.value)}
                           />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="review_rating">Рейтинг (звёзды)</label>
-                          <select
-                            id="review_rating"
-                            value={reviewRating}
-                            onChange={(e) => setReviewRating(e.target.value)}
-                          >
-                            {[1, 2, 3, 4, 5].map((i) => (
-                              <option key={i} value={i}>
-                                {i} ★
-                              </option>
-                            ))}
-                          </select>
                         </div>
                         <button type="button" className="btn-submit" onClick={submitReview}>
                           Отправить отзыв
