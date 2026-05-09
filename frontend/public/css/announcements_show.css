@@ -178,6 +178,26 @@
 .response-status-form {
     margin-top: 10px;
 }
+
+.response-status-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    cursor: pointer;
+}
+
+.response-status-label-text {
+    flex-shrink: 0;
+    font-weight: 500;
+    color: #3b3a57;
+}
+
+.response-status-field .status-dropdown {
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+}
 .announcement-responses-filters {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildGenreIconUrl, buildStorageUrl } from "@/lib/media";
 import { setSuccessFlash } from "@/lib/flash";
+import StatusDropdown from "@/components/StatusDropdown";
 
 type Announcement = {
   id: number;
@@ -601,18 +602,14 @@ export default function AnnouncementDetailPage({
                 {response.message ? <p>{response.message}</p> : null}
                 <audio controls src={buildStorageUrl(response.audio_path) ?? undefined} />
                 <div className="response-status-form" style={{ marginTop: 8 }}>
-                  <label>
-                    Статус:{" "}
-                    <select
+                  <label className="response-status-field" htmlFor={`response-status-${response.id}`}>
+                    <span className="response-status-label-text">Статус:</span>
+                    <StatusDropdown
+                      id={`response-status-${response.id}`}
                       value={response.status}
-                      onChange={(e) => updateResponseStatus(response.id, e.target.value)}
-                    >
-                      {RESPONSE_STATUSES.map((status) => (
-                        <option key={status} value={status}>
-                          {status}
-                        </option>
-                      ))}
-                    </select>
+                      options={RESPONSE_STATUSES}
+                      onChange={(status) => updateResponseStatus(response.id, status)}
+                    />
                   </label>
                 </div>
                 {response.status === "Принято" && acceptedResponseId === response.id ? (
