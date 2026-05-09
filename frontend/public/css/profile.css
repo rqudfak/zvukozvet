@@ -417,6 +417,15 @@
     font-weight: 600;
 }
 
+.review-author-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.review-author-link:hover {
+    text-decoration: underline;
+}
+
 .review-date {
     font-size: 13px;
     color: #9d9db2;
