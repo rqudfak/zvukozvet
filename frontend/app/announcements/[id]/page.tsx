@@ -529,9 +529,25 @@ export default function AnnouncementDetailPage({
                     ×
                   </button>
                 ) : null}
-                {userResponse.message ? <p>{userResponse.message}</p> : null}
-                <audio controls src={buildStorageUrl(userResponse.audio_path) ?? undefined} />
-                <p>Статус: {userResponse.status}</p>
+                {userResponse.message ? (
+                  <div className="response-message-block">
+                    <span className="response-block-label">Сообщение</span>
+                    <p className="response-message-text">{userResponse.message}</p>
+                  </div>
+                ) : null}
+                <div className="response-audio-block">
+                  <span className="response-block-label">Аудиозапись</span>
+                  <audio
+                    className="response-audio-native"
+                    controls
+                    src={buildStorageUrl(userResponse.audio_path) ?? undefined}
+                    preload="metadata"
+                  />
+                </div>
+                <p className="response-status-line">
+                  <span className="response-status-line-label">Статус</span>
+                  <span className="response-status-line-value">{userResponse.status}</span>
+                </p>
                 {responseError ? <p className="error">{responseError}</p> : null}
               </div>
             </>
@@ -555,7 +571,7 @@ export default function AnnouncementDetailPage({
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="audio">Аудиофайл (обязательно)</label>
+                <label htmlFor="audio" style={{marginTop: "10px"}}>Аудиофайл (обязательно)</label>
                 <input
                   type="file"
                   id="audio"
@@ -647,9 +663,22 @@ export default function AnnouncementDetailPage({
                     </strong>
                   </div>
                 </div>
-                {response.message ? <p>{response.message}</p> : null}
-                <audio controls src={buildStorageUrl(response.audio_path) ?? undefined} />
-                <div className="response-status-form" style={{ marginTop: 8 }}>
+                {response.message ? (
+                  <div className="response-message-block">
+                    <span className="response-block-label">Сообщение</span>
+                    <p className="response-message-text">{response.message}</p>
+                  </div>
+                ) : null}
+                <div className="response-audio-block">
+                  <span className="response-block-label">Аудиозапись</span>
+                  <audio
+                    className="response-audio-native"
+                    controls
+                    src={buildStorageUrl(response.audio_path) ?? undefined}
+                    preload="metadata"
+                  />
+                </div>
+                <div className="response-status-form">
                   <label className="response-status-field" htmlFor={`response-status-${response.id}`}>
                     <span className="response-status-label-text">Статус:</span>
                     <StatusDropdown
@@ -662,22 +691,21 @@ export default function AnnouncementDetailPage({
                 </div>
                 {response.status === "Принято" && acceptedResponseId === response.id ? (
                   existingReview ? (
-                    <div
-                      className="review-existing"
-                      style={{ marginTop: 12, padding: 12, background: "#f9f9f9", borderRadius: 6 }}
-                    >
-                      <strong>Ваш отзыв:</strong> {existingReview.message}
-                      <span className="review-rating">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                          <span key={i} className={`review-star ${i <= existingReview.rating ? "filled" : ""}`}>
-                            ★
-                          </span>
-                        ))}
-                      </span>
+                    <div className="review-existing">
+                      <div className="review-existing-body">
+                        <span className="response-block-label">Ваш отзыв</span>
+                        <p className="review-existing-text">{existingReview.message}</p>
+                        <span className="review-rating" aria-label={`Оценка ${existingReview.rating} из 5`}>
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <span key={i} className={`review-star ${i <= existingReview.rating ? "filled" : ""}`}>
+                              ★
+                            </span>
+                          ))}
+                        </span>
+                      </div>
                       <button
                         type="button"
-                        className="btn-submit"
-                        style={{ padding: "4px 12px", fontSize: 12, marginLeft: 12 }}
+                        className="btn-submit review-existing-delete"
                         onClick={() => deleteReview(existingReview.id)}
                       >
                         Удалить отзыв
