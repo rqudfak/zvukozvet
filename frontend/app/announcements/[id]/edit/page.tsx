@@ -446,7 +446,7 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
 
         <div className="form-actions">
           <button className="btn-submit" type="submit" disabled={saving}>
-            Сохранить изменения
+            Сохранить
           </button>
           <Link href={`/announcements/${announcementId}`} className="btn-cancel">
             Отмена
