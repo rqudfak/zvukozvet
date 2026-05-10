@@ -694,7 +694,6 @@ export default function AnnouncementDetailPage({
                     <div className="review-existing">
                       <div className="review-existing-body">
                         <span className="response-block-label">Ваш отзыв</span>
-                        <p className="review-existing-text">{existingReview.message}</p>
                         <span className="review-rating" aria-label={`Оценка ${existingReview.rating} из 5`}>
                           {[1, 2, 3, 4, 5].map((i) => (
                             <span key={i} className={`review-star ${i <= existingReview.rating ? "filled" : ""}`}>
@@ -702,6 +701,7 @@ export default function AnnouncementDetailPage({
                             </span>
                           ))}
                         </span>
+                        <p className="review-existing-text">{existingReview.message}</p>
                       </div>
                       <button
                         type="button"
