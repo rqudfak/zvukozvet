@@ -11,9 +11,9 @@
 }
 
 .about-page-lead {
+    text-align: justify;
     font-size: 17px;
     line-height: 1.55;
-    color: #504e76;
     margin-bottom: 28px;
 }
 
@@ -34,6 +34,7 @@
 }
 
 .about-section p {
+    text-align: justify;
     margin-bottom: 12px;
     line-height: 1.65;
     font-size: 16px;
@@ -46,6 +47,7 @@
 }
 
 .about-section li {
+    text-align: justify;
     margin-bottom: 8px;
 }
 
