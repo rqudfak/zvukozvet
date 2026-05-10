@@ -24,6 +24,8 @@ const COLORS = {
   muted: "#8B87B8",
 };
 
+const CHART_FONT = { family: "'Nunito', sans-serif", size: 13 } as const;
+
 export type StatsPayload = {
   period: {
     preset: string;
@@ -168,11 +170,11 @@ export default function AdminStatsDashboard() {
       scales: {
         x: {
           beginAtZero: true,
-          ticks: { color: COLORS.muted },
+          ticks: { color: COLORS.muted, font: { ...CHART_FONT } },
           grid: { color: "rgba(80, 78, 118, 0.08)" },
         },
         y: {
-          ticks: { color: COLORS.primary },
+          ticks: { color: COLORS.primary, font: { ...CHART_FONT } },
           grid: { display: false },
         },
       },
