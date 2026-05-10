@@ -7,6 +7,7 @@ import { API_URL, fetchApi } from "@/lib/api";
 import { buildGenreIconUrl, buildStorageUrl } from "@/lib/media";
 import { setSuccessFlash } from "@/lib/flash";
 import StatusDropdown from "@/components/StatusDropdown";
+import PortfolioStyleAudioPlayer from "@/components/PortfolioStyleAudioPlayer";
 
 type Announcement = {
   id: number;
@@ -537,12 +538,7 @@ export default function AnnouncementDetailPage({
                 ) : null}
                 <div className="response-audio-block">
                   <span className="response-block-label">Аудиозапись</span>
-                  <audio
-                    className="response-audio-native"
-                    controls
-                    src={buildStorageUrl(userResponse.audio_path) ?? undefined}
-                    preload="metadata"
-                  />
+                  <PortfolioStyleAudioPlayer src={buildStorageUrl(userResponse.audio_path)} />
                 </div>
                 <p className="response-status-line">
                   <span className="response-status-line-label">Статус</span>
@@ -671,12 +667,7 @@ export default function AnnouncementDetailPage({
                 ) : null}
                 <div className="response-audio-block">
                   <span className="response-block-label">Аудиозапись</span>
-                  <audio
-                    className="response-audio-native"
-                    controls
-                    src={buildStorageUrl(response.audio_path) ?? undefined}
-                    preload="metadata"
-                  />
+                  <PortfolioStyleAudioPlayer src={buildStorageUrl(response.audio_path)} />
                 </div>
                 <div className="response-status-form">
                   <label className="response-status-field" htmlFor={`response-status-${response.id}`}>

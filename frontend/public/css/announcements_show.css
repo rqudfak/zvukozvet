@@ -216,24 +216,13 @@
     white-space: pre-line;
 }
 
+/* Плеер — те же классы, что в портфолио профиля (profile.css: .portfolio-audio-player) */
 .response-audio-block {
     margin-bottom: 14px;
-    padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.72);
-    border-radius: 10px;
 }
 
-.response-audio-native {
-    display: block;
+.response-audio-block .portfolio-item-audio {
     width: 100%;
-    min-height: 44px;
-    margin: 0;
-    border-radius: 8px;
-    vertical-align: middle;
-}
-
-.response-audio-native::-webkit-media-controls-panel {
-    background-color: #f6f5fb;
 }
 
 .response-status-line {
@@ -499,10 +488,6 @@
 
     .response-item {
         padding: 14px 12px;
-    }
-
-    .response-audio-block {
-        padding: 12px;
     }
 
     .review-existing {
