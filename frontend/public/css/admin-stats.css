@@ -76,6 +76,7 @@
     cursor: pointer;
     text-align: left;
     box-sizing: border-box;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .admin-stats-date-trigger:hover {
