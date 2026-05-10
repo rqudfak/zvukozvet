@@ -59,6 +59,7 @@ type MyResponse = {
     title: string;
     status: string;
     created_at?: string;
+    accepted_responses_count?: number;
   };
 };
 
@@ -83,6 +84,11 @@ function formatDate(dateString?: string): string {
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   const yyyy = date.getFullYear();
   return `${dd}.${mm}.${yyyy}`;
+}
+
+/** Принят отклик и объявление не в статусе «Одобрено» (снято с публикации). */
+function isProfileAnnouncementClosed(a: { status: string; accepted_responses_count?: number }): boolean {
+  return (a.accepted_responses_count ?? 0) > 0 && a.status !== "Одобрено";
 }
 
 export default function UserPage() {
@@ -763,9 +769,17 @@ export default function UserPage() {
                       <Link className="my-announcement-title" href={`/announcements/${announcement.id}`}>
                         {announcement.title}
                       </Link>
-                      <span className="my-announcement-date">
-                        {formatDate(announcement.created_at)}
-                      </span>
+                      <div className="my-announcement-top-aside">
+                        {isProfileAnnouncementClosed(announcement) ? (
+                          <span
+                            className="announcement-edit-warning my-announcement-closed-badge"
+                            role="status"
+                          >
+                            Закрыто
+                          </span>
+                        ) : null}
+                        <span className="my-announcement-date">{formatDate(announcement.created_at)}</span>
+                      </div>
                     </div>
                     <div className="my-announcement-meta">
                       <span className="my-announcement-status">Статус: {announcement.status}</span>
@@ -806,7 +820,17 @@ export default function UserPage() {
                       ) : (
                         <span className="my-announcement-title">Объявление недоступно</span>
                       )}
-                      <span className="my-announcement-date">{formatDate(response.created_at)}</span>
+                      <div className="my-announcement-top-aside">
+                        {response.announcement && isProfileAnnouncementClosed(response.announcement) ? (
+                          <span
+                            className="announcement-edit-warning my-announcement-closed-badge"
+                            role="status"
+                          >
+                            Закрыто
+                          </span>
+                        ) : null}
+                        <span className="my-announcement-date">{formatDate(response.created_at)}</span>
+                      </div>
                     </div>
                     <div className="my-announcement-meta">
                       <span className="my-announcement-status">Статус отклика: {response.status}</span>
@@ -845,7 +869,17 @@ export default function UserPage() {
                       <Link className="my-announcement-title" href={`/announcements/${announcement.id}`}>
                         {announcement.title}
                       </Link>
-                      <span className="my-announcement-date">{formatDate(announcement.created_at)}</span>
+                      <div className="my-announcement-top-aside">
+                        {isProfileAnnouncementClosed(announcement) ? (
+                          <span
+                            className="announcement-edit-warning my-announcement-closed-badge"
+                            role="status"
+                          >
+                            Закрыто
+                          </span>
+                        ) : null}
+                        <span className="my-announcement-date">{formatDate(announcement.created_at)}</span>
+                      </div>
                     </div>
                     <div className="my-announcement-meta">
                       <span className="my-announcement-status">Статус: {announcement.status}</span>
