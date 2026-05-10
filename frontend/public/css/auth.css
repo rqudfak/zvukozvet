@@ -237,3 +237,140 @@
     text-decoration: underline;
 }
 
+.auth-form-message {
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.auth-form-message--error {
+    color: #d11a2a;
+}
+
+.auth-form-message--success {
+    color: #1b7d33;
+}
+
+.form-input--forgot-wrap {
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.form-input--forgot-wrap .forgot-password-link {
+    color: #f1642e;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.form-input--forgot-wrap .forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 489px) {
+    .auth-block {
+        width: 100%;
+        max-width: 100%;
+        padding: 22px 14px;
+        gap: 18px;
+        box-sizing: border-box;
+        border-radius: 8px;
+    }
+
+    .auth-block h2 {
+        font-size: 1.2rem;
+        line-height: 1.3;
+        text-align: center;
+        margin: 0;
+        padding: 0 2px;
+        word-break: break-word;
+    }
+
+    .auth-form {
+        width: 100%;
+        max-width: 100%;
+        gap: 12px;
+    }
+
+    .auth-form .form-input {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .auth-form input:not([type="checkbox"]):not([type="hidden"]) {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .auth-form .field-error,
+    .auth-form .login-error,
+    .auth-form .forgot-password-error {
+        max-width: 100%;
+    }
+
+    .auth-form .btn-switch {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .auth-form-message {
+        font-size: 13px;
+    }
+
+    .form-input--forgot-wrap {
+        text-align: center;
+    }
+
+    .auth-page .auth-form .form-group {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .auth-page .auth-form .form-group input {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .auth-block .two-factor-info,
+    .auth-block .two-factor-footer {
+        max-width: 100%;
+    }
+
+    .auth-block .two-factor-info {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    .auth-block .two-factor-info p {
+        font-size: 13px;
+    }
+
+    .auth-block .two-factor-footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px 12px;
+        margin-top: 16px;
+    }
+
+    .auth-block .two-factor-footer-sep {
+        display: none;
+    }
+
+    .auth-form .form-checkbox {
+        align-items: flex-start;
+    }
+
+    .auth-form .form-checkbox label {
+        font-size: 13px;
+        line-height: 1.45;
+    }
+}
+

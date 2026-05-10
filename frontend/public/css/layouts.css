@@ -525,3 +525,16 @@ main:has(.auth-page) > .center {
     width: 100%;
     box-sizing: border-box;
 }
+
+@media (max-width: 489px) {
+    .auth-page {
+        padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+            max(20px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+        justify-content: flex-start;
+    }
+
+    main:has(.auth-page) > .center {
+        width: 100%;
+        max-width: 100%;
+    }
+}

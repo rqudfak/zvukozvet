@@ -765,7 +765,7 @@
 }
 
 .admin-filter-checkboxes {
-    max-height: 160px;
+    max-height: 130px;
     overflow: auto;
     border: 1px solid #dddbe8;
     border-radius: 6px;

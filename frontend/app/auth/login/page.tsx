@@ -71,7 +71,7 @@ export default function LoginPage() {
           <input id="password" name="password" type="password" required placeholder=" " />
           <label htmlFor="password">Пароль:</label>
         </div>
-        <div className="form-input" style={{ textAlign: "right", marginTop: -10, marginBottom: 10 }}>
+        <div className="form-input form-input--forgot-wrap">
           <Link href="/auth/forgot-password" className="forgot-password-link">
             Забыли пароль?
           </Link>
