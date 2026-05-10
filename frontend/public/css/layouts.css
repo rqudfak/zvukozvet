@@ -147,7 +147,6 @@ nav .center.header-nav-inner {
         align-items: center;
     }
     .header-nav-menus .notif {
-        width: 100%;
         max-width: 320px;
     }
     .header-nav-menus .notif-btn {
@@ -167,7 +166,6 @@ nav .center.header-nav-inner {
     }
     .header-nav-menus {
         display: grid !important;
-        grid-template-columns: 1fr auto 1fr;
         align-items: center;
         gap: clamp(16px, 3vw, 36px);
         flex: 1;

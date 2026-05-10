@@ -814,3 +814,187 @@
         flex: 1 1 100%;
     }
 }
+
+/* Адаптив: объявления и пользователи в админке (таблицы + вкладки + фильтры) */
+@media (max-width: 900px) {
+    .admin-header {
+        margin-bottom: 14px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .admin-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        gap: 8px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        scrollbar-width: thin;
+    }
+
+    .admin-tab {
+        flex-shrink: 0;
+        padding: 9px 12px;
+        font-size: 14px;
+    }
+
+    .admin-header h2 {
+        font-size: 1.35rem;
+        line-height: 1.25;
+        word-break: break-word;
+    }
+
+    .admin-table-container {
+        padding: 14px 12px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        /* полоса прокрутки таблицы не обрезается */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-table-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .admin-table-toolbar .pagination {
+        width: 100%;
+        margin: 0;
+        justify-content: center;
+        order: -1;
+    }
+
+    .admin-table-toolbar .pagination nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        max-width: 100%;
+    }
+
+    .admin-table-toolbar .pagination nav button,
+    .admin-table-toolbar .pagination nav span {
+        min-height: 40px;
+        min-width: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 10px;
+        box-sizing: border-box;
+    }
+
+    .admin-table-toolbar .btn-reset-filters {
+        margin-left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 14px;
+        text-align: center;
+    }
+
+    .admin-table-container > .pagination {
+        margin-top: 14px;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .admin-table-container > .pagination nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .admin-table-container > .pagination nav button,
+    .admin-table-container > .pagination nav span {
+        min-height: 40px;
+        min-width: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 10px;
+        box-sizing: border-box;
+    }
+
+    .admin-table-container .admin-table {
+        min-width: 820px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px 8px;
+        font-size: 14px;
+    }
+
+    .admin-table td:first-child {
+        word-break: break-word;
+    }
+
+    .admin-header-trigger {
+        font-size: 13px;
+        gap: 4px;
+    }
+
+    .admin-table td.admin-table-cell-status .status-dropdown {
+        max-width: 220px;
+        min-width: 140px;
+    }
+
+    .genre-actions-cell {
+        white-space: nowrap;
+    }
+
+    .modal.modal-open {
+        padding: 12px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+
+    .modal-box {
+        max-width: min(440px, calc(100vw - 24px));
+        max-height: min(90vh, calc(100dvh - 24px));
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-filter-menu {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        top: 50%;
+        bottom: auto;
+        transform: translateY(-50%);
+        width: auto;
+        max-width: none;
+        max-height: min(72vh, 520px);
+        overflow-y: auto;
+        z-index: 2000;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+    }
+
+    .admin-table-header-cell.admin-table-header-cell--filter-menu-right .admin-filter-menu {
+        left: 12px;
+        right: 12px;
+    }
+
+    .admin-filter-search {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .modal-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .modal-footer .btn-submit,
+    .modal-footer .btn-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+}
