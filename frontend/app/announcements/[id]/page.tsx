@@ -441,7 +441,9 @@ export default function AnnouncementDetailPage({
           ) : null}
         </div>
         {nonAuthorClosedBanner ? (
-          <p className="announcement-edit-warning">Объявление закрыто</p>
+          <p className="announcement-edit-warning">
+            Объявление закрыто: по нему уже принят отклик другого исполнителя, объявление снято с публикации.
+          </p>
         ) : null}
         {isAuthor && hasAcceptedResponse ? (
           <p className="announcement-edit-warning">Редактирование недоступно: по объявлению уже принят отклик.</p>
@@ -486,8 +488,24 @@ export default function AnnouncementDetailPage({
 
       {!isAuthorized ? (
         <div className="announcement-detail" style={{ marginTop: 25, marginBottom: 30 }}>
-          Чтобы откликнуться на объявление, пожалуйста, <Link href="/auth/login"><span className="announcement-detail-link">войдите</span></Link> или{" "}
-          <Link href="/auth/register"><span className="announcement-detail-link">зарегистрируйтесь</span></Link>.
+          <h3>Отклик на объявление</h3>
+          {hasAcceptedResponse ? (
+            <p className="announcement-edit-warning" style={{ marginTop: 12 }}>
+              Отклики больше не принимаются: по объявлению уже выбран исполнитель, новые откликнуться нельзя.
+            </p>
+          ) : (
+            <p style={{ marginTop: 12 }}>
+              Чтобы откликнуться на объявление, пожалуйста,{" "}
+              <Link href="/auth/login">
+                <span className="announcement-detail-link">войдите</span>
+              </Link>{" "}
+              или{" "}
+              <Link href="/auth/register">
+                <span className="announcement-detail-link">зарегистрируйтесь</span>
+              </Link>
+              .
+            </p>
+          )}
         </div>
       ) : null}
 
@@ -517,7 +535,12 @@ export default function AnnouncementDetailPage({
                 {responseError ? <p className="error">{responseError}</p> : null}
               </div>
             </>
-          ) : hasAcceptedResponse ? null : (
+          ) : hasAcceptedResponse ? (
+            <p className="announcement-edit-warning" style={{ marginTop: 12 }}>
+              Отклики больше не принимаются: по объявлению уже выбран исполнитель, объявление снято с публикации,
+              оставить отклик нельзя.
+            </p>
+          ) : (
             <form className="announcement-form" style={{ marginTop: 15 }} onSubmit={submitResponse}>
               {responseError ? <p className="error">{responseError}</p> : null}
               <div className="form-group">

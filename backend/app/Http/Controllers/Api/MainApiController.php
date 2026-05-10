@@ -405,7 +405,6 @@ class MainApiController extends Controller
 
         $responses = collect();
         $userResponse = null;
-        $acceptedResponse = null;
         $existingReview = null;
 
         if ($user) {
@@ -416,8 +415,7 @@ class MainApiController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->get();
 
-                $acceptedResponse = $responses->where('status', 'Принято')->first();
-                if ($acceptedResponse) {
+                if ($responses->where('status', 'Принято')->isNotEmpty()) {
                     $existingReview = Review::query()
                         ->where('announcement_id', $announcement->id)
                         ->first();
@@ -430,11 +428,17 @@ class MainApiController extends Controller
             }
         }
 
+        // Всегда отдаём фронту (в т.ч. гостям), иначе нельзя скрыть форму отклика на закрытом объявлении.
+        $acceptedResponseId = AnnouncementResponse::query()
+            ->where('announcement_id', $announcement->id)
+            ->where('status', 'Принято')
+            ->value('id');
+
         return response()->json([
             'announcement' => $announcement,
             'responses' => $responses,
             'user_response' => $userResponse,
-            'accepted_response_id' => $acceptedResponse?->id,
+            'accepted_response_id' => $acceptedResponseId,
             'existing_review' => $existingReview,
             'response_statuses' => AnnouncementResponse::STATUSES,
         ]);
@@ -862,6 +866,18 @@ class MainApiController extends Controller
         }
         if ($announcement->user_id === $request->user()->id) {
             return response()->json(['message' => 'Автор объявления не может откликаться на своё объявление.'], 422);
+        }
+
+        if ($announcement->status !== 'Одобрено') {
+            return response()->json([
+                'message' => 'Объявление снято с публикации или на модерации, отклики не принимаются.',
+            ], 422);
+        }
+
+        if ($announcement->responses()->where('status', 'Принято')->exists()) {
+            return response()->json([
+                'message' => 'Объявление закрыто: по нему уже принят отклик, новые отклики не принимаются.',
+            ], 422);
         }
 
         $data = $request->validate([
