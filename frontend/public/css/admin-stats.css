@@ -60,6 +60,19 @@
     border-radius: 8px;
     font-family: Nunito, sans-serif;
     color: #504E76;
+    accent-color: #C4C3E3;
+    color-scheme: light;
+}
+
+.admin-stats-custom-range input[type="date"]:focus,
+.admin-stats-custom-range input[type="date"]:focus-visible {
+    outline: none;
+    border-color: #C4C3E3;
+    box-shadow: 0 0 0 3px rgba(196, 195, 227, 0.65);
+}
+
+.admin-stats-custom-range input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
 }
 
 .admin-stats-period-caption {
