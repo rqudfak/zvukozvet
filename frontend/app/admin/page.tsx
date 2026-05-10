@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AdminStatsDashboard from "@/components/AdminStatsDashboard";
 
 export default function AdminPage() {
   return (
@@ -20,10 +21,8 @@ export default function AdminPage() {
         </div>
         <h2>Статистика</h2>
       </div>
-      
-      <div className="admin-dashboard-info">
-        <p>Выберите раздел выше для управления жанрами, объявлениями или пользователями.</p>
-      </div>
+
+      <AdminStatsDashboard />
     </>
   );
 }

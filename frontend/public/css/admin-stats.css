@@ -1,0 +1,165 @@
+.admin-stats {
+    margin-top: 8px;
+}
+
+.admin-stats-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.admin-stats-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-stats-preset {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 2px solid #C4C3E3;
+    background: #fff;
+    color: #504E76;
+    font-family: Nunito, sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.admin-stats-preset:hover {
+    border-color: #504E76;
+}
+
+.admin-stats-preset-active {
+    background: #504E76;
+    color: #fff;
+    border-color: #504E76;
+}
+
+.admin-stats-custom-range {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-stats-custom-range label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #504E76;
+    font-weight: 600;
+}
+
+.admin-stats-custom-range input[type="date"] {
+    padding: 6px 10px;
+    border: 2px solid #C4C3E3;
+    border-radius: 8px;
+    font-family: Nunito, sans-serif;
+    color: #504E76;
+}
+
+.admin-stats-period-caption {
+    margin-bottom: 16px;
+    color: #504E76;
+    font-size: 15px;
+}
+
+.admin-stats-error {
+    color: #c0392b;
+    margin-bottom: 12px;
+}
+
+.admin-stats-loading {
+    color: #504E76;
+}
+
+.admin-stats-kpi {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.admin-stats-kpi-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(80, 78, 118, 0.12);
+    border-left: 4px solid #504E76;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-stats-kpi-label {
+    font-size: 13px;
+    color: #6b6689;
+    font-weight: 600;
+}
+
+.admin-stats-kpi-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #504E76;
+    line-height: 1.2;
+}
+
+.admin-stats-kpi-value.accent {
+    color: #F1642E;
+}
+
+.admin-stats-kpi-hint {
+    font-size: 12px;
+    color: #8B87B8;
+}
+
+.admin-stats-charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+.admin-stats-chart-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 22px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.admin-stats-chart-card h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: #504E76;
+}
+
+.admin-stats-chart-note {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: #6b6689;
+    line-height: 1.45;
+}
+
+.admin-stats-chart-wrap {
+    position: relative;
+}
+
+.admin-stats-chart-wrap-doughnut {
+    height: 280px;
+}
+
+.admin-stats-chart-wrap-bar {
+    height: min(420px, 60vh);
+}
+
+.admin-stats-empty {
+    margin: 0;
+    padding: 32px 16px;
+    text-align: center;
+    color: #8B87B8;
+    font-size: 14px;
+}

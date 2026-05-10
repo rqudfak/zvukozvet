@@ -786,8 +786,6 @@
 
 .admin-filter-checkbox input[type="checkbox"] {
     accent-color: #f1642e;
-    width: 17px;
-    height: 17px;
     vertical-align: middle;
     cursor: pointer;
 }
