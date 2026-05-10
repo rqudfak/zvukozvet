@@ -54,25 +54,168 @@
     font-weight: 600;
 }
 
-.admin-stats-custom-range input[type="date"] {
+/* Кастомный календарь (нативное окно date input нельзя перекрасить) */
+.admin-stats-date-field {
+    position: relative;
+}
+
+.admin-stats-date-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 200px;
     padding: 6px 10px;
     border: 2px solid #C4C3E3;
     border-radius: 8px;
-    font-family: Nunito, sans-serif;
+    background: #fff;
     color: #504E76;
-    accent-color: #C4C3E3;
-    color-scheme: light;
+    font-family: Nunito, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    box-sizing: border-box;
 }
 
-.admin-stats-custom-range input[type="date"]:focus,
-.admin-stats-custom-range input[type="date"]:focus-visible {
+.admin-stats-date-trigger:hover {
+    border-color: #504E76;
+}
+
+.admin-stats-date-trigger:focus-visible {
     outline: none;
     border-color: #C4C3E3;
     box-shadow: 0 0 0 3px rgba(196, 195, 227, 0.65);
 }
 
-.admin-stats-custom-range input[type="date"]::-webkit-calendar-picker-indicator {
+.admin-stats-date-trigger-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-stats-date-trigger-chevron {
+    flex-shrink: 0;
+    font-size: 18px;
+    line-height: 1;
+    opacity: 0.75;
+}
+
+.admin-stats-date-popover {
+    position: absolute;
+    z-index: 50;
+    left: 0;
+    top: calc(100% + 6px);
+    width: min(100vw - 32px, 300px);
+    padding: 12px;
+    background: #fff;
+    border: 2px solid #C4C3E3;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(80, 78, 118, 0.18);
+    box-sizing: border-box;
+}
+
+.admin-stats-date-popover-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.admin-stats-date-nav {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 2px solid #C4C3E3;
+    border-radius: 8px;
+    background: #fff;
+    color: #504E76;
+    font-size: 20px;
+    line-height: 1;
     cursor: pointer;
+    flex-shrink: 0;
+    font-family: Nunito, sans-serif;
+}
+
+.admin-stats-date-nav:hover:not(:disabled) {
+    background: #C4C3E3;
+    color: #fff;
+}
+
+.admin-stats-date-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.admin-stats-date-month-title {
+    flex: 1;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #504E76;
+}
+
+.admin-stats-date-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 6px;
+}
+
+.admin-stats-date-weekday {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #8B87B8;
+    padding: 4px 0;
+}
+
+.admin-stats-date-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.admin-stats-date-pad {
+    min-height: 36px;
+    pointer-events: none;
+}
+
+.admin-stats-date-cell {
+    aspect-ratio: 1;
+    min-height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: #f0f0f7;
+    color: #504E76;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: Nunito, sans-serif;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+
+.admin-stats-date-cell:hover:not(:disabled) {
+    background: #C4C3E3;
+    color: #fff;
+}
+
+.admin-stats-date-cell.is-selected {
+    background: #F1642E;
+    color: #fff;
+}
+
+.admin-stats-date-cell.is-selected:hover:not(:disabled) {
+    background: #d95528;
+    color: #fff;
+}
+
+.admin-stats-date-cell.is-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: #fafafa;
+    color: #a8a8b8;
 }
 
 .admin-stats-period-caption {
