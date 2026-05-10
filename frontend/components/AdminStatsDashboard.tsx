@@ -13,6 +13,7 @@ import {
 import { Bar, Doughnut } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import { API_URL } from "@/lib/api";
+import AdminStatsDateField, { toYmd } from "@/components/AdminStatsDateField";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ArcElement);
 
@@ -39,21 +40,14 @@ export type StatsPayload = {
   top_genres: { genre: string; count: number }[];
 };
 
-function formatDateInput(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
 export default function AdminStatsDashboard() {
   const [preset, setPreset] = useState<"week" | "month" | "year" | "custom">("month");
   const [customFrom, setCustomFrom] = useState(() => {
     const t = new Date();
     t.setDate(t.getDate() - 30);
-    return formatDateInput(t);
+    return toYmd(t);
   });
-  const [customTo, setCustomTo] = useState(() => formatDateInput(new Date()));
+  const [customTo, setCustomTo] = useState(() => toYmd(new Date()));
 
   const [data, setData] = useState<StatsPayload | null>(null);
   const [loading, setLoading] = useState(true);
@@ -186,7 +180,7 @@ export default function AdminStatsDashboard() {
     []
   );
 
-  const todayStr = formatDateInput(new Date());
+  const todayStr = toYmd(new Date());
 
   return (
     <div className="admin-stats">
@@ -214,21 +208,15 @@ export default function AdminStatsDashboard() {
           <div className="admin-stats-custom-range">
             <label>
               С
-              <input
-                type="date"
-                value={customFrom}
-                max={customTo}
-                onChange={(e) => setCustomFrom(e.target.value)}
-              />
+              <AdminStatsDateField value={customFrom} max={customTo} onChange={setCustomFrom} />
             </label>
             <label>
               По
-              <input
-                type="date"
+              <AdminStatsDateField
                 value={customTo}
                 min={customFrom}
                 max={todayStr}
-                onChange={(e) => setCustomTo(e.target.value)}
+                onChange={setCustomTo}
               />
             </label>
           </div>
