@@ -479,7 +479,13 @@ class MainApiController extends Controller
 
         $myResponses = $user->responses()
             ->with([
-                'announcement:id,title,status,created_at',
+                'announcement' => function ($query) {
+                    $query->withCount([
+                        'responses as accepted_responses_count' => function ($q) {
+                            $q->where('status', 'Принято');
+                        },
+                    ]);
+                },
             ])
             ->orderBy('created_at', 'desc')
             ->get();
