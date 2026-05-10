@@ -474,6 +474,11 @@ class MainApiController extends Controller
 
         $publicAnnouncements = $user->announcements()
             ->where('status', 'Одобрено')
+            ->withCount([
+                'responses as accepted_responses_count' => function ($q) {
+                    $q->where('status', 'Принято');
+                },
+            ])
             ->orderBy('created_at', 'desc')
             ->get();
 
