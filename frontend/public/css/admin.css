@@ -711,6 +711,7 @@
     right: 0;
     top: calc(100% + 6px);
     width: 280px;
+    max-width: min(280px, calc(100vw - 24px));
     z-index: 30;
     background: #fbfaf3;
     border: 1px solid #d7d5e3;
@@ -718,6 +719,7 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     padding: 10px;
     text-align: left;
+    box-sizing: border-box;
 }
 
 /* Узкие левые колонки: меню растёт вправо от левого края ячейки, не уезжает за таблицу */
@@ -753,7 +755,9 @@
 }
 
 .admin-filter-search {
-    width: 92%;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     border: 1px solid #d3d1df;
     border-radius: 6px;
     padding: 7px 9px;
@@ -767,6 +771,7 @@
     border-radius: 6px;
     background: #fff;
     padding: 6px;
+    min-height: 0;
 }
 
 .admin-filter-checkbox {
@@ -960,32 +965,48 @@
     }
 }
 
-@media (max-width: 600px) {
+/* Окна фильтров столбцов: не выходят за экран < 960px; высота по содержимому */
+@media (max-width: 959px) {
     .admin-filter-menu {
         position: fixed;
-        left: 12px;
-        right: 12px;
+        left: 50%;
+        right: auto;
         top: 50%;
         bottom: auto;
-        transform: translateY(-50%);
-        width: auto;
-        max-width: none;
-        max-height: min(72vh, 520px);
+        transform: translate(-50%, -50%);
+        width: min(340px, calc(100vw - 24px));
+        max-width: calc(100vw - 24px);
+        max-height: min(82dvh, calc(100dvh - 32px));
+        height: auto;
+        overflow-x: hidden;
         overflow-y: auto;
         z-index: 2000;
         box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+        -webkit-overflow-scrolling: touch;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .admin-table-header-cell.admin-table-header-cell--filter-menu-right .admin-filter-menu {
-        left: 12px;
-        right: 12px;
+        left: 50%;
+        right: auto;
+        transform: translate(-50%, -50%);
     }
 
-    .admin-filter-search {
+    .admin-filter-checkboxes {
+        flex: 0 1 auto;
+        max-height: min(140px, 38vh);
         width: 100%;
         box-sizing: border-box;
     }
 
+    .admin-filter-menu-footer {
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 600px) {
     .modal-footer {
         flex-direction: column-reverse;
         align-items: stretch;
