@@ -69,13 +69,35 @@
 }
 
 /* при заполненном поле без фокуса */
-.auth-form input:not([type="checkbox"]):not([type="hidden"]):not(:placeholder-shown):not(:focus) + label,
-.auth-form input:not([type="checkbox"]):not([type="hidden"]).has-value:not(:focus) + label {
+.auth-form input:not([type="checkbox"]):not([type="hidden"]):not(:placeholder-shown):not(:focus):not(:disabled) + label,
+.auth-form input:not([type="checkbox"]):not([type="hidden"]).has-value:not(:focus):not(:disabled) + label {
     top: 0;
     transform: translateY(-50%);
     font-size: 11px;
     color: #fff;
     background-color: #b7b7b7;
+    border-radius: 5px;
+}
+
+/* недоступное поле (напр. почта при сбросе пароля по ссылке) */
+.auth-form input:not([type="checkbox"]):not([type="hidden"]):disabled {
+    opacity: 1;
+    color: #555;
+    background-color: #ebebeb;
+    border-color: #c8c8c8;
+    cursor: not-allowed;
+}
+
+.auth-form input:not([type="checkbox"]):not([type="hidden"]):disabled:focus {
+    border-color: #c8c8c8;
+}
+
+.auth-form input:not([type="checkbox"]):not([type="hidden"]):disabled + label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: #555;
+    background-color: #ebebeb;
     border-radius: 5px;
 }
 
