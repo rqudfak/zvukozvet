@@ -410,7 +410,7 @@ export default function AdminAnnouncementsPage() {
                 </td>
                 <td>{item.type}</td>
                 <td>{item.genre}</td>
-                <td>
+                <td className="admin-table-cell-status">
                   <StatusDropdown
                     value={item.status}
                     options={statuses}

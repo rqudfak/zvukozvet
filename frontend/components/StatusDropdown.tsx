@@ -11,7 +11,13 @@ type StatusDropdownProps = {
   className?: string;
   /** Подпись в кнопке, когда value пустая строка (например «Выберите жанр»). */
   emptyLabel?: string;
+  /** Человекочитаемые подписи для значений option (например hex цвета → «Оранжевый»). */
+  optionLabels?: Record<string, string>;
 };
+
+function displayOption(option: string, optionLabels?: Record<string, string>): string {
+  return optionLabels?.[option] ?? option;
+}
 
 export default function StatusDropdown({
   id,
@@ -21,6 +27,7 @@ export default function StatusDropdown({
   disabled,
   className,
   emptyLabel,
+  optionLabels,
 }: StatusDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -62,7 +69,7 @@ export default function StatusDropdown({
         }}
       >
         <span className={`status-dropdown-value${value === "" && emptyLabel ? " is-placeholder" : ""}`}>
-          {value !== "" ? value : (emptyLabel ?? "")}
+          {value !== "" ? displayOption(value, optionLabels) : (emptyLabel ?? "")}
         </span>
         <span className="status-dropdown-chevron" aria-hidden="true">
           ▾
@@ -81,7 +88,7 @@ export default function StatusDropdown({
                 setOpen(false);
               }}
             >
-              {option}
+              {displayOption(option, optionLabels)}
             </li>
           ))}
         </ul>
