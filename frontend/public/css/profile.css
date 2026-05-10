@@ -573,13 +573,13 @@
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: space-between;
     margin-top: 8px;
     align-items: center;
 }
 
 .my-announcement-status {
     font-size: 13px;
-    color: #555;
 }
 
 .my-announcement-badge {
