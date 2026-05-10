@@ -771,7 +771,11 @@ export default function UserPage() {
                       </Link>
                       <div className="my-announcement-top-aside">
                         <span className="my-announcement-date">{formatDate(announcement.created_at)}</span>
-                        {isProfileAnnouncementClosed(announcement) ? (
+                      </div>
+                    </div>
+                    <div className="my-announcement-meta">
+                      <span className="my-announcement-status">Статус: {announcement.status}</span>
+                      {isProfileAnnouncementClosed(announcement) ? (
                           <span
                             className="announcement-edit-warning my-announcement-closed-badge"
                             role="status"
@@ -779,10 +783,6 @@ export default function UserPage() {
                             Закрыто
                           </span>
                         ) : null}
-                      </div>
-                    </div>
-                    <div className="my-announcement-meta">
-                      <span className="my-announcement-status">Статус: {announcement.status}</span>
                     </div>
                     <div className="my-announcement-desc">{announcement.description ?? ""}</div>
                   </div>
@@ -822,7 +822,11 @@ export default function UserPage() {
                       )}
                       <div className="my-announcement-top-aside">
                         <span className="my-announcement-date">{formatDate(response.created_at)}</span>
-                        {response.announcement && isProfileAnnouncementClosed(response.announcement) ? (
+                      </div>
+                    </div>
+                    <div className="my-announcement-meta">
+                      <span className="my-announcement-status">Статус отклика: {response.status}</span>
+                      {response.announcement && isProfileAnnouncementClosed(response.announcement) ? (
                           <span
                             className="announcement-edit-warning my-announcement-closed-badge"
                             role="status"
@@ -830,10 +834,6 @@ export default function UserPage() {
                             Закрыто
                           </span>
                         ) : null}
-                      </div>
-                    </div>
-                    <div className="my-announcement-meta">
-                      <span className="my-announcement-status">Статус отклика: {response.status}</span>
                     </div>
                     {response.announcement?.status !== "Одобрено" ? (
                       <div className="my-announcement-desc">
@@ -871,7 +871,11 @@ export default function UserPage() {
                       </Link>
                       <div className="my-announcement-top-aside">
                         <span className="my-announcement-date">{formatDate(announcement.created_at)}</span>
-                        {isProfileAnnouncementClosed(announcement) ? (
+                      </div>
+                    </div>
+                    <div className="my-announcement-meta">
+                      <span className="my-announcement-status">Статус: {announcement.status}</span>
+                      {isProfileAnnouncementClosed(announcement) ? (
                           <span
                             className="announcement-edit-warning my-announcement-closed-badge"
                             role="status"
@@ -879,10 +883,6 @@ export default function UserPage() {
                             Закрыто
                           </span>
                         ) : null}
-                      </div>
-                    </div>
-                    <div className="my-announcement-meta">
-                      <span className="my-announcement-status">Статус: {announcement.status}</span>
                     </div>
                     <div className="my-announcement-desc">{announcement.description ?? ""}</div>
                   </div>
