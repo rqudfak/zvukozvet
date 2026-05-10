@@ -482,7 +482,7 @@ export default function AnnouncementDetailPage({
 
         <div className="announcement-detail-fragment">
           <h3>Текст для озвучивания</h3>
-          <div style={{ whiteSpace: "pre-line" }}>{announcement.fragment}</div>
+          <div style={{ whiteSpace: "pre-line", textAlign: "justify" }}>{announcement.fragment}</div>
         </div>
 
       </div>

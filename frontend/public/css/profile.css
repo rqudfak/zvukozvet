@@ -325,7 +325,6 @@
 .portfolio-audio-duration {
     font-size: 16px;
     font-weight: 500;
-    color: #5a5687;
 }
 
 @media (max-width: 900px) {
@@ -339,10 +338,6 @@
     }
 
     .portfolio-item-desc {
-        font-size: 24px;
-    }
-
-    .portfolio-audio-duration {
         font-size: 24px;
     }
 }
@@ -367,10 +362,6 @@
         width: 30px;
         height: 30px;
         font-size: 20px;
-    }
-
-    .portfolio-audio-duration {
-        font-size: 16px;
     }
 }
 

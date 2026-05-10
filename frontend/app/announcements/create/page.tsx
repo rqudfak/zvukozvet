@@ -137,7 +137,7 @@ export default function CreateAnnouncementPage() {
         {error ? <p style={{ color: "#d11a2a" }}>{error}</p> : null}
         <div className="form-actions">
           <button className="btn-submit" type="submit" disabled={loading}>
-            Создать объявление
+            Создать
           </button>
           <Link href="/" className="btn-cancel">
             Отмена
