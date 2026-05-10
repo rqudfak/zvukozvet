@@ -515,7 +515,7 @@ export default function AnnouncementDetailPage({
           <h3>Отклик на объявление</h3>
           {userResponse ? (
             <>
-              <p>
+              <p style={{marginTop: "5px"}}>
                 <strong>Ваш текущий отклик:</strong>
               </p>
               <div className="response-item response-item-user">
