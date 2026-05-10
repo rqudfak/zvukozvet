@@ -86,9 +86,9 @@ function formatDate(dateString?: string): string {
   return `${dd}.${mm}.${yyyy}`;
 }
 
-/** Принят отклик и объявление не в статусе «Одобрено» (снято с публикации). */
-function isProfileAnnouncementClosed(a: { status: string; accepted_responses_count?: number }): boolean {
-  return (a.accepted_responses_count ?? 0) > 0 && a.status !== "Одобрено";
+/** Объявление закрыто для новых откликов: есть принятый отклик (статус объявления часто остаётся «Одобрено»). */
+function isProfileAnnouncementClosed(a: { accepted_responses_count?: number }): boolean {
+  return (a.accepted_responses_count ?? 0) > 0;
 }
 
 export default function UserPage() {
