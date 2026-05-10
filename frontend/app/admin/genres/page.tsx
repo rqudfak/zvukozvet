@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { API_URL } from "@/lib/api";
 import { emitSuccessToast } from "@/lib/flash";
 import { buildGenreIconUrl } from "@/lib/media";
+import StatusDropdown from "@/components/StatusDropdown";
 
 type Genre = {
   id: number;
@@ -15,6 +16,17 @@ type Genre = {
 };
 
 const DEFAULT_COLOR = "#F1642E";
+
+const GENRE_TYPE_OPTIONS = ["Книга", "Видеоигра"] as const;
+
+const COLOR_OPTIONS = ["#F1642E", "#C4C3E3", "#FFC44B", "#A3B565"] as const;
+
+const COLOR_LABELS: Record<string, string> = {
+  "#F1642E": "Оранжевый",
+  "#C4C3E3": "Голубой",
+  "#FFC44B": "Жёлтый",
+  "#A3B565": "Зелёный",
+};
 
 export default function AdminGenresPage() {
   const [books, setBooks] = useState<Genre[]>([]);
@@ -301,19 +313,22 @@ export default function AdminGenresPage() {
               </div>
               <div className="form-group">
                 <label htmlFor="type">Тип</label>
-                <select id="type" value={type} onChange={(e) => setType(e.target.value)}>
-                  <option value="Книга">Книга</option>
-                  <option value="Видеоигра">Видеоигра</option>
-                </select>
+                <StatusDropdown
+                  id="type"
+                  value={type}
+                  options={GENRE_TYPE_OPTIONS}
+                  onChange={setType}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="color">Цвет</label>
-                <select id="color" value={color} onChange={(e) => setColor(e.target.value)}>
-                  <option value="#F1642E">Оранжевый</option>
-                  <option value="#C4C3E3">Голубой</option>
-                  <option value="#FFC44B">Жёлтый</option>
-                  <option value="#A3B565">Зелёный</option>
-                </select>
+                <StatusDropdown
+                  id="color"
+                  value={color}
+                  options={COLOR_OPTIONS}
+                  optionLabels={COLOR_LABELS}
+                  onChange={setColor}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="icon">Иконка жанра (png/jpg/webp/svg)</label>
@@ -357,27 +372,22 @@ export default function AdminGenresPage() {
               </div>
               <div className="form-group">
                 <label htmlFor="genre_type">Тип</label>
-                <select
+                <StatusDropdown
                   id="genre_type"
                   value={editing.type}
-                  onChange={(e) => setEditing({ ...editing, type: e.target.value })}
-                >
-                  <option value="Книга">Книга</option>
-                  <option value="Видеоигра">Видеоигра</option>
-                </select>
+                  options={GENRE_TYPE_OPTIONS}
+                  onChange={(next) => setEditing({ ...editing, type: next })}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="genre_color">Цвет</label>
-                <select
+                <StatusDropdown
                   id="genre_color"
                   value={editing.color}
-                  onChange={(e) => setEditing({ ...editing, color: e.target.value })}
-                >
-                  <option value="#F1642E">Оранжевый</option>
-                  <option value="#C4C3E3">Голубой</option>
-                  <option value="#FFC44B">Жёлтый</option>
-                  <option value="#A3B565">Зелёный</option>
-                </select>
+                  options={COLOR_OPTIONS}
+                  optionLabels={COLOR_LABELS}
+                  onChange={(next) => setEditing({ ...editing, color: next })}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="genre_icon">Иконка жанра (png/jpg/webp/svg)</label>

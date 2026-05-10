@@ -612,6 +612,17 @@
     flex: 1 1 320px;
 }
 
+.admin-genres-form .form-group .status-dropdown,
+.modal-body .form-group .status-dropdown {
+    width: 100%;
+}
+
+.admin-table td.admin-table-cell-status .status-dropdown {
+    width: 100%;
+    min-width: 140px;
+    max-width: 260px;
+}
+
 .genre-form-error {
     display: block;
     margin-top: -5px;
@@ -771,6 +782,14 @@
 
 .admin-filter-checkbox input {
     margin-right: 6px;
+}
+
+.admin-filter-checkbox input[type="checkbox"] {
+    accent-color: #f1642e;
+    width: 17px;
+    height: 17px;
+    vertical-align: middle;
+    cursor: pointer;
 }
 
 .admin-filter-menu-footer {
