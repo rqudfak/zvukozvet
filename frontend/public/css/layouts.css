@@ -197,6 +197,7 @@ nav li a, .btn-auth {
 }
 nav li a:active, nav li a:hover, .btn-auth:active, .btn-auth:hover {
     color: #F1642E;
+    transition: color 0.2s;
 }
 
 /* Уведомления */
