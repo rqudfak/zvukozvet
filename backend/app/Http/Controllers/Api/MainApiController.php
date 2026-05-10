@@ -20,6 +20,7 @@ use App\Notifications\NewResponseOnYourAnnouncement;
 use App\Notifications\ResponseStatusUpdated;
 use App\Models\User;
 use App\Services\AchievementService;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -821,6 +822,91 @@ class MainApiController extends Controller
         $portfolio_item->delete();
 
         return response()->json(['message' => 'Запись удалена']);
+    }
+
+    public function adminStatistics(Request $request)
+    {
+        $preset = $request->query('preset', 'month');
+        $allowedPresets = ['week', 'month', 'year', 'custom'];
+        if (! in_array($preset, $allowedPresets, true)) {
+            $preset = 'month';
+        }
+
+        $now = Carbon::now();
+
+        if ($preset === 'custom') {
+            $validated = $request->validate([
+                'from' => 'required|date',
+                'to' => 'required|date',
+            ]);
+            $from = Carbon::parse($validated['from'])->startOfDay();
+            $to = Carbon::parse($validated['to'])->endOfDay();
+            if ($from->greaterThan($to)) {
+                return response()->json(['message' => 'Дата «с» не может быть позже «по»'], 422);
+            }
+        } else {
+            $to = $now->copy()->endOfDay();
+            $from = match ($preset) {
+                'week' => $now->copy()->subDays(7)->startOfDay(),
+                'month' => $now->copy()->subDays(30)->startOfDay(),
+                'year' => $now->copy()->subDays(365)->startOfDay(),
+                default => $now->copy()->subDays(30)->startOfDay(),
+            };
+        }
+
+        $usersTotal = User::query()->count();
+
+        $usersRegisteredInPeriod = User::query()
+            ->whereBetween('created_at', [$from, $to])
+            ->count();
+
+        $announcementsTotal = Announcement::query()
+            ->whereBetween('created_at', [$from, $to])
+            ->count();
+
+        $announcementsCompleted = Announcement::query()
+            ->whereBetween('created_at', [$from, $to])
+            ->whereHas('responses', function ($q) {
+                $q->where('status', 'Принято');
+            })
+            ->count();
+
+        $announcementsUncompleted = Announcement::query()
+            ->whereBetween('created_at', [$from, $to])
+            ->whereDoesntHave('responses', function ($q) {
+                $q->where('status', 'Принято');
+            })
+            ->count();
+
+        $topGenres = Announcement::query()
+            ->selectRaw('genre, COUNT(*) as cnt')
+            ->whereBetween('created_at', [$from, $to])
+            ->whereNotNull('genre')
+            ->where('genre', '!=', '')
+            ->groupBy('genre')
+            ->orderByDesc('cnt')
+            ->limit(12)
+            ->get()
+            ->map(fn ($row) => [
+                'genre' => $row->genre,
+                'count' => (int) $row->cnt,
+            ]);
+
+        return response()->json([
+            'period' => [
+                'preset' => $preset,
+                'from' => $from->toIso8601String(),
+                'to' => $to->toIso8601String(),
+                'from_date' => $from->format('Y-m-d'),
+                'to_date' => $to->format('Y-m-d'),
+            ],
+            'users_total' => $usersTotal,
+            'users_registered_in_period' => $usersRegisteredInPeriod,
+            'announcements_total' => $announcementsTotal,
+            'announcements_completed' => $announcementsCompleted,
+            'announcements_uncompleted' => $announcementsUncompleted,
+            'top_genres' => $topGenres,
+        ]);
     }
 
     public function adminAnnouncements(Request $request)

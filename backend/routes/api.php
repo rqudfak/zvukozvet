@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin/statistics', [MainApiController::class, 'adminStatistics']);
     Route::get('/admin/announcements', [MainApiController::class, 'adminAnnouncements']);
     Route::patch('/admin/announcements/{announcement}/status', [MainApiController::class, 'adminUpdateAnnouncementStatus']);
     Route::delete('/admin/announcements/{announcement}', [MainApiController::class, 'adminDeleteAnnouncement']);

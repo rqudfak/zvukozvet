@@ -30,6 +30,7 @@ export default function RootLayout({
         <link rel="stylesheet" href="/css/auth.css" />
         <link rel="stylesheet" href="/css/profile.css" />
         <link rel="stylesheet" href="/css/admin.css" />
+        <link rel="stylesheet" href="/css/admin-stats.css" />
         <link rel="stylesheet" href="/css/about.css" />
         <link rel="stylesheet" href="/css/contacts.css" />
       </head>
