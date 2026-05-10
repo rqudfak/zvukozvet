@@ -33,16 +33,19 @@ function ResetPasswordForm() {
   const rawToken = params.token;
   const token = typeof rawToken === "string" ? rawToken : Array.isArray(rawToken) ? (rawToken[0] ?? "") : "";
 
+  const emailFromQuery = searchParams.get("email") ?? "";
+  const isEmailLocked = emailFromQuery.trim().length > 0;
+
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(emailFromQuery);
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
   useEffect(() => {
     const fromQuery = searchParams.get("email");
-    if (fromQuery) {
+    if (fromQuery !== null) {
       setEmail(fromQuery);
     }
   }, [searchParams]);
@@ -105,19 +108,27 @@ function ResetPasswordForm() {
       <h2>Сброс пароля</h2>
       <form onSubmit={handleSubmit} className="auth-form">
         <input type="hidden" name="token" value={token} readOnly />
+        {isEmailLocked ? <input type="hidden" name="email" value={email} readOnly /> : null}
         <div className="form-input">
           <input
             id="email"
-            name="email"
+            name={isEmailLocked ? undefined : "email"}
             type="email"
-            required
+            required={!isEmailLocked}
             placeholder=" "
             value={email}
-            onChange={(event) => {
-              setEmail(event.target.value);
-              clearFieldError("email");
-              setError(null);
-            }}
+            disabled={isEmailLocked}
+            autoComplete="email"
+            className={email ? "has-value" : undefined}
+            onChange={
+              isEmailLocked
+                ? undefined
+                : (event) => {
+                    setEmail(event.target.value);
+                    clearFieldError("email");
+                    setError(null);
+                  }
+            }
           />
           <label htmlFor="email">Почта:</label>
         </div>
