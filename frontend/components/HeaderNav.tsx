@@ -98,6 +98,7 @@ export default function HeaderNav() {
 
   useEffect(() => {
     setMobileMenuOpen(false);
+    setIsNotifOpen(false);
   }, [pathname]);
 
   useEffect(() => {

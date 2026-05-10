@@ -34,5 +34,5 @@ export default function ProfilePage() {
       });
   }, [router]);
 
-  return <div className="profile-card">Загрузка профиля...</div>;
+  return <div className="profile-card" style={{marginTop: "30px"}}>Загрузка профиля...</div>;
 }
