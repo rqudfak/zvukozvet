@@ -76,10 +76,11 @@
     cursor: pointer;
     text-align: left;
     box-sizing: border-box;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .admin-stats-date-trigger:hover {
-    border-color: #504E76;
+    border-color: #C4C3E3;
 }
 
 .admin-stats-date-trigger:focus-visible {
