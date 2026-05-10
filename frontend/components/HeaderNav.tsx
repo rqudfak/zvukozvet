@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { API_URL } from "@/lib/api";
 import { setSuccessFlash } from "@/lib/flash";
 
@@ -12,12 +13,16 @@ type NotificationItem = {
   data?: { message?: string; url?: string };
 };
 
+const HEADER_MOBILE_MQ = "(min-width: 961px)";
+
 export default function HeaderNav() {
+  const pathname = usePathname();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [openingId, setOpeningId] = useState<string | null>(null);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const notifRef = useRef<HTMLLIElement | null>(null);
 
   async function loadUserAndNotifications() {
@@ -64,6 +69,7 @@ export default function HeaderNav() {
   }, []);
 
   function handleLogout() {
+    setMobileMenuOpen(false);
     localStorage.removeItem("auth_token");
     setIsAuthorized(false);
     setIsAdmin(false);
@@ -73,7 +79,40 @@ export default function HeaderNav() {
   }
 
   useEffect(() => {
-    function handleDocumentClick(event: MouseEvent) {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 960px)");
+    function syncBodyScroll() {
+      if (mobileMenuOpen && mq.matches) {
+        document.body.classList.add("header-nav-mobile-open");
+      } else {
+        document.body.classList.remove("header-nav-mobile-open");
+      }
+    }
+    syncBodyScroll();
+    mq.addEventListener("change", syncBodyScroll);
+    return () => {
+      mq.removeEventListener("change", syncBodyScroll);
+      document.body.classList.remove("header-nav-mobile-open");
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const mq = window.matchMedia(HEADER_MOBILE_MQ);
+    function onChange() {
+      if (mq.matches) {
+        setMobileMenuOpen(false);
+      }
+    }
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    function handleDocumentClick(event: globalThis.MouseEvent) {
       if (!isNotifOpen) return;
       if (!notifRef.current) return;
       const target = event.target as Node;
@@ -85,6 +124,7 @@ export default function HeaderNav() {
     function handleEscape(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setIsNotifOpen(false);
+        setMobileMenuOpen(false);
       }
     }
 
@@ -97,6 +137,7 @@ export default function HeaderNav() {
   }, [isNotifOpen]);
 
   async function openNotification(notificationId: string) {
+    setMobileMenuOpen(false);
     const token = localStorage.getItem("auth_token");
     if (!token) {
       window.location.href = "/auth/login";
@@ -127,101 +168,129 @@ export default function HeaderNav() {
 
   const unreadCount = notifications.filter((item) => !item.read_at).length;
 
+  function closeMobileMenuFromNav(event: ReactMouseEvent<HTMLElement>) {
+    const target = event.target as HTMLElement;
+    if (target.closest(".notif-btn")) {
+      return;
+    }
+    if (target.closest("a[href]") || target.closest("button.btn-auth")) {
+      setMobileMenuOpen(false);
+    }
+  }
+
   return (
-    <nav className="header-nav">
-      <div className="center">
-        <h1>
+    <nav className={`header-nav${mobileMenuOpen ? " header-nav--menu-open" : ""}`}>
+      <div className="center header-nav-inner">
+        <h1 className="header-nav-logo">
           <Link href="/">ЗвукоЦвет</Link>
         </h1>
-        <ul className="header-nav-list">
-          <li>
-            <Link href="/">Главная</Link>
-          </li>
-          {isAuthorized ? (
+        <button
+          type="button"
+          className="header-burger"
+          aria-expanded={mobileMenuOpen}
+          aria-controls="header-nav-drawer"
+          aria-label={mobileMenuOpen ? "Закрыть меню" : "Открыть меню"}
+          onClick={() => setMobileMenuOpen((open) => !open)}
+        >
+          <span className="header-burger-bar" aria-hidden />
+          <span className="header-burger-bar" aria-hidden />
+          <span className="header-burger-bar" aria-hidden />
+        </button>
+        <div
+          id="header-nav-drawer"
+          className="header-nav-menus"
+          onClick={closeMobileMenuFromNav}
+        >
+          <ul className="header-nav-list">
             <li>
-              <Link href="/profile">Профиль</Link>
+              <Link href="/">Главная</Link>
             </li>
-          ) : null}
-          <li>
-            <Link href="/about">О нас</Link>
-          </li>
-          <li>
-            <Link href="/contacts">Контакты</Link>
-          </li>
-        </ul>
-        <ul className="header-nav-auth">
-          {isAuthorized ? (
-            <>
-              {isAdmin ? (
-                <li>
-                  <Link href="/admin">Админка</Link>
+            {isAuthorized ? (
+              <li>
+                <Link href="/profile">Профиль</Link>
+              </li>
+            ) : null}
+            <li>
+              <Link href="/about">О нас</Link>
+            </li>
+            <li>
+              <Link href="/contacts">Контакты</Link>
+            </li>
+          </ul>
+          <ul className="header-nav-auth">
+            {isAuthorized ? (
+              <>
+                {isAdmin ? (
+                  <li>
+                    <Link href="/admin">Админка</Link>
+                  </li>
+                ) : null}
+                <li className="notif" ref={notifRef}>
+                  <button
+                    type="button"
+                    className="notif-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsNotifOpen((prev) => !prev);
+                    }}
+                  >
+                    Уведомления
+                    {unreadCount > 0 ? <span className="notif-badge">{unreadCount}</span> : null}
+                  </button>
+                  <div className={`notif-dropdown ${isNotifOpen ? "open" : ""}`} aria-hidden={!isNotifOpen}>
+                    <div className="notif-header">
+                      <span className="notif-title">Уведомления</span>
+                      <Link className="notif-link" href="/notifications">
+                        Все
+                      </Link>
+                    </div>
+                    <div className="notif-list">
+                      {notifications.length ? (
+                        notifications.map((item) => (
+                          <button
+                            key={item.id}
+                            type="button"
+                            className={`notif-item notif-item-btn ${item.read_at ? "" : "unread"}`}
+                            disabled={openingId === item.id}
+                            onClick={() => openNotification(item.id)}
+                          >
+                            <span className="notif-item-text">{item.data?.message ?? "Уведомление"}</span>
+                            <span className="notif-item-date">
+                              {new Date(item.created_at).toLocaleString("ru-RU", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </button>
+                        ))
+                      ) : (
+                        <div className="notif-empty">Уведомлений пока нет.</div>
+                      )}
+                    </div>
+                  </div>
                 </li>
-              ) : null}
-              <li className="notif" ref={notifRef}>
-                <button
-                  type="button"
-                  className="notif-btn"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsNotifOpen((prev) => !prev);
-                  }}
-                >
-                  Уведомления
-                  {unreadCount > 0 ? <span className="notif-badge">{unreadCount}</span> : null}
-                </button>
-                <div className={`notif-dropdown ${isNotifOpen ? "open" : ""}`} aria-hidden={!isNotifOpen}>
-                  <div className="notif-header">
-                    <span className="notif-title">Уведомления</span>
-                    <Link className="notif-link" href="/notifications">
-                      Все
-                    </Link>
-                  </div>
-                  <div className="notif-list">
-                    {notifications.length ? (
-                      notifications.map((item) => (
-                        <button
-                          key={item.id}
-                          type="button"
-                          className={`notif-item notif-item-btn ${item.read_at ? "" : "unread"}`}
-                          disabled={openingId === item.id}
-                          onClick={() => openNotification(item.id)}
-                        >
-                          <span className="notif-item-text">{item.data?.message ?? "Уведомление"}</span>
-                          <span className="notif-item-date">
-                            {new Date(item.created_at).toLocaleString("ru-RU", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </button>
-                      ))
-                    ) : (
-                      <div className="notif-empty">Уведомлений пока нет.</div>
-                    )}
-                  </div>
-                </div>
-              </li>
-              <li>
-                <button type="button" className="btn-auth" onClick={handleLogout}>
-                  Выйти
-                </button>
-              </li>
-            </>
-          ) : null}
-          {!isAuthorized ? (
-            <>
-              <li>
-                <Link href="/auth/register">Регистрация</Link>
-              </li>
-              <li>
-                <Link href="/auth/login">Вход</Link>
-              </li>
-            </>
-          ) : null}
-        </ul>
+                <li>
+                  <button type="button" className="btn-auth" onClick={handleLogout}>
+                    Выйти
+                  </button>
+                </li>
+              </>
+            ) : null}
+            {!isAuthorized ? (
+              <>
+                <li>
+                  <Link href="/auth/register">Регистрация</Link>
+                </li>
+                <li>
+                  <Link href="/auth/login">Вход</Link>
+                </li>
+              </>
+            ) : null}
+          </ul>
+        </div>
       </div>
     </nav>
   );

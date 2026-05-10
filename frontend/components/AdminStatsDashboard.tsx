@@ -264,7 +264,7 @@ export default function AdminStatsDashboard() {
             <div className="admin-stats-chart-card">
               <h3>Выполненные и невыполненные объявления</h3>
               <p className="admin-stats-chart-note">
-                «Выполнено» — есть отклик со статусом «Принято». Остальные объявления за период
+                «Выполнено» – есть отклик со статусом «Принято». Остальные объявления за период
                 считаются без принятого отклика.
               </p>
               <div className="admin-stats-chart-wrap admin-stats-chart-wrap-doughnut">
