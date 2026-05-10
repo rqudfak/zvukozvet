@@ -161,7 +161,7 @@ function ResetPasswordForm() {
           <span className="field-error">{fieldErrors.password_confirmation}</span>
         ) : null}
 
-        {error ? <p style={{ color: "#d11a2a" }}>{error}</p> : null}
+        {error ? <p className="auth-form-message auth-form-message--error">{error}</p> : null}
         <div className="form-buttons">
           <button className="btn-submit" type="submit" disabled={loading || !token}>
             Сохранить пароль

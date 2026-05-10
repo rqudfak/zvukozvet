@@ -189,8 +189,8 @@ export default function LoginTwoFactorPage() {
             <label htmlFor="code">6-значный код:</label>
           </div>
           {fieldErrors.code ? <span className="field-error">{fieldErrors.code}</span> : null}
-          {error ? <p style={{ color: "#d11a2a" }}>{error}</p> : null}
-          {status ? <p style={{ color: "#1b7d33", maxWidth: "320px" }}>{status}</p> : null}
+          {error ? <p className="auth-form-message auth-form-message--error">{error}</p> : null}
+          {status ? <p className="auth-form-message auth-form-message--success">{status}</p> : null}
 
           <div className="form-buttons">
             <button className="btn-submit" type="submit" disabled={loading || code.length !== 6}>
