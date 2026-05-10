@@ -216,6 +216,18 @@
     font-family: inherit;
 }
 
+/* Кастомные списки (StatusDropdown) на create/edit — как у полей ввода */
+.announcement-form .status-dropdown {
+    width: 100%;
+}
+
+.announcement-form .status-dropdown-trigger {
+    min-height: 42px;
+    padding: 10px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {

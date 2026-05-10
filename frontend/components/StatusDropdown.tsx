@@ -9,6 +9,8 @@ type StatusDropdownProps = {
   onChange: (next: string) => void;
   disabled?: boolean;
   className?: string;
+  /** Подпись в кнопке, когда value пустая строка (например «Выберите жанр»). */
+  emptyLabel?: string;
 };
 
 export default function StatusDropdown({
@@ -18,6 +20,7 @@ export default function StatusDropdown({
   onChange,
   disabled,
   className,
+  emptyLabel,
 }: StatusDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -58,7 +61,9 @@ export default function StatusDropdown({
           }
         }}
       >
-        <span className="status-dropdown-value">{value}</span>
+        <span className={`status-dropdown-value${value === "" && emptyLabel ? " is-placeholder" : ""}`}>
+          {value !== "" ? value : (emptyLabel ?? "")}
+        </span>
         <span className="status-dropdown-chevron" aria-hidden="true">
           ▾
         </span>

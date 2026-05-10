@@ -513,6 +513,11 @@
     white-space: nowrap;
 }
 
+.status-dropdown-value.is-placeholder {
+    color: #8888a0;
+    font-weight: 500;
+}
+
 .status-dropdown-chevron {
     flex-shrink: 0;
     font-size: 20px;

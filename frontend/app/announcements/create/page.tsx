@@ -4,8 +4,13 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { fetchApi } from "@/lib/api";
 import { setSuccessFlash } from "@/lib/flash";
+import StatusDropdown from "@/components/StatusDropdown";
 
 type Genre = { id: number; name: string };
+
+const TYPE_OPTIONS = ["Книга", "Видеоигра"] as const;
+const GENDER_OPTIONS = ["Мужской", "Женский", "Детский"] as const;
+const DURATION_OPTIONS = ["Кратковременная роль", "Долгосрочная роль"] as const;
 
 export default function CreateAnnouncementPage() {
   const [genres, setGenres] = useState<{ books: Genre[]; games: Genre[] }>({
@@ -15,11 +20,20 @@ export default function CreateAnnouncementPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState("Книга");
+  const [genre, setGenre] = useState("");
+  const [gender, setGender] = useState("Мужской");
+  const [duration, setDuration] = useState("Кратковременная роль");
 
   const availableGenres = useMemo(
     () => (type === "Книга" ? genres.books : genres.games),
     [genres.books, genres.games, type],
   );
+
+  const genreNames = useMemo(() => availableGenres.map((g) => g.name), [availableGenres]);
+
+  useEffect(() => {
+    setGenre("");
+  }, [type]);
 
   useEffect(() => {
     fetchApi<{ books: Genre[]; games: Genre[] }>("/genres")
@@ -38,6 +52,12 @@ export default function CreateAnnouncementPage() {
       return;
     }
 
+    if (!genre.trim()) {
+      setError("Выберите жанр.");
+      setLoading(false);
+      return;
+    }
+
     const form = event.currentTarget;
     const formData = new FormData(form);
 
@@ -51,11 +71,11 @@ export default function CreateAnnouncementPage() {
         },
         body: JSON.stringify({
           title: formData.get("title"),
-          type: formData.get("type"),
-          genre: formData.get("genre"),
+          type,
+          genre,
           languages: formData.get("languages"),
-          gender: formData.get("gender"),
-          duration: formData.get("duration"),
+          gender,
+          duration,
           description: formData.get("description"),
           fragment: formData.get("fragment"),
         }),
@@ -86,26 +106,18 @@ export default function CreateAnnouncementPage() {
         </div>
         <div className="form-group">
           <label htmlFor="type">Тип</label>
-          <select
-            id="type"
-            name="type"
-            defaultValue="Книга"
-            onChange={(event) => setType(event.target.value)}
-          >
-            <option value="Книга">Книга</option>
-            <option value="Видеоигра">Видеоигра</option>
-          </select>
+          <StatusDropdown id="type" value={type} options={TYPE_OPTIONS} onChange={setType} />
         </div>
         <div className="form-group">
           <label htmlFor="genre">Жанр</label>
-          <select id="genre" name="genre" required>
-            <option value="">Выберите жанр</option>
-            {availableGenres.map((genre) => (
-              <option key={genre.id} value={genre.name}>
-                {genre.name}
-              </option>
-            ))}
-          </select>
+          <StatusDropdown
+            id="genre"
+            value={genre}
+            options={genreNames}
+            emptyLabel="Выберите жанр"
+            onChange={setGenre}
+            disabled={genreNames.length === 0}
+          />
         </div>
         <div className="form-group">
           <label htmlFor="languages">Языки</label>
@@ -113,18 +125,11 @@ export default function CreateAnnouncementPage() {
         </div>
         <div className="form-group">
           <label htmlFor="gender">Голос озвучивания</label>
-          <select id="gender" name="gender" defaultValue="Мужской">
-            <option value="Мужской">Мужской</option>
-            <option value="Женский">Женский</option>
-            <option value="Детский">Детский</option>
-          </select>
+          <StatusDropdown id="gender" value={gender} options={GENDER_OPTIONS} onChange={setGender} />
         </div>
         <div className="form-group">
           <label htmlFor="duration">Длительность роли</label>
-          <select id="duration" name="duration" defaultValue="Кратковременная роль">
-            <option value="Кратковременная роль">Кратковременная роль</option>
-            <option value="Долгосрочная роль">Долгосрочная роль</option>
-          </select>
+          <StatusDropdown id="duration" value={duration} options={DURATION_OPTIONS} onChange={setDuration} />
         </div>
         <div className="form-group">
           <label htmlFor="description">Описание</label>

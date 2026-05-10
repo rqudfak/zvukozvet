@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { API_URL } from "@/lib/api";
 import { setSuccessFlash } from "@/lib/flash";
+import StatusDropdown from "@/components/StatusDropdown";
 
 type Genre = { id: number; name: string };
 
@@ -33,6 +34,8 @@ type FieldKey =
 type FieldErrors = Partial<Record<FieldKey, string>>;
 
 const GENDER_OPTIONS = ["Мужской", "Женский", "Детский"] as const;
+const TYPE_OPTIONS = ["Книга", "Видеоигра"] as const;
+const DURATION_OPTIONS = ["Кратковременная роль", "Долгосрочная роль"] as const;
 
 function firstError(errors: unknown, key: string): string | undefined {
   if (!errors || typeof errors !== "object") return undefined;
@@ -79,6 +82,8 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
     () => (type === "Книга" ? genres.books : genres.games),
     [genres.books, genres.games, type],
   );
+
+  const genreNames = useMemo(() => availableGenres.map((item) => item.name), [availableGenres]);
 
   useEffect(() => {
     params.then(({ id }) => setAnnouncementId(id));
@@ -216,6 +221,12 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
       return;
     }
 
+    if (!genre.trim()) {
+      setFieldErrors({ genre: "Выберите жанр." });
+      setSaving(false);
+      return;
+    }
+
     try {
       const response = await fetch(`/api/announcements/${announcementId}`, {
         method: "PUT",
@@ -310,43 +321,33 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
 
         <div className="form-group">
           <label htmlFor="edit-type">Тип</label>
-          <select
+          <StatusDropdown
             id="edit-type"
-            name="type"
-            required
             value={type}
-            onChange={(e) => {
-              setType(e.target.value);
+            options={TYPE_OPTIONS}
+            onChange={(next) => {
+              setType(next);
               clearFieldError("type");
               setError(null);
             }}
-          >
-            <option value="Книга">Книга</option>
-            <option value="Видеоигра">Видеоигра</option>
-          </select>
+          />
           {fieldErrors.type ? <span className="field-error">{fieldErrors.type}</span> : null}
         </div>
 
         <div className="form-group">
           <label htmlFor="edit-genre">Жанр</label>
-          <select
+          <StatusDropdown
             id="edit-genre"
-            name="genre"
-            required
             value={genre}
-            onChange={(e) => {
-              setGenre(e.target.value);
+            options={genreNames}
+            emptyLabel="Выберите жанр"
+            disabled={genreNames.length === 0}
+            onChange={(next) => {
+              setGenre(next);
               clearFieldError("genre");
               setError(null);
             }}
-          >
-            <option value="">Выберите жанр</option>
-            {availableGenres.map((item) => (
-              <option key={item.id} value={item.name}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+          />
           {fieldErrors.genre ? <span className="field-error">{fieldErrors.genre}</span> : null}
         </div>
 
@@ -369,40 +370,31 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
 
         <div className="form-group">
           <label htmlFor="edit-gender">Голос озвучивания</label>
-          <select
+          <StatusDropdown
             id="edit-gender"
-            name="gender"
-            required
             value={gender}
-            onChange={(e) => {
-              setGender(e.target.value);
+            options={GENDER_OPTIONS}
+            onChange={(next) => {
+              setGender(next);
               clearFieldError("gender");
               setError(null);
             }}
-          >
-            <option value="Мужской">Мужской</option>
-            <option value="Женский">Женский</option>
-            <option value="Детский">Детский</option>
-          </select>
+          />
           {fieldErrors.gender ? <span className="field-error">{fieldErrors.gender}</span> : null}
         </div>
 
         <div className="form-group">
           <label htmlFor="edit-duration">Срок</label>
-          <select
+          <StatusDropdown
             id="edit-duration"
-            name="duration"
-            required
             value={duration}
-            onChange={(e) => {
-              setDuration(e.target.value);
+            options={DURATION_OPTIONS}
+            onChange={(next) => {
+              setDuration(next);
               clearFieldError("duration");
               setError(null);
             }}
-          >
-            <option value="Кратковременная роль">Кратковременная роль</option>
-            <option value="Долгосрочная роль">Долгосрочная роль</option>
-          </select>
+          />
           {fieldErrors.duration ? <span className="field-error">{fieldErrors.duration}</span> : null}
         </div>
 
