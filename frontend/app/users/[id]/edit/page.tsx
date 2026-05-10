@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { API_URL } from "@/lib/api";
+import StatusDropdown from "@/components/StatusDropdown";
 
 type UserPayload = {
   id: number;
@@ -184,13 +185,12 @@ export default function EditUserPage() {
         </div>
         <div className="form-group">
           <label htmlFor="gender">Пол</label>
-          <select id="gender" name="gender" value={gender} onChange={(event) => setGender(event.target.value)} required>
-            {GENDER_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          <StatusDropdown
+            id="gender"
+            value={gender}
+            options={GENDER_OPTIONS}
+            onChange={setGender}
+          />
         </div>
         <div className="form-group">
           <label htmlFor="language">Языки</label>
@@ -205,13 +205,12 @@ export default function EditUserPage() {
         </div>
         <div className="form-group">
           <label htmlFor="timbre">Тембр</label>
-          <select id="timbre" name="timbre" value={timbre} onChange={(event) => setTimbre(event.target.value)} required>
-            {TIMBRE_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          <StatusDropdown
+            id="timbre"
+            value={timbre}
+            options={TIMBRE_OPTIONS}
+            onChange={setTimbre}
+          />
         </div>
         {error ? <p className="error">{error}</p> : null}
         <div className="form-actions">

@@ -228,6 +228,11 @@
     font-size: 14px;
 }
 
+.form-group .status-dropdown-trigger:focus-visible {
+    outline: none;
+    border-color: #F1642E;
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
