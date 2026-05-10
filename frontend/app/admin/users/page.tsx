@@ -25,10 +25,16 @@ type ColumnKey = "id" | "login" | "name" | "email" | "announcements_count" | "bl
 type SortDirection = "asc" | "desc";
 type ColumnFilters = Record<ColumnKey, string[] | null>;
 
+/** Блокировка действует только пока banned_until в будущем (совпадает с логикой backend User::isBanned). */
+function isBanCurrentlyActive(user: UserRow): boolean {
+  if (!user.banned_until) return false;
+  return new Date(user.banned_until).getTime() > Date.now();
+}
+
 function getBlockingLabel(user: UserRow): string {
   if (user.role === "admin") return "Администратор";
-  if (user.banned_until) {
-    return `Заблокирован до ${new Date(user.banned_until).toLocaleString("ru-RU")}`;
+  if (isBanCurrentlyActive(user)) {
+    return `Заблокирован до ${new Date(user.banned_until!).toLocaleString("ru-RU")}`;
   }
   return "Не заблокирован";
 }
@@ -424,8 +430,8 @@ export default function AdminUsersPage() {
                 <td>
                   {user.role === "admin" ? (
                     <span className="admin-badge">Админ</span>
-                  ) : user.banned_until ? (
-                    <span>до {new Date(user.banned_until).toLocaleString("ru-RU")}</span>
+                  ) : isBanCurrentlyActive(user) ? (
+                    <span>до {new Date(user.banned_until!).toLocaleString("ru-RU")}</span>
                   ) : (
                     <button
                       type="button"
