@@ -152,35 +152,167 @@
 
 /* Отклики */
 .response-item {
-    margin-top: 15px;
-    padding: 15px;
-    border-radius: 10px;
-    background: #f8f8fc;
-    border: 1px solid #ececf5;
-}
-.response-item-user {
+    margin-top: 18px;
+    padding: 18px 18px 16px;
+    border-radius: 12px;
+    background: linear-gradient(165deg, #fdfcfe 0%, #f8f7fc 45%, #f4f3f9 100%);
+    border: 1px solid #e2e0ef;
+    box-shadow: 0 4px 18px rgba(80, 78, 118, 0.06);
     position: relative;
 }
+
+.response-item-user {
+    padding-right: 44px;
+}
+
 .response-delete-cross {
     position: absolute;
-    top: 8px;
-    right: 10px;
-    border: none;
-    background: transparent;
-    color: #7f7f7f;
-    font-size: 24px;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ececf5;
+    border-radius: 8px;
+    background: #fff;
+    color: #9d9db2;
+    font-size: 22px;
     line-height: 1;
     cursor: pointer;
-    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
+
 .response-delete-cross:hover {
     color: #d11a2a;
+    border-color: #f6bdb8;
+    background: #fff8f7;
 }
-.response-item audio {
-    margin-top: 8px;
+
+.response-block-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #625e8e;
+    margin-bottom: 8px;
 }
+
+.response-message-block {
+    margin-top: 4px;
+    margin-bottom: 14px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #ececf5;
+    border-radius: 10px;
+    border-left: 3px solid #f1642e;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.response-message-text {
+    margin: 0;
+    color: #3b3a57;
+    font-size: 15px;
+    line-height: 1.55;
+    white-space: pre-line;
+}
+
+.response-audio-block {
+    margin-bottom: 14px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 2px solid #625e8e;
+    border-radius: 10px;
+}
+
+.response-audio-native {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    border-radius: 8px;
+    vertical-align: middle;
+}
+
+.response-audio-native::-webkit-media-controls-panel {
+    background-color: #f6f5fb;
+}
+
+.response-status-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    margin: 0;
+    padding-top: 4px;
+    font-size: 14px;
+    color: #3b3a57;
+}
+
+.response-status-line-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #625e8e;
+}
+
+.response-status-line-value {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(80, 78, 118, 0.1);
+    color: #504e76;
+    font-weight: 600;
+    font-size: 13px;
+}
+
 .response-status-form {
-    margin-top: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(80, 78, 118, 0.12);
+}
+
+.review-existing {
+    margin-top: 16px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #ececf5;
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.review-existing-body {
+    flex: 1;
+    min-width: 200px;
+}
+
+.review-existing-text {
+    margin: 0 0 10px;
+    color: #3b3a57;
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.review-existing .review-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.review-existing-delete {
+    padding: 8px 16px;
+    font-size: 13px;
+    flex-shrink: 0;
+    align-self: flex-end;
 }
 
 .response-status-field {
@@ -292,6 +424,17 @@
     gap: 10px;
 }
 
+.response-user-row a {
+    color: #504e76;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.response-user-row a:hover {
+    color: #f1642e;
+    text-decoration: underline;
+}
+
 .response-user-avatar {
     width: 40px;
     height: 40px;
@@ -356,6 +499,23 @@
         align-items: flex-start;
         gap: 10px;
         padding-left: 10px;
+    }
+
+    .response-item {
+        padding: 14px 12px;
+    }
+
+    .response-audio-block {
+        padding: 12px;
+    }
+
+    .review-existing {
+        flex-direction: column;
+    }
+
+    .review-existing-delete {
+        align-self: stretch;
+        width: 100%;
     }
 }
 
