@@ -115,7 +115,7 @@ export default function AdminStatsDashboard() {
       datasets: [
         {
           data: [done, pending],
-          backgroundColor: [COLORS.accent, COLORS.primary],
+          backgroundColor: [COLORS.accent, COLORS.lavender],
           borderWidth: 2,
           borderColor: "#fff",
         },
@@ -153,7 +153,7 @@ export default function AdminStatsDashboard() {
           label: "Объявлений",
           data: data.top_genres.map((g) => g.count),
           backgroundColor: data.top_genres.map((_, i) =>
-            i % 2 === 0 ? COLORS.primary : COLORS.accent
+            i % 2 === 0 ? COLORS.accent : COLORS.lavender
           ),
           borderRadius: 6,
         },
