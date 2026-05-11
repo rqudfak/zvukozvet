@@ -89,7 +89,7 @@ export default async function Home({
   const selectedSearch = (resolved.search as string) ?? "";
 
   return (
-    <>
+    <div className="home-announcements">
       <div className="announcements-header">
         <h2>Доска объявлений</h2>
         {announcements.last_page > 1 ? (
@@ -217,6 +217,6 @@ export default async function Home({
           </nav>
         </div>
       ) : null}
-    </>
+    </div>
   );
 }
