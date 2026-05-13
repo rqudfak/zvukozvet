@@ -85,11 +85,11 @@
 .profile-follow-badge {
     font-size: 14px;
     font-weight: 700;
-    color: var(--profile-purple);
+    color: #fff;
     padding: 8px 16px;
     border-radius: 999px;
-    background: linear-gradient(135deg, rgba(163, 181, 101, 0.4), rgba(255, 196, 75, 0.28));
-    border: 2px solid var(--acc-sage);
+    background: #A3B565;
+    border: 2px solid #9bac60;
     box-shadow: 0 2px 10px rgba(80, 78, 118, 0.12);
     letter-spacing: 0.02em;
     white-space: nowrap;
@@ -484,9 +484,9 @@
     align-items: stretch;
     gap: 2px;
     padding: 16px 18px 14px;
-    background: #fff;
+    background: linear-gradient(165deg, #fdfcfe 0%, #f8f7fc 45%, #f4f3f9 100%);
     border: 1px solid var(--profile-border);
-    border-radius: var(--profile-radius);
+    border-radius: 12px;
     border-left: 4px solid #F1642E;
     position: relative;
     box-shadow: 0 2px 8px rgba(80, 78, 118, 0.06);
@@ -629,13 +629,8 @@
     .portfolio-upload-label::after {
         font-size: 26px;
     }
-
-    .portfolio-item-date {
-        font-size: 18px;
-    }
-
-    .portfolio-item-desc {
-        font-size: 24px;
+    .portfolio-audio-duration {
+        font-size: 14px;
     }
 }
 
@@ -646,7 +641,7 @@
     }
 
     .portfolio-item-desc {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .portfolio-audio-player {
@@ -676,8 +671,11 @@
     }
 
     .profile-card-head {
-        margin: -18px -16px 20px;
-        padding: 22px 16px 20px;
+        margin: -18px 0 0;
+    }
+
+    .profile-header {
+        gap: 14px;
     }
 
     .profile-meta-columns {
@@ -910,8 +908,8 @@
 
 .my-announcement-item {
     padding: 16px 18px;
-    background: #fff;
-    border-radius: var(--profile-radius);
+    background: linear-gradient(165deg, #fdfcfe 0%, #f8f7fc 45%, #f4f3f9 100%);
+    border-radius: 12px;
     border: 1px solid var(--profile-border);
     border-left: 4px solid var(--profile-accent);
     box-shadow: 0 2px 8px rgba(80, 78, 118, 0.06);
