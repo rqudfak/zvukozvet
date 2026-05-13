@@ -395,7 +395,7 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
         </div>
 
         <div className="form-group">
-          <label>Тембр</label>
+          <label style={{marginBottom: '-8px'}}>Тембр</label>
           <div className="announcement-timbre-options">
             {ANNOUNCEMENT_TIMBRE_OPTIONS.map((option) => (
               <label key={option} className="announcement-timbre-option">
