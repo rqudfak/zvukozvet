@@ -502,8 +502,37 @@ export default function UserPage() {
                 <img src="/img/settings-hover.svg" alt="" className="profile-icon-img profile-icon-img--hover" decoding="async" />
               </Link>
             </div>
+          ) : isAuthorized ? (
+            <div className="profile-head-toolbar profile-head-toolbar--follow" role="toolbar" aria-label="Подписка">
+              {payload.is_following ? <span className="profile-follow-badge">Вы подписаны</span> : null}
+              <button
+                type="button"
+                className="profile-icon-link profile-icon-link--follow"
+                onClick={() => void toggleFollow()}
+                disabled={followLoading}
+                title={payload.is_following ? "Отписаться" : "Подписаться"}
+                aria-label={payload.is_following ? "Отписаться от пользователя" : "Подписаться на пользователя"}
+              >
+                {payload.is_following ? (
+                  <>
+                    <img src="/img/unsubscribe.svg" alt="" className="profile-icon-img profile-icon-img--rest" decoding="async" />
+                    <img src="/img/unsubscribe-hover.svg" alt="" className="profile-icon-img profile-icon-img--hover" decoding="async" />
+                  </>
+                ) : (
+                  <>
+                    <img src="/img/subscribe.svg" alt="" className="profile-icon-img profile-icon-img--rest" decoding="async" />
+                    <img src="/img/subscribe-hover.svg" alt="" className="profile-icon-img profile-icon-img--hover" decoding="async" />
+                  </>
+                )}
+              </button>
+            </div>
           ) : null}
         </div>
+        {followMessage && !canEdit && isAuthorized ? (
+          <p className="profile-follow-feedback" role="status">
+            {followMessage}
+          </p>
+        ) : null}
         <div className="profile-card-head">
           
           <div className="profile-header">
@@ -549,7 +578,7 @@ export default function UserPage() {
                       <strong>На сайте:</strong> с {formatDate(payload.user.created_at)}
                     </p>
                     <p>
-                      <strong>Принято откликов:</strong> {acceptedWorksCount}
+                      <strong>Выполненных работ:</strong> {acceptedWorksCount}
                     </p>
                   </div>
                 </div>
@@ -565,18 +594,6 @@ export default function UserPage() {
                   </div>
                 </div>
               </div>
-
-              {!canEdit && isAuthorized ? (
-                <button
-                  type="button"
-                  className={`btn-edit-profile${payload.is_following ? " is-following" : ""}`}
-                  onClick={toggleFollow}
-                  disabled={followLoading}
-                >
-                  {payload.is_following ? "Отписаться" : "Подписаться"}
-                </button>
-              ) : null}
-              {followMessage ? <p>{followMessage}</p> : null}
             </div>
           </div>
         </div>
