@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+
+const GENRE_PREVIEW_COUNT = 6;
 
 type Genre = {
   id: number;
@@ -24,9 +27,15 @@ export default function AnnouncementsFilters({
   selectedGenders,
   selectedSearch,
 }: AnnouncementsFiltersProps) {
+  const [genresExpanded, setGenresExpanded] = useState(() =>
+    genres.slice(GENRE_PREVIEW_COUNT).some((g) => selectedGenres.includes(g.name)),
+  );
+
   function submitCurrentForm(target: EventTarget & HTMLInputElement) {
     target.form?.requestSubmit();
   }
+
+  const hasMoreGenres = genres.length > GENRE_PREVIEW_COUNT;
 
   return (
     <form method="GET" action="/" id="filters-form">
@@ -61,8 +70,11 @@ export default function AnnouncementsFilters({
       <div className="filter-section">
         <h3 className="filter-title">Жанр</h3>
         <div className="filter-tags filter-tags-grid">
-          {genres.map((genre) => (
-            <label key={genre.id} className="filter-tag">
+          {genres.map((genre, index) => (
+            <label
+              key={genre.id}
+              className={`filter-tag${!genresExpanded && index >= GENRE_PREVIEW_COUNT ? " filter-genre-tag-collapsed" : ""}`}
+            >
               <input
                 type="checkbox"
                 name="genres[]"
@@ -74,6 +86,15 @@ export default function AnnouncementsFilters({
             </label>
           ))}
         </div>
+        {hasMoreGenres ? (
+          <button
+            type="button"
+            className="filter-genres-toggle"
+            onClick={() => setGenresExpanded((previous) => !previous)}
+          >
+            {genresExpanded ? "Свернуть" : "Показать все"}
+          </button>
+        ) : null}
       </div>
 
       <div className="filter-divider"></div>
