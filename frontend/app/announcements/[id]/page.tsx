@@ -675,15 +675,17 @@ export default function AnnouncementDetailPage({
                   <PortfolioStyleAudioPlayer src={buildStorageUrl(response.audio_path)} />
                 </div>
                 <div className="response-status-form">
-                  <label className="response-status-field" htmlFor={`response-status-${response.id}`}>
-                    <span className="response-status-label-text">Статус:</span>
+                  <div className="response-status-field">
+                    <span className="response-status-label-text" id={`response-status-label-${response.id}`}>
+                      Статус:
+                    </span>
                     <StatusDropdown
                       id={`response-status-${response.id}`}
                       value={response.status}
                       options={RESPONSE_STATUSES}
                       onChange={(status) => updateResponseStatus(response.id, status)}
                     />
-                  </label>
+                  </div>
                 </div>
                 {response.status === "Принято" && acceptedResponseId === response.id ? (
                   existingReview ? (
@@ -743,7 +745,7 @@ export default function AnnouncementDetailPage({
                             onChange={(e) => setReviewMessage(e.target.value)}
                           />
                         </div>
-                        <button type="button" className="btn-submit" onClick={submitReview}>
+                        <button type="button" className="btn-submit" style={{marginTop: "15px"}} onClick={submitReview}>
                           Отправить отзыв
                         </button>
                       </div>

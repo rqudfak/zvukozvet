@@ -248,7 +248,6 @@
     font-size: 12px;
 }
 
-/* как на регистрации: красные подписи под полями */
 .announcement-form .field-error {
     display: block;
     color: #d11a2a;
@@ -257,12 +256,12 @@
     margin-top: 6px;
 }
 
-/* Тембры на create/edit: обычные чекбоксы, без оформления блока фильтров */
 .announcement-timbre-options {
     display: flex;
     flex-wrap: wrap;
     gap: 6px 18px;
     align-items: center;
+    margin-bottom: 6px;
 }
 
 .announcement-timbre-option {
@@ -272,7 +271,6 @@
     cursor: pointer;
     font-size: 14px;
     font-family: inherit;
-    color: #333;
     font-weight: 500;
 }
 
@@ -343,12 +341,6 @@
     flex-wrap: wrap;
     gap: 10px;
 }
-
-/*.filter-tags-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 8px;
-}*/
 
 .filter-tag {
     display: inline-flex;

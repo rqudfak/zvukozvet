@@ -76,14 +76,19 @@ export default function StatusDropdown({
         </span>
       </button>
       {open ? (
-        <ul className="status-dropdown-menu" role="listbox">
+        <ul
+          className="status-dropdown-menu"
+          role="listbox"
+          onMouseDown={(event) => event.stopPropagation()}
+        >
           {options.map((option) => (
             <li
               key={option}
               role="option"
               aria-selected={value === option}
               className={value === option ? "is-selected" : undefined}
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 onChange(option);
                 setOpen(false);
               }}
