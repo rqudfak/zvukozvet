@@ -478,8 +478,8 @@ export default function UserPage() {
 
   return (
     <>
-      <h2 className="page-title">Профиль</h2>
       <div className="profile-card">
+        <h2 className="page-title">Профиль</h2>
         <div className="profile-card-head">
           {canEdit ? (
             <div className="profile-head-toolbar" role="toolbar" aria-label="Действия с профилем">

@@ -20,13 +20,14 @@
 
 .page-title {
     margin-bottom: 20px;
-    margin-top: 30px;
+    margin-top: 20px;
     font-size: 22px;
     font-weight: 700;
 }
 
 .profile-card {
     width: 80%;
+    margin-top: 30px;
     margin: 0 auto;
     border-radius: var(--profile-radius);
     box-shadow: var(--profile-shadow);
