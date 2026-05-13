@@ -23,10 +23,8 @@
 }
 
 .profile-card {
-    background: var(--profile-cream);
     border-radius: var(--profile-radius);
     box-shadow: var(--profile-shadow);
-    border-left: 4px solid var(--profile-accent);
     padding: 26px 28px;
     margin-bottom: 30px;
 }
@@ -385,7 +383,7 @@
     background: #fff;
     border: 1px solid var(--profile-border);
     border-radius: var(--profile-radius);
-    border-left: 4px solid var(--profile-lavender);
+    border-left: 4px solid #F1642E;
     position: relative;
     box-shadow: 0 2px 8px rgba(80, 78, 118, 0.06);
 }
@@ -429,7 +427,7 @@
     color: var(--profile-purple-muted);
     border-radius: 50%;
     cursor: pointer;
-    font-size: 42px;
+    font-size: 30px;
     font-weight: 300;
     line-height: 1;
     padding: 0;
@@ -449,7 +447,6 @@
     gap: 18px;
     padding: 0 18px;
     color: var(--profile-purple);
-    background: var(--profile-cream-deep);
 }
 
 .portfolio-audio-play {
