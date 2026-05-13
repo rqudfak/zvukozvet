@@ -104,6 +104,8 @@ export default function UserPage() {
   const [portfolioDescription, setPortfolioDescription] = useState("");
   const [portfolioAudio, setPortfolioAudio] = useState<File | null>(null);
   const [portfolioMessage, setPortfolioMessage] = useState<string | null>(null);
+  const [portfolioItemToDelete, setPortfolioItemToDelete] = useState<number | null>(null);
+  const [portfolioDeleteSubmitting, setPortfolioDeleteSubmitting] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [followMessage, setFollowMessage] = useState<string | null>(null);
   const [portfolioPage, setPortfolioPage] = useState(1);
@@ -261,12 +263,25 @@ export default function UserPage() {
     }
   }
 
-  async function deletePortfolioItem(itemId: number) {
+  function openPortfolioDeleteConfirm(itemId: number) {
+    setPortfolioItemToDelete(itemId);
+  }
+
+  function closePortfolioDeleteConfirm() {
+    if (portfolioDeleteSubmitting) return;
+    setPortfolioItemToDelete(null);
+  }
+
+  async function confirmDeletePortfolioItem() {
+    if (portfolioItemToDelete === null) return;
+    const itemId = portfolioItemToDelete;
     const token = localStorage.getItem("auth_token");
     if (!token) {
       setPortfolioMessage("Нужно войти в аккаунт.");
+      setPortfolioItemToDelete(null);
       return;
     }
+    setPortfolioDeleteSubmitting(true);
     try {
       const response = await fetch(`${API_URL}/users/${params.id}/portfolio/${itemId}`, {
         method: "DELETE",
@@ -280,9 +295,12 @@ export default function UserPage() {
         return;
       }
       setPortfolioMessage(data?.message ?? "Запись удалена.");
+      setPortfolioItemToDelete(null);
       await refreshProfile(token);
     } catch {
       setPortfolioMessage("Ошибка сервера при удалении записи.");
+    } finally {
+      setPortfolioDeleteSubmitting(false);
     }
   }
 
@@ -671,7 +689,7 @@ export default function UserPage() {
                         type="button"
                         className="btn-delete-small"
                         title="Удалить запись"
-                        onClick={() => deletePortfolioItem(item.id)}
+                        onClick={() => openPortfolioDeleteConfirm(item.id)}
                       >
                         ×
                       </button>
@@ -1068,6 +1086,53 @@ export default function UserPage() {
           </div>
         </div>
       </div>
+
+      {portfolioItemToDelete !== null ? (
+        <div
+          className="modal modal-open"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-portfolio-title"
+        >
+          <div className="modal-backdrop" onClick={closePortfolioDeleteConfirm} />
+          <div className="modal-box">
+            <div className="modal-header">
+              <h3 id="delete-portfolio-title">Удаление записи</h3>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={closePortfolioDeleteConfirm}
+                disabled={portfolioDeleteSubmitting}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-delete-announce-title" style={{ marginBottom: 0 }}>
+                Вы уверены, что хотите удалить запись?
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={closePortfolioDeleteConfirm}
+                disabled={portfolioDeleteSubmitting}
+              >
+                Отмена
+              </button>
+              <button
+                type="button"
+                className="btn-submit"
+                onClick={() => void confirmDeletePortfolioItem()}
+                disabled={portfolioDeleteSubmitting}
+              >
+                {portfolioDeleteSubmitting ? "Удаление…" : "Удалить"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }
