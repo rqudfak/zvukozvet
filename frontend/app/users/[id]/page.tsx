@@ -430,18 +430,40 @@ export default function UserPage() {
       <h2 className="page-title">Профиль</h2>
       <div className="profile-card">
         <div className="profile-card-head">
+          {canEdit ? (
+            <div className="profile-head-toolbar" role="toolbar" aria-label="Действия с профилем">
+              <Link
+                href={`/users/${params.id}/edit`}
+                className="profile-icon-link"
+                title="Редактировать профиль"
+                aria-label="Редактировать профиль"
+              >
+                <img src="/img/edit.svg" alt="" className="profile-icon-img profile-icon-img--rest" decoding="async" />
+                <img src="/img/edit-hover.svg" alt="" className="profile-icon-img profile-icon-img--hover" decoding="async" />
+              </Link>
+              <Link
+                href={`/users/${params.id}/security`}
+                className="profile-icon-link"
+                title="Безопасность аккаунта"
+                aria-label="Безопасность аккаунта"
+              >
+                <img src="/img/settings.svg" alt="" className="profile-icon-img profile-icon-img--rest" decoding="async" />
+                <img src="/img/settings-hover.svg" alt="" className="profile-icon-img profile-icon-img--hover" decoding="async" />
+              </Link>
+            </div>
+          ) : null}
           <div className="profile-header">
-          <div className="profile-avatar-wrap">
-            {payload.user.avatar ? (
-              <img
-                src={buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/img/default.png"}
-                alt={payload.user.name ? `Аватар ${payload.user.name}` : "Аватар"}
-                className="profile-avatar"
-              />
-            ) : (
-              <img src="/img/default.png" alt="Аватар по умолчанию" className="profile-avatar" />
-            )}
-          </div>
+            <div className="profile-avatar-wrap">
+              {payload.user.avatar ? (
+                <img
+                  src={buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/img/default.png"}
+                  alt={payload.user.name ? `Аватар ${payload.user.name}` : "Аватар"}
+                  className="profile-avatar"
+                />
+              ) : (
+                <img src="/img/default.png" alt="Аватар по умолчанию" className="profile-avatar" />
+              )}
+            </div>
           <div className="profile-info">
             <p className="profile-name">{payload.user.name}</p>
             <p>
@@ -472,16 +494,6 @@ export default function UserPage() {
               </div>
             </div>
 
-            {canEdit ? (
-              <div className="profile-edit-actions">
-                <Link href={`/users/${params.id}/edit`} className="btn-edit-profile">
-                  Редактировать
-                </Link>
-                <Link href={`/users/${params.id}/security`} className="btn-profile-security">
-                  Безопасность аккаунта
-                </Link>
-              </div>
-            ) : null}
             {!canEdit && isAuthorized ? (
               <button
                 type="button"
