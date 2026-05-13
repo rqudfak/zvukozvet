@@ -35,6 +35,7 @@
 }
 
 .profile-card-head {
+    position: relative;
     margin: 0 auto;
     width: 80%;
     padding: 28px 28px 26px;
@@ -43,6 +44,63 @@
 
 .profile-card-head .profile-header {
     margin-bottom: 0;
+}
+
+.profile-head-toolbar {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.profile-card-head:has(.profile-head-toolbar) .profile-info {
+    padding-right: 5.75rem;
+}
+
+.profile-icon-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--profile-radius);
+    line-height: 0;
+    flex-shrink: 0;
+}
+
+.profile-icon-link:focus-visible {
+    outline: 2px solid var(--acc-orange);
+    outline-offset: 2px;
+}
+
+.profile-icon-img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+}
+
+.profile-icon-img--hover {
+    opacity: 0;
+}
+
+.profile-icon-link:hover .profile-icon-img--rest,
+.profile-icon-link:focus-visible .profile-icon-img--rest {
+    opacity: 0;
+}
+
+.profile-icon-link:hover .profile-icon-img--hover,
+.profile-icon-link:focus-visible .profile-icon-img--hover {
+    opacity: 1;
 }
 
 .profile-header {
@@ -152,47 +210,6 @@
 .btn-edit-profile:hover {
     filter: brightness(0.93);
     color: #fff !important;
-}
-
-.profile-edit-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-    margin-top: 16px;
-}
-
-.profile-card-head .profile-edit-actions {
-    margin-top: 16px;
-}
-
-.profile-edit-actions .btn-edit-profile {
-    margin-top: 0;
-}
-
-.btn-profile-security {
-    display: inline-block;
-    padding: 10px 22px;
-    background: transparent;
-    color: var(--profile-purple) !important;
-    text-decoration: none;
-    border-radius: var(--profile-radius);
-    font-weight: 600;
-    border: 2px solid var(--acc-lavender);
-    cursor: pointer;
-    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
-}
-
-.btn-profile-security:hover {
-    border-color: var(--acc-orange);
-    color: var(--acc-orange) !important;
-    background: rgba(255, 196, 75, 0.14);
-}
-
-.portfolio-upload > p {
-    margin: 8px 0 0;
-    font-size: 14px;
-    color: var(--profile-purple-muted);
 }
 
 /* Акценты палитры только в верхней части карточки (перебивают базовые стили выше) */
@@ -542,6 +559,19 @@
     .profile-card-head {
         margin: -18px -16px 20px;
         padding: 22px 16px 20px;
+    }
+
+    .profile-head-toolbar {
+        top: 14px;
+        right: 10px;
+    }
+
+    .profile-card-head:has(.profile-head-toolbar) .profile-header {
+        padding-top: 46px;
+    }
+
+    .profile-card-head:has(.profile-head-toolbar) .profile-info {
+        padding-right: 0;
     }
 
     .profile-header {
