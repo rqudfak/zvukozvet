@@ -797,8 +797,6 @@ class MainApiController extends Controller
         $user = $request->user();
         $user->two_factor_enabled = true;
         $user->save();
-
-        return response()->json(['message' => 'Двухфакторная аутентификация успешно включена!']);
     }
 
     public function disableTwoFactor(Request $request)
