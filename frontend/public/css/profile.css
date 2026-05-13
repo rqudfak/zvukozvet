@@ -19,19 +19,19 @@
 }
 
 .page-title {
-    margin-bottom: 20px;
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 22px;
     font-weight: 700;
 }
 
 .profile-card {
-    width: 80%;
-    margin-top: 30px;
     margin: 0 auto;
-    border-radius: var(--profile-radius);
-    box-shadow: var(--profile-shadow);
-    padding: 26px 28px;
+    margin-top: 30px;
+    width: 80%;
+    border-radius: 14px;
+    border: 1px solid #ececf5;
+    box-shadow: 0 8px 26px rgba(80, 78, 118, 0.08);
+    padding: 30px;
     margin-bottom: 30px;
 }
 
