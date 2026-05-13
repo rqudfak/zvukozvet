@@ -644,9 +644,6 @@ export default function UserPage() {
         <div className={`profile-tab-content ${activeTab === "portfolio" ? "active" : ""}`}>
           {canEdit ? (
             <div className="portfolio-upload">
-              <div className="portfolio-form-label">
-                <label className="portfolio-upload-label">+ Загрузить запись</label>
-              </div>
               <div className="portfolio-form-input">
                 <input
                   type="file"

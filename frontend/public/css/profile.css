@@ -1,14 +1,33 @@
+/* Профиль — визуальный стиль доски объявлений и шапки (крем, фиолетовый, оранжевый акцент) */
+:root {
+    --profile-purple: #504e76;
+    --profile-purple-muted: #625e8e;
+    --profile-accent: #f1642e;
+    --profile-accent-hover: #e55a28;
+    --profile-cream: #fdf8e2;
+    --profile-cream-deep: #f5efd5;
+    --profile-lavender: #c4c3e3;
+    --profile-lavender-soft: #eae8f3;
+    --profile-border: #e0dde8;
+    --profile-shadow: 0 4px 14px rgba(80, 78, 118, 0.14);
+    --profile-radius: 5px;
+    --profile-radius-md: 8px;
+}
+
 .page-title {
     margin-bottom: 20px;
     margin-top: 30px;
-    font-size: 24px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--profile-purple);
 }
 
 .profile-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    padding: 24px;
+    background: var(--profile-cream);
+    border-radius: var(--profile-radius);
+    box-shadow: var(--profile-shadow);
+    border-left: 4px solid var(--profile-accent);
+    padding: 26px 28px;
     margin-bottom: 30px;
 }
 
@@ -25,14 +44,13 @@
 .profile-avatar {
     width: 120px;
     height: 120px;
-    border-radius: 8px;
+    border-radius: var(--profile-radius);
     object-fit: cover;
-    background: #eee;
+    background: var(--profile-lavender-soft);
+    border: 2px solid var(--profile-lavender);
     flex-shrink: 0;
     vertical-align: middle;
-    /* Растровое фото, не «пиксельная» интерполяция как у пиксель-арта */
     image-rendering: auto;
-    /* Часто убирает «мыльность» при масштабировании в отдельном композитном слое (Chromium) */
     transform: translateZ(0);
 }
 
@@ -52,12 +70,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #d8d8e6;
-    background: #f3f3f8;
-    color: #6f6f84;
+    border: 2px solid var(--profile-lavender);
+    background: var(--profile-lavender-soft);
+    color: var(--profile-purple-muted);
     font-size: 42px;
     font-weight: 600;
     line-height: 1;
+    border-radius: var(--profile-radius);
 }
 
 .profile-info {
@@ -66,12 +85,19 @@
 
 .profile-info p {
     margin: 6px 0;
+    line-height: 1.45;
+    color: var(--profile-purple);
+}
+
+.profile-info strong {
+    color: var(--profile-purple);
 }
 
 .profile-name {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     margin-bottom: 8px !important;
+    color: var(--profile-purple);
 }
 
 .profile-achievements-bar-wrap {
@@ -80,16 +106,17 @@
 
 .profile-achievements-bar {
     height: 10px;
-    background: #eee;
+    background: var(--profile-lavender-soft);
     border-radius: 5px;
     overflow: hidden;
     margin-top: 6px;
     max-width: 300px;
+    border: 1px solid var(--profile-border);
 }
 
 .profile-achievements-bar-fill {
     height: 100%;
-    background: #F1642E;
+    background: var(--profile-accent);
     border-radius: 5px;
     transition: width 0.3s ease;
 }
@@ -98,58 +125,180 @@
     display: inline-block;
     margin-top: 16px;
     padding: 10px 24px;
-    background: #F1642E;
-    color: white;
+    background: var(--profile-accent);
+    color: #fff !important;
     text-decoration: none;
-    border-radius: 6px;
+    border-radius: var(--profile-radius);
     font-weight: 600;
     border: none;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .btn-edit-profile:hover {
-    background: #e55a28;
+    background: var(--profile-accent-hover);
+    color: #fff !important;
 }
 
 .btn-edit-profile.is-following {
-    background: #b9b9b9;
+    background: var(--profile-purple-muted);
 }
 
 .btn-edit-profile.is-following:hover {
-    background: #a8a8a8;
+    background: var(--profile-purple);
+    color: #fff !important;
+}
+
+/* Безопасность (2FA) */
+.profile-security-section {
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid var(--profile-border);
+}
+
+.profile-security-section h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 14px;
+    color: var(--profile-purple);
+}
+
+.security-note {
+    font-size: 14px;
+    color: var(--profile-purple-muted);
+    margin: 8px 0 0;
+    line-height: 1.45;
+}
+
+.password-confirm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+    align-items: center;
+}
+
+.password-confirm input {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px 12px;
+    border: 1px solid var(--profile-border);
+    border-radius: var(--profile-radius);
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--profile-purple);
+    background: #fff;
+}
+
+.password-confirm input:focus {
+    outline: none;
+    border-color: var(--profile-accent);
+}
+
+.btn-security {
+    padding: 10px 18px;
+    border: none;
+    border-radius: var(--profile-radius);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    transition: background 0.2s ease;
+}
+
+.btn-security.enable {
+    background: var(--profile-accent);
+    color: #fff;
+}
+
+.btn-security.enable:hover {
+    background: var(--profile-accent-hover);
+}
+
+.btn-security.disable {
+    background: var(--profile-lavender);
+    color: var(--profile-purple);
+}
+
+.btn-security.disable:hover {
+    background: #b4b2d6;
+}
+
+.badge-success {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.badge-warning {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #fff3e0;
+    color: #e65100;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.security-status {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-security-section > p {
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: var(--profile-purple-muted);
+}
+
+.portfolio-upload > p {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--profile-purple-muted);
 }
 
 /* Вкладки */
 .profile-tabs {
     display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #e5e5e5;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+    padding-bottom: 0;
+    border-bottom: 2px solid var(--profile-lavender);
 }
 
 .profile-tab {
-    padding: 10px 20px;
-    border: none;
-    background: #f5f5f5;
-    border-radius: 6px 6px 0 0;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    background: transparent;
+    border-radius: var(--profile-radius) var(--profile-radius) 0 0;
     cursor: pointer;
     font-size: 14px;
-    color: #4a4a4a;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--profile-purple-muted);
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .profile-tab:hover {
-    background: #eee;
+    background: var(--profile-lavender-soft);
+    color: var(--profile-purple);
 }
 
 .profile-tab.active {
-    background: #FDF8E2;
-    color: #4a4a4a;
-    font-weight: 600;
-    border: 1px solid #e5e5e5;
-    border-bottom-color: #FDF8E2;
-    margin-bottom: -1px;
+    background: var(--profile-cream);
+    color: var(--profile-purple);
+    font-weight: 700;
+    border-color: var(--profile-border);
+    border-bottom: 2px solid var(--profile-cream);
+    margin-bottom: -2px;
+    box-shadow: inset 0 3px 0 var(--profile-accent);
 }
 
 .profile-tab-content {
@@ -161,19 +310,25 @@
 }
 
 .profile-empty {
-    color: #999;
+    color: var(--profile-purple-muted);
     padding: 20px 0;
+    font-size: 15px;
 }
 
 /* Портфолио */
 .portfolio-upload {
     margin-bottom: 28px;
+    padding: 18px 20px;
+    background: var(--profile-lavender-soft);
+    border: 1px solid var(--profile-border);
+    border-radius: var(--profile-radius);
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.portfolio-form-label, .portfolio-form-input {
+.portfolio-form-label,
+.portfolio-form-input {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -183,11 +338,15 @@
 
 .portfolio-upload-label {
     cursor: pointer;
-    color: #5a5687;
+    color: var(--profile-purple);
     font-weight: 700;
     font-size: 16px;
     line-height: 1;
     padding-right: 6px;
+}
+
+.portfolio-upload-label:hover {
+    color: var(--profile-accent);
 }
 
 .portfolio-file-input {
@@ -198,9 +357,17 @@
     flex: 1;
     min-width: 220px;
     padding: 10px 14px;
-    border: 1px solid #d4d4e5;
-    border-radius: 8px;
-    color: #5a5687;
+    border: 1px solid var(--profile-border);
+    border-radius: var(--profile-radius);
+    color: var(--profile-purple);
+    background: #fff;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.portfolio-desc-input:focus {
+    outline: none;
+    border-color: var(--profile-accent);
 }
 
 .portfolio-list {
@@ -214,16 +381,19 @@
     flex-direction: column;
     align-items: stretch;
     gap: 2px;
-    padding: 8px 0 0;
-    background: transparent;
-    border-radius: 0;
+    padding: 16px 18px 14px;
+    background: #fff;
+    border: 1px solid var(--profile-border);
+    border-radius: var(--profile-radius);
+    border-left: 4px solid var(--profile-lavender);
     position: relative;
+    box-shadow: 0 2px 8px rgba(80, 78, 118, 0.06);
 }
 
 .portfolio-item-date {
     font-size: 14px;
     font-weight: 600;
-    color: #a9a9bf;
+    color: var(--profile-purple-muted);
 }
 
 .portfolio-item-desc {
@@ -231,8 +401,8 @@
     margin: 0;
     margin-bottom: 6px;
     font-size: 16px;
-    line-height: 1.15;
-    color: #5a5687;
+    line-height: 1.25;
+    color: var(--profile-purple);
     padding-right: 60px;
     white-space: pre-line;
 }
@@ -247,8 +417,8 @@
 
 .portfolio-item-delete {
     position: absolute;
-    top: 8px;
-    right: 0;
+    top: 10px;
+    right: 10px;
 }
 
 .btn-delete-small {
@@ -256,7 +426,7 @@
     height: 40px;
     border: none;
     background: transparent;
-    color: #a7a6bb;
+    color: var(--profile-purple-muted);
     border-radius: 50%;
     cursor: pointer;
     font-size: 42px;
@@ -268,23 +438,24 @@
 
 .btn-delete-small:hover {
     background: transparent;
-    color: #726e9a;
+    color: var(--profile-accent);
 }
 
 .portfolio-audio-player {
-    border: 2px solid #625e8e;
-    border-radius: 6px;
+    border: 2px solid var(--profile-purple-muted);
+    border-radius: var(--profile-radius);
     display: flex;
     align-items: center;
     gap: 18px;
     padding: 0 18px;
-    color: #5a5687;
+    color: var(--profile-purple);
+    background: var(--profile-cream-deep);
 }
 
 .portfolio-audio-play {
     border: none;
     background: transparent;
-    color: #625e8e;
+    color: var(--profile-purple-muted);
     width: 42px;
     height: 42px;
     font-size: 20px;
@@ -294,10 +465,16 @@
     align-items: center;
     justify-content: center;
     padding: 0;
+    transition: color 0.2s ease;
+}
+
+.portfolio-audio-play:hover {
+    color: var(--profile-accent);
 }
 
 .portfolio-audio-play.is-playing {
     font-size: 24px;
+    color: var(--profile-accent);
 }
 
 .portfolio-audio-seek {
@@ -305,7 +482,7 @@
     appearance: none;
     height: 6px;
     border-radius: 999px;
-    background: #c8c6de;
+    background: var(--profile-lavender);
     outline: none;
     cursor: pointer;
 }
@@ -313,7 +490,7 @@
 .portfolio-audio-seek::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 999px;
-    background: #c8c6de;
+    background: var(--profile-lavender);
 }
 
 .portfolio-audio-seek::-webkit-slider-thumb {
@@ -321,7 +498,7 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #625e8e;
+    background: var(--profile-accent);
     border: none;
     margin-top: -4px;
 }
@@ -329,20 +506,21 @@
 .portfolio-audio-seek::-moz-range-track {
     height: 6px;
     border-radius: 999px;
-    background: #c8c6de;
+    background: var(--profile-lavender);
 }
 
 .portfolio-audio-seek::-moz-range-thumb {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #625e8e;
+    background: var(--profile-accent);
     border: none;
 }
 
 .portfolio-audio-duration {
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
+    color: var(--profile-purple-muted);
 }
 
 @media (max-width: 900px) {
@@ -381,6 +559,58 @@
         height: 30px;
         font-size: 20px;
     }
+
+    .page-title {
+        font-size: 20px;
+        margin-top: 20px;
+    }
+
+    .profile-card {
+        padding: 18px 16px;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile-info {
+        width: 100%;
+    }
+
+    .profile-achievements-bar {
+        max-width: none;
+    }
+
+    .profile-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 4px;
+        padding-bottom: 4px;
+        scrollbar-width: thin;
+    }
+
+    .profile-tab {
+        flex-shrink: 0;
+        white-space: nowrap;
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+    .password-confirm {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .password-confirm input {
+        min-width: 0;
+    }
+
+    .btn-security {
+        width: 100%;
+    }
 }
 
 /* Отзывы */
@@ -391,10 +621,12 @@
 }
 
 .review-item {
-    padding: 12px 14px;
+    padding: 16px 18px;
     background: #fff;
-    border-radius: 10px;
-    border: 1px solid #ececf5;
+    border-radius: var(--profile-radius);
+    border: 1px solid var(--profile-border);
+    border-left: 4px solid var(--profile-accent);
+    box-shadow: 0 2px 8px rgba(80, 78, 118, 0.06);
 }
 
 .review-header {
@@ -415,9 +647,9 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 1px solid #d8d8e6;
+    border: 2px solid var(--profile-lavender);
     object-fit: cover;
-    background: #f3f3f8;
+    background: var(--profile-lavender-soft);
     flex-shrink: 0;
     vertical-align: middle;
     image-rendering: auto;
@@ -437,7 +669,7 @@
 }
 
 .review-avatar-placeholder {
-    color: #b6b6c8;
+    color: var(--profile-purple-muted);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -452,7 +684,8 @@
 }
 
 .review-author {
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--profile-purple);
 }
 
 .review-author-link {
@@ -461,18 +694,20 @@
 }
 
 .review-author-link:hover {
+    color: var(--profile-accent);
     text-decoration: underline;
 }
 
 .review-date {
     font-size: 13px;
-    color: #9d9db2;
+    color: var(--profile-purple-muted);
 }
 
 .review-message {
     margin: 14px 0 0;
     font-size: 16px;
-    line-height: 1.25;
+    line-height: 1.35;
+    color: var(--profile-purple);
 }
 
 .review-rating {
@@ -485,13 +720,13 @@
 }
 
 .review-star {
-    color: #ddd;
+    color: var(--profile-lavender);
     font-size: 24px;
     line-height: 1;
 }
 
 .review-star.filled {
-    color: #F1642E;
+    color: var(--profile-accent);
 }
 
 /* Достижения */
@@ -506,9 +741,21 @@
     flex-direction: column;
     align-items: center;
     padding: 16px;
-    background: #f9f9f9;
-    border-radius: 8px;
+    background: var(--profile-cream-deep);
+    border-radius: var(--profile-radius);
     text-align: center;
+    border: 1px solid var(--profile-border);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.achievement-item.unlocked {
+    border-left: 4px solid var(--profile-accent);
+    background: var(--profile-cream);
+}
+
+.achievement-item.unlocked:hover {
+    box-shadow: var(--profile-shadow);
+    transform: translateY(-2px);
 }
 
 .achievement-icon {
@@ -525,13 +772,15 @@
 
 .achievement-name {
     font-size: 13px;
+    font-weight: 700;
+    color: var(--profile-purple);
 }
 
 .achievement-desc {
     margin-top: 6px;
     font-size: 12px;
-
     line-height: 1.25;
+    color: var(--profile-purple-muted);
 }
 
 .achievement-item.locked .achievement-icon {
@@ -540,7 +789,8 @@
 }
 
 .achievement-item.locked {
-    border: 1px dashed #e3e3e3;
+    border: 1px dashed var(--profile-lavender);
+    background: var(--profile-lavender-soft);
 }
 
 .achievement-item.unlocked .achievement-icon {
@@ -548,36 +798,52 @@
     opacity: 1;
 }
 
-/* Мои объявления */
+/* Мои объявления / подписки / списки */
 .my-announcements-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
 .my-announcement-item {
-    padding: 14px;
-    background: #f9f9f9;
-    border-radius: 10px;
+    padding: 16px 18px;
+    background: #fff;
+    border-radius: var(--profile-radius);
+    border: 1px solid var(--profile-border);
+    border-left: 4px solid var(--profile-accent);
+    box-shadow: 0 2px 8px rgba(80, 78, 118, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.my-announcement-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(80, 78, 118, 0.12);
 }
 
 .my-announcement-top {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
 }
 
+.my-announcement-top:has(.review-avatar) {
+    align-items: center;
+}
+
 .my-announcement-title {
     font-weight: 700;
-    color: #333;
+    color: var(--profile-purple);
     text-decoration: none;
     flex: 1;
     min-width: 0;
+    font-size: 17px;
+    line-height: 1.25;
 }
 
 .my-announcement-title:hover {
-    text-decoration: underline;
+    color: var(--profile-accent);
+    text-decoration: none;
 }
 
 .my-announcement-top-aside {
@@ -599,8 +865,9 @@
 
 .my-announcement-date {
     font-size: 12px;
-    color: #666;
+    color: var(--profile-purple-muted);
     flex-shrink: 0;
+    font-weight: 600;
 }
 
 .my-announcement-meta {
@@ -614,6 +881,7 @@
 
 .my-announcement-status {
     font-size: 13px;
+    color: var(--profile-purple-muted);
 }
 
 .my-announcement-badge {
@@ -630,17 +898,16 @@
 
 .my-announcement-badge.active {
     background: #fff3e0;
-    color: #e55a28;
+    color: var(--profile-accent-hover);
 }
 
 .my-announcement-desc {
     margin-top: 10px;
-    color: #555;
-    font-size: 13px;
-    line-height: 1.35;
+    color: var(--profile-purple);
+    font-size: 14px;
+    line-height: 1.4;
+    opacity: 0.92;
 }
-
-
 
 .pagination {
     display: flex;
@@ -648,6 +915,7 @@
     margin: 20px 0;
     font-size: 14px;
 }
+
 .pagination nav {
     display: flex;
     gap: 8px;
@@ -663,17 +931,34 @@
 
 .pagination a {
     font-weight: bold;
+    color: var(--profile-purple);
 }
+
+.pagination a:hover {
+    color: var(--profile-accent);
+}
+
 .pagination button {
     font-weight: bold;
     cursor: pointer;
-} 
-.pagination button:hover {
-    color: #F1642E;
+    color: var(--profile-purple);
+    font-family: inherit;
 }
-/* Текущая страница */
+
+.pagination button:hover {
+    color: var(--profile-accent);
+}
+
 .pagination [aria-current="page"] {
-    color: #F1642E;
+    color: var(--profile-accent);
     text-decoration: underline;
     font-weight: bold;
+}
+
+.pagination-top {
+    margin-bottom: 14px;
+}
+
+.pagination-bottom {
+    margin-top: 18px;
 }
