@@ -1322,15 +1322,11 @@ class MainApiController extends Controller
         }
 
         $request->user()->followingUsers()->syncWithoutDetaching([$user->id]);
-
-        return response()->json(['message' => 'Вы подписались на пользователя.']);
     }
 
     public function unfollowUser(Request $request, User $user)
     {
         $request->user()->followingUsers()->detach($user->id);
-
-        return response()->json(['message' => 'Подписка отменена.']);
     }
 
     /**
