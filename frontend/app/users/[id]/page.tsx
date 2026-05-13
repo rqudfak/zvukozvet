@@ -480,8 +480,7 @@ export default function UserPage() {
     <>
       <div className="profile-card">
         <h2 className="page-title">Профиль</h2>
-        <div className="profile-card-head">
-          {canEdit ? (
+        {canEdit ? (
             <div className="profile-head-toolbar" role="toolbar" aria-label="Действия с профилем">
               <Link
                 href={`/users/${params.id}/edit`}
@@ -503,6 +502,8 @@ export default function UserPage() {
               </Link>
             </div>
           ) : null}
+        <div className="profile-card-head">
+          
           <div className="profile-header">
             <div className="profile-avatar-wrap">
               {canEdit && hasCustomProfileAvatar(payload.user.avatar) ? (
