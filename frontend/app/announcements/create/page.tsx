@@ -134,7 +134,7 @@ export default function CreateAnnouncementPage() {
           <StatusDropdown id="gender" value={gender} options={GENDER_OPTIONS} onChange={setGender} />
         </div>
         <div className="form-group">
-          <label>Тембр</label>
+          <label style={{marginBottom: '-8px'}}>Тембр</label>
           <div className="announcement-timbre-options">
             {ANNOUNCEMENT_TIMBRE_OPTIONS.map((option) => (
               <label key={option} className="announcement-timbre-option">
