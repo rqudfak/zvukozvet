@@ -98,9 +98,6 @@ export default function UserPage() {
   const [activeTab, setActiveTab] = useState("portfolio");
   const [canEdit, setCanEdit] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState(false);
-  const [securityPassword, setSecurityPassword] = useState("");
-  const [securityMessage, setSecurityMessage] = useState<string | null>(null);
   const [portfolioDescription, setPortfolioDescription] = useState("");
   const [portfolioAudio, setPortfolioAudio] = useState<File | null>(null);
   const [portfolioMessage, setPortfolioMessage] = useState<string | null>(null);
@@ -169,12 +166,11 @@ export default function UserPage() {
     })
       .then(async (response) => {
         if (!response.ok) throw new Error("Unauthorized");
-        return response.json() as Promise<{ id: number; two_factor_enabled?: boolean }>;
+        return response.json() as Promise<{ id: number }>;
       })
       .then((currentUser) => {
         setIsAuthorized(true);
         setCanEdit(String(currentUser.id) === String(params.id));
-        setIsTwoFactorEnabled(Boolean(currentUser.two_factor_enabled));
       })
       .catch(() => {
         setIsAuthorized(false);
@@ -191,37 +187,6 @@ export default function UserPage() {
     setSubscriptionsPage(1);
     setSubscribersPage(1);
   }, [activeTab, params.id]);
-
-  async function submitTwoFactor(enabled: boolean) {
-    setSecurityMessage(null);
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      setSecurityMessage("Нужно войти в аккаунт.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}${enabled ? "/2fa/enable" : "/2fa/disable"}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ password: securityPassword }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        setSecurityMessage(data.message ?? "Не удалось обновить 2FA.");
-        return;
-      }
-
-      setIsTwoFactorEnabled(enabled);
-      setSecurityPassword("");
-      setSecurityMessage(data.message ?? "Готово.");
-    } catch {
-      setSecurityMessage("Ошибка сервера при изменении 2FA.");
-    }
-  }
 
   async function uploadPortfolio() {
     setPortfolioMessage(null);
@@ -508,9 +473,14 @@ export default function UserPage() {
             </div>
 
             {canEdit ? (
-              <Link href={`/users/${params.id}/edit`} className="btn-edit-profile">
-                Редактировать
-              </Link>
+              <div className="profile-edit-actions">
+                <Link href={`/users/${params.id}/edit`} className="btn-edit-profile">
+                  Редактировать
+                </Link>
+                <Link href={`/users/${params.id}/security`} className="btn-profile-security">
+                  Безопасность аккаунта
+                </Link>
+              </div>
             ) : null}
             {!canEdit && isAuthorized ? (
               <button
@@ -523,58 +493,6 @@ export default function UserPage() {
               </button>
             ) : null}
             {followMessage ? <p>{followMessage}</p> : null}
-
-            {canEdit ? (
-              <div className="profile-security-section">
-                <h4>🔒 Безопасность аккаунта</h4>
-                {isTwoFactorEnabled ? (
-                  <div className="security-status enabled">
-                    <span className="badge-success">✓ Двухфакторная аутентификация включена</span>
-                    <p className="security-note">
-                      При входе в аккаунт вам будет приходить код подтверждения на почту.
-                    </p>
-                    <div className="password-confirm">
-                      <input
-                        type="password"
-                        placeholder="Введите текущий пароль"
-                        value={securityPassword}
-                        onChange={(event) => setSecurityPassword(event.target.value)}
-                      />
-                      <button
-                        type="button"
-                        className="btn-security disable"
-                        onClick={() => submitTwoFactor(false)}
-                      >
-                        Отключить 2FA
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="security-status disabled">
-                    <span className="badge-warning">✗ Двухфакторная аутентификация не настроена</span>
-                    <p className="security-note">
-                      Включите 2FA для дополнительной защиты вашего аккаунта.
-                    </p>
-                    <div className="password-confirm">
-                      <input
-                        type="password"
-                        placeholder="Введите текущий пароль"
-                        value={securityPassword}
-                        onChange={(event) => setSecurityPassword(event.target.value)}
-                      />
-                      <button
-                        type="button"
-                        className="btn-security enable"
-                        onClick={() => submitTwoFactor(true)}
-                      >
-                        Включить 2FA
-                      </button>
-                    </div>
-                  </div>
-                )}
-                {securityMessage ? <p>{securityMessage}</p> : null}
-              </div>
-            ) : null}
           </div>
           </div>
         </div>
