@@ -91,6 +91,13 @@ function isProfileAnnouncementClosed(a: { accepted_responses_count?: number }): 
   return (a.accepted_responses_count ?? 0) > 0;
 }
 
+/** Свой загруженный аватар (не заглушка в БД). */
+function hasCustomProfileAvatar(avatar: string | null | undefined): boolean {
+  if (avatar == null || String(avatar).trim() === "") return false;
+  const n = String(avatar).trim().toLowerCase();
+  return n !== "defult.png" && n !== "default.png";
+}
+
 export default function UserPage() {
   const PAGE_SIZE = 10;
   const params = useParams<{ id: string }>();
@@ -103,6 +110,9 @@ export default function UserPage() {
   const [portfolioMessage, setPortfolioMessage] = useState<string | null>(null);
   const [portfolioItemToDelete, setPortfolioItemToDelete] = useState<number | null>(null);
   const [portfolioDeleteSubmitting, setPortfolioDeleteSubmitting] = useState(false);
+  const [avatarDeleteOpen, setAvatarDeleteOpen] = useState(false);
+  const [avatarDeleteSubmitting, setAvatarDeleteSubmitting] = useState(false);
+  const [avatarDeleteError, setAvatarDeleteError] = useState<string | null>(null);
   const [followLoading, setFollowLoading] = useState(false);
   const [followMessage, setFollowMessage] = useState<string | null>(null);
   const [portfolioPage, setPortfolioPage] = useState(1);
@@ -266,6 +276,47 @@ export default function UserPage() {
       setPortfolioMessage("Ошибка сервера при удалении записи.");
     } finally {
       setPortfolioDeleteSubmitting(false);
+    }
+  }
+
+  function openAvatarDeleteConfirm() {
+    setAvatarDeleteError(null);
+    setAvatarDeleteOpen(true);
+  }
+
+  function closeAvatarDeleteConfirm() {
+    if (avatarDeleteSubmitting) return;
+    setAvatarDeleteOpen(false);
+    setAvatarDeleteError(null);
+  }
+
+  async function confirmDeleteAvatar() {
+    setAvatarDeleteError(null);
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      setAvatarDeleteError("Нужно войти в аккаунт.");
+      return;
+    }
+    setAvatarDeleteSubmitting(true);
+    try {
+      const response = await fetch(`${API_URL}/users/${params.id}/avatar`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      const data = (await response.json().catch(() => null)) as { message?: string } | null;
+      if (!response.ok) {
+        setAvatarDeleteError(data?.message ?? "Не удалось удалить изображение.");
+        return;
+      }
+      setAvatarDeleteOpen(false);
+      await refreshProfile(token);
+    } catch {
+      setAvatarDeleteError("Ошибка сервера при удалении изображения.");
+    } finally {
+      setAvatarDeleteSubmitting(false);
     }
   }
 
@@ -454,58 +505,76 @@ export default function UserPage() {
           ) : null}
           <div className="profile-header">
             <div className="profile-avatar-wrap">
-              {payload.user.avatar ? (
-                <img
-                  src={buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/img/default.png"}
-                  alt={payload.user.name ? `Аватар ${payload.user.name}` : "Аватар"}
-                  className="profile-avatar"
-                />
-              ) : (
-                <img src="/img/default.png" alt="Аватар по умолчанию" className="profile-avatar" />
-              )}
+              {canEdit && hasCustomProfileAvatar(payload.user.avatar) ? (
+                <button
+                  type="button"
+                  className="profile-avatar-remove"
+                  onClick={openAvatarDeleteConfirm}
+                  aria-label="Удалить фото профиля"
+                  title="Удалить фото"
+                >
+                  ×
+                </button>
+              ) : null}
+              <img
+                src={
+                  hasCustomProfileAvatar(payload.user.avatar)
+                    ? (buildStorageUrl(`avatars/${payload.user.avatar}`) ?? "/img/default.png")
+                    : "/img/default.png"
+                }
+                alt={payload.user.name ? `Аватар ${payload.user.name}` : "Аватар"}
+                className="profile-avatar"
+              />
             </div>
-          <div className="profile-info">
-            <p className="profile-name">{payload.user.name}</p>
-            <p>
-              <strong>Пол:</strong> {payload.user.gender ?? "—"}
-            </p>
-            <p>
-              <strong>Языки:</strong> {payload.user.language ?? "—"}
-            </p>
-            <p>
-              <strong>Тембр:</strong> {payload.user.timbre ?? "—"}
-            </p>
-            <p>
-              <strong>На сайте:</strong> с {formatDate(payload.user.created_at)}
-            </p>
-            <p>
-              <strong>Принято откликов:</strong> {acceptedWorksCount}
-            </p>
-
-            <div className="profile-achievements-bar-wrap">
-              <strong>
-                Достижения: {achievementProgress.earned}/{achievementProgress.total}
-              </strong>
-              <div className="profile-achievements-bar">
-                <div
-                  className="profile-achievements-bar-fill"
-                  style={{ width: `${achievementProgress.percent}%` }}
-                />
+            <div className="profile-info">
+              <p className="profile-name">{payload.user.name}</p>
+              <div className="profile-meta-block">
+                <div className="profile-meta-columns">
+                  <div className="profile-meta-col">
+                    <p>
+                      <strong>Пол:</strong> {payload.user.gender ?? "—"}
+                    </p>
+                    <p>
+                      <strong>Языки:</strong> {payload.user.language ?? "—"}
+                    </p>
+                    <p>
+                      <strong>Тембр:</strong> {payload.user.timbre ?? "—"}
+                    </p>
+                  </div>
+                  <div className="profile-meta-col">
+                    <p>
+                      <strong>На сайте:</strong> с {formatDate(payload.user.created_at)}
+                    </p>
+                    <p>
+                      <strong>Принято откликов:</strong> {acceptedWorksCount}
+                    </p>
+                  </div>
+                </div>
+                <div className="profile-achievements-bar-wrap">
+                  <strong>
+                    Достижения: {achievementProgress.earned}/{achievementProgress.total}
+                  </strong>
+                  <div className="profile-achievements-bar">
+                    <div
+                      className="profile-achievements-bar-fill"
+                      style={{ width: `${achievementProgress.percent}%` }}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
 
-            {!canEdit && isAuthorized ? (
-              <button
-                type="button"
-                className={`btn-edit-profile${payload.is_following ? " is-following" : ""}`}
-                onClick={toggleFollow}
-                disabled={followLoading}
-              >
-                {payload.is_following ? "Отписаться" : "Подписаться"}
-              </button>
-            ) : null}
-            {followMessage ? <p>{followMessage}</p> : null}
-          </div>
+              {!canEdit && isAuthorized ? (
+                <button
+                  type="button"
+                  className={`btn-edit-profile${payload.is_following ? " is-following" : ""}`}
+                  onClick={toggleFollow}
+                  disabled={followLoading}
+                >
+                  {payload.is_following ? "Отписаться" : "Подписаться"}
+                </button>
+              ) : null}
+              {followMessage ? <p>{followMessage}</p> : null}
+            </div>
           </div>
         </div>
 
@@ -1057,6 +1126,53 @@ export default function UserPage() {
                 disabled={portfolioDeleteSubmitting}
               >
                 {portfolioDeleteSubmitting ? "Удаление…" : "Удалить"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {avatarDeleteOpen ? (
+        <div className="modal modal-open" role="dialog" aria-modal="true" aria-labelledby="delete-avatar-title">
+          <div className="modal-backdrop" onClick={closeAvatarDeleteConfirm} />
+          <div className="modal-box">
+            <div className="modal-header">
+              <h3 id="delete-avatar-title">Удаление изображения</h3>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={closeAvatarDeleteConfirm}
+                disabled={avatarDeleteSubmitting}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-delete-announce-title" style={{ marginBottom: 0 }}>
+                Вы уверены, что хотите удалить изображение?
+              </p>
+              {avatarDeleteError ? (
+                <p className="modal-delete-error" style={{ marginTop: 12, marginBottom: 0 }}>
+                  {avatarDeleteError}
+                </p>
+              ) : null}
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={closeAvatarDeleteConfirm}
+                disabled={avatarDeleteSubmitting}
+              >
+                Отмена
+              </button>
+              <button
+                type="button"
+                className="btn-submit"
+                onClick={() => void confirmDeleteAvatar()}
+                disabled={avatarDeleteSubmitting}
+              >
+                {avatarDeleteSubmitting ? "Удаление…" : "Удалить"}
               </button>
             </div>
           </div>

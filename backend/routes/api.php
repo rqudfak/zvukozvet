@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/update', [MainApiController::class, 'updateMyProfile']);
     Route::put('/users/{user}', [MainApiController::class, 'updateUser']);
     Route::post('/users/{user}', [MainApiController::class, 'updateUser']);
+    Route::delete('/users/{user}/avatar', [MainApiController::class, 'destroyUserAvatar']);
     Route::post('/announcements', [MainApiController::class, 'createAnnouncement']);
     Route::put('/announcements/{announcement}', [MainApiController::class, 'updateAnnouncement']);
     Route::delete('/announcements/{announcement}', [MainApiController::class, 'deleteAnnouncement']);
