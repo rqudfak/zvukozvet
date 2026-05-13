@@ -395,13 +395,10 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
         </div>
 
         <div className="form-group">
-          <span className="form-label-block">Тембр</span>
-          <p style={{ marginTop: 0, marginBottom: 8, fontSize: 13, color: "#555" }}>
-            Можно выбрать несколько. «Не указано» нельзя сочетать с другими тембрами.
-          </p>
-          <div className="filter-tags">
+          <label>Тембр</label>
+          <div className="announcement-timbre-options">
             {ANNOUNCEMENT_TIMBRE_OPTIONS.map((option) => (
-              <label key={option} className="filter-tag">
+              <label key={option} className="announcement-timbre-option">
                 <input
                   type="checkbox"
                   checked={timbres.includes(option)}
