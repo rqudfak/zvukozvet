@@ -141,7 +141,7 @@ class User extends Authenticatable
 
     public function portfolioItems()
     {
-        return $this->hasMany(PortfolioItem::class);
+        return $this->hasMany(PortfolioItem::class)->orderByDesc('created_at')->orderByDesc('id');
     }
 
     public function reviewsReceived()
