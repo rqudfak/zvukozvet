@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { API_URL } from "@/lib/api";
+import {
+  ANNOUNCEMENT_TIMBRE_OPTIONS,
+  toggleAnnouncementTimbreSelection,
+} from "@/lib/announcementTimbres";
 import { setSuccessFlash } from "@/lib/flash";
 import StatusDropdown from "@/components/StatusDropdown";
 
@@ -16,6 +20,7 @@ type AnnouncementPayload = {
   genre: string;
   languages: string;
   gender: string;
+  timbres?: string[];
   duration: string;
   description: string;
   fragment: string;
@@ -27,6 +32,7 @@ type FieldKey =
   | "genre"
   | "languages"
   | "gender"
+  | "timbres"
   | "duration"
   | "description"
   | "fragment";
@@ -53,6 +59,7 @@ function parseFieldErrors(payload: unknown): FieldErrors {
     genre: firstError(errors, "genre"),
     languages: firstError(errors, "languages"),
     gender: firstError(errors, "gender"),
+    timbres: firstError(errors, "timbres"),
     duration: firstError(errors, "duration"),
     description: firstError(errors, "description"),
     fragment: firstError(errors, "fragment"),
@@ -70,6 +77,7 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
   const [genre, setGenre] = useState("");
   const [languages, setLanguages] = useState("");
   const [gender, setGender] = useState("Мужской");
+  const [timbres, setTimbres] = useState<string[]>(["Не указано"]);
   const [duration, setDuration] = useState("Кратковременная роль");
   const [description, setDescription] = useState("");
   const [fragment, setFragment] = useState("");
@@ -172,6 +180,8 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
         setLanguages(ann.languages);
         const g = ann.gender;
         setGender(GENDER_OPTIONS.includes(g as (typeof GENDER_OPTIONS)[number]) ? g : "Мужской");
+        const loadedTimbres = Array.isArray(ann.timbres) ? ann.timbres.filter((t): t is string => typeof t === "string") : [];
+        setTimbres(loadedTimbres.length > 0 ? loadedTimbres : ["Не указано"]);
         setDuration(ann.duration === "Долгосрочная роль" ? "Долгосрочная роль" : "Кратковременная роль");
         setDescription(ann.description);
         setFragment(ann.fragment);
@@ -241,6 +251,7 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
           genre,
           languages,
           gender,
+          timbres,
           duration,
           description,
           fragment,
@@ -381,6 +392,30 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
             }}
           />
           {fieldErrors.gender ? <span className="field-error">{fieldErrors.gender}</span> : null}
+        </div>
+
+        <div className="form-group">
+          <span className="form-label-block">Тембр</span>
+          <p style={{ marginTop: 0, marginBottom: 8, fontSize: 13, color: "#555" }}>
+            Можно выбрать несколько. «Не указано» нельзя сочетать с другими тембрами.
+          </p>
+          <div className="filter-tags">
+            {ANNOUNCEMENT_TIMBRE_OPTIONS.map((option) => (
+              <label key={option} className="filter-tag">
+                <input
+                  type="checkbox"
+                  checked={timbres.includes(option)}
+                  onChange={() => {
+                    setTimbres((prev) => toggleAnnouncementTimbreSelection(prev, option));
+                    clearFieldError("timbres");
+                    setError(null);
+                  }}
+                />
+                <span>{option}</span>
+              </label>
+            ))}
+          </div>
+          {fieldErrors.timbres ? <span className="field-error">{fieldErrors.timbres}</span> : null}
         </div>
 
         <div className="form-group">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
+import { formatAnnouncementTimbresDisplay } from "@/lib/announcementTimbres";
 import { buildGenreIconUrl, buildStorageUrl } from "@/lib/media";
 import { setSuccessFlash } from "@/lib/flash";
 import StatusDropdown from "@/components/StatusDropdown";
@@ -18,6 +19,7 @@ type Announcement = {
   genre_icon?: string | null;
   languages: string;
   gender: string;
+  timbres?: string[];
   duration: string;
   description: string;
   fragment: string;
@@ -469,6 +471,9 @@ export default function AnnouncementDetailPage({
           </div>
           <div className="info-item">
             <strong>Голос озвучивания:</strong> {announcement.gender}
+          </div>
+          <div className="info-item">
+            <strong>Тембр:</strong> {formatAnnouncementTimbresDisplay(announcement.timbres)}
           </div>
           <div className="info-item">
             <strong>Срок:</strong> {announcement.duration}

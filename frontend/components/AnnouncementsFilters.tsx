@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { ANNOUNCEMENT_TIMBRE_OPTIONS } from "@/lib/announcementTimbres";
 
 const GENRE_PREVIEW_COUNT = 6;
 
@@ -16,6 +17,7 @@ type AnnouncementsFiltersProps = {
   typeGameChecked: boolean;
   selectedGenres: string[];
   selectedGenders: string[];
+  selectedTimbres: string[];
   selectedSearch: string;
 };
 
@@ -25,6 +27,7 @@ export default function AnnouncementsFilters({
   typeGameChecked,
   selectedGenres,
   selectedGenders,
+  selectedTimbres,
   selectedSearch,
 }: AnnouncementsFiltersProps) {
   const [genresExpanded, setGenresExpanded] = useState(() =>
@@ -132,6 +135,26 @@ export default function AnnouncementsFilters({
             />
             <span>Детский</span>
           </label>
+        </div>
+      </div>
+
+      <div className="filter-divider"></div>
+
+      <div className="filter-section">
+        <h3 className="filter-title">Тембр</h3>
+        <div className="filter-tags filter-tags-grid">
+          {ANNOUNCEMENT_TIMBRE_OPTIONS.map((option) => (
+            <label key={option} className="filter-tag">
+              <input
+                type="checkbox"
+                name="timbres[]"
+                value={option}
+                defaultChecked={selectedTimbres.includes(option)}
+                onChange={(event) => submitCurrentForm(event.currentTarget)}
+              />
+              <span>{option}</span>
+            </label>
+          ))}
         </div>
       </div>
 

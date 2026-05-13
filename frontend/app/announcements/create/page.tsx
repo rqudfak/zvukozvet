@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { fetchApi } from "@/lib/api";
+import {
+  ANNOUNCEMENT_TIMBRE_OPTIONS,
+  toggleAnnouncementTimbreSelection,
+} from "@/lib/announcementTimbres";
 import { setSuccessFlash } from "@/lib/flash";
 import StatusDropdown from "@/components/StatusDropdown";
 
@@ -22,6 +26,7 @@ export default function CreateAnnouncementPage() {
   const [type, setType] = useState("Книга");
   const [genre, setGenre] = useState("");
   const [gender, setGender] = useState("Мужской");
+  const [timbres, setTimbres] = useState<string[]>(["Не указано"]);
   const [duration, setDuration] = useState("Кратковременная роль");
 
   const availableGenres = useMemo(
@@ -75,6 +80,7 @@ export default function CreateAnnouncementPage() {
           genre,
           languages: formData.get("languages"),
           gender,
+          timbres,
           duration,
           description: formData.get("description"),
           fragment: formData.get("fragment"),
@@ -126,6 +132,24 @@ export default function CreateAnnouncementPage() {
         <div className="form-group">
           <label htmlFor="gender">Голос озвучивания</label>
           <StatusDropdown id="gender" value={gender} options={GENDER_OPTIONS} onChange={setGender} />
+        </div>
+        <div className="form-group">
+          <span className="form-label-block">Тембр</span>
+          <p className="form-hint" style={{ marginTop: 0, marginBottom: 8, fontSize: 13, color: "#555" }}>
+            Можно выбрать несколько. «Не указано» нельзя сочетать с другими тембрами.
+          </p>
+          <div className="filter-tags">
+            {ANNOUNCEMENT_TIMBRE_OPTIONS.map((option) => (
+              <label key={option} className="filter-tag">
+                <input
+                  type="checkbox"
+                  checked={timbres.includes(option)}
+                  onChange={() => setTimbres((prev) => toggleAnnouncementTimbreSelection(prev, option))}
+                />
+                <span>{option}</span>
+              </label>
+            ))}
+          </div>
         </div>
         <div className="form-group">
           <label htmlFor="duration">Длительность роли</label>

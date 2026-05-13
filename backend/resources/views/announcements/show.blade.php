@@ -49,6 +49,9 @@
             <strong>Голос озвучивания:</strong> {{ $announcement->gender }}
         </div>
         <div class="info-item">
+            <strong>Тембр:</strong> {{ implode(', ', is_array($announcement->timbres) && count($announcement->timbres) ? $announcement->timbres : ['Не указано']) }}
+        </div>
+        <div class="info-item">
             <strong>Срок:</strong> {{ $announcement->duration }}
         </div>
     </div>

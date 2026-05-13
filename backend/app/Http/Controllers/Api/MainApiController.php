@@ -349,6 +349,17 @@ class MainApiController extends Controller
             $query->whereIn('gender', $genders);
         }
 
+        $allowedTimbres = Announcement::TIMBRE_VALUES;
+        $timbresFromForm = array_values(array_filter((array) $request->input('timbres', []), static fn ($v) => is_string($v) && $v !== ''));
+        $timbresFromForm = array_values(array_intersect($allowedTimbres, $timbresFromForm));
+        if ($timbresFromForm !== []) {
+            $query->where(function ($q) use ($timbresFromForm) {
+                foreach ($timbresFromForm as $timbre) {
+                    $q->orWhereJsonContains('timbres', $timbre);
+                }
+            });
+        }
+
         if ($request->filled('search')) {
             $term = mb_strtolower($request->string('search')->toString(), 'UTF-8');
             $query->whereRaw('LOWER(title) LIKE ?', ['%' . $term . '%']);
@@ -360,6 +371,9 @@ class MainApiController extends Controller
             ->pluck('icon', 'name');
         $paginator->getCollection()->transform(function (Announcement $announcement) use ($iconsByGenreName) {
             $this->hydrateAnnouncementGenreIcon($announcement, $iconsByGenreName);
+            if ($announcement->timbres === null) {
+                $announcement->setAttribute('timbres', ['Не указано']);
+            }
 
             return $announcement;
         });
@@ -398,6 +412,9 @@ class MainApiController extends Controller
 
         $announcement->load('user:id,name');
         $this->hydrateAnnouncementGenreIcon($announcement);
+        if ($announcement->timbres === null) {
+            $announcement->setAttribute('timbres', ['Не указано']);
+        }
 
         $responses = collect();
         $userResponse = null;
@@ -566,7 +583,13 @@ class MainApiController extends Controller
             'duration' => 'required|in:Кратковременная роль,Долгосрочная роль',
             'description' => 'required|string',
             'fragment' => 'required|string',
+            'timbres' => 'nullable|array',
+            'timbres.*' => 'string|in:' . implode(',', Announcement::TIMBRE_VALUES),
         ]);
+
+        $timbresInput = $validated['timbres'] ?? [];
+        unset($validated['timbres']);
+        $validated['timbres'] = Announcement::normalizeTimbres($timbresInput);
 
         $validated['user_id'] = $request->user()->id;
         $validated['color'] = Announcement::getColorByGenre($validated['genre']);
@@ -618,6 +641,8 @@ class MainApiController extends Controller
             'duration.in' => 'Выберите «Кратковременная роль» или «Долгосрочная роль».',
             'description.required' => 'Введите описание.',
             'fragment.required' => 'Введите текст для озвучивания.',
+            'timbres.array' => 'Тембры должны быть переданы списком.',
+            'timbres.*.in' => 'Выбран недопустимый тембр.',
         ];
 
         $validated = $request->validate([
@@ -629,7 +654,13 @@ class MainApiController extends Controller
             'duration' => 'required|in:Кратковременная роль,Долгосрочная роль',
             'description' => 'required|string',
             'fragment' => 'required|string',
+            'timbres' => 'nullable|array',
+            'timbres.*' => 'string|in:' . implode(',', Announcement::TIMBRE_VALUES),
         ], $messages);
+
+        $timbresInput = $validated['timbres'] ?? [];
+        unset($validated['timbres']);
+        $validated['timbres'] = Announcement::normalizeTimbres($timbresInput);
 
         $validated['color'] = Announcement::getColorByGenre($validated['genre']);
         $validated['genre_icon'] = Announcement::getIconByGenre($validated['genre']);
@@ -721,7 +752,7 @@ class MainApiController extends Controller
             'name' => 'required|string|max:255',
             'gender' => 'required|in:Мужской,Женский,Не указано',
             'language' => 'required|string|max:255',
-            'timbre' => 'required|in:Тенор,Баритон,Бас,Сопрано,Меццо-сопрано,Контральто,Не указано',
+            'timbre' => 'required|in:Тенор,Баритон,Бас,Дискант,Альт,Сопрано,Меццо-сопрано,Контральто,Не указано',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 

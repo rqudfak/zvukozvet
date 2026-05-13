@@ -93,7 +93,13 @@ class AnnouncementController extends Controller
             'duration' => 'required|in:Кратковременная роль,Долгосрочная роль',
             'description' => 'required|string',
             'fragment' => 'required|string',
+            'timbres' => 'nullable|array',
+            'timbres.*' => 'string|in:' . implode(',', Announcement::TIMBRE_VALUES),
         ]);
+
+        $timbresInput = $validated['timbres'] ?? [];
+        unset($validated['timbres']);
+        $validated['timbres'] = Announcement::normalizeTimbres($timbresInput);
 
         $validated['user_id'] = Auth::id();
         $validated['color'] = Announcement::getColorByGenre($validated['genre']);
@@ -194,7 +200,13 @@ class AnnouncementController extends Controller
             'duration' => 'required|in:Кратковременная роль,Долгосрочная роль',
             'description' => 'required|string',
             'fragment' => 'required|string',
+            'timbres' => 'nullable|array',
+            'timbres.*' => 'string|in:' . implode(',', Announcement::TIMBRE_VALUES),
         ]);
+
+        $timbresInput = $validated['timbres'] ?? [];
+        unset($validated['timbres']);
+        $validated['timbres'] = Announcement::normalizeTimbres($timbresInput);
 
         $validated['color'] = Announcement::getColorByGenre($validated['genre']);
         $validated['genre_icon'] = Announcement::getIconByGenre($validated['genre']);
