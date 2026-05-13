@@ -37,9 +37,8 @@
 .profile-card-head {
     position: relative;
     margin: 0 auto;
-    width: 80%;
-    padding: 28px 28px 26px;
-    border-radius: var(--profile-radius) var(--profile-radius) 0 0;
+    width: 85%;
+    padding: 28px;
 }
 
 .profile-card-head .profile-header {
@@ -57,7 +56,7 @@
 }
 
 .profile-card-head:has(.profile-head-toolbar) .profile-info {
-    padding-right: 5.75rem;
+    padding-right: 4.75rem;
 }
 
 .profile-icon-link {
@@ -195,18 +194,12 @@
 .profile-info p {
     margin: 6px 0;
     line-height: 1.45;
-    color: var(--profile-purple);
-}
-
-.profile-info strong {
-    color: var(--profile-purple);
 }
 
 .profile-name {
     font-size: 22px;
     font-weight: 700;
     margin-bottom: 8px !important;
-    color: var(--profile-purple);
 }
 
 .profile-meta-block {
