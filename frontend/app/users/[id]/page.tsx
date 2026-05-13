@@ -478,30 +478,32 @@ export default function UserPage() {
 
   return (
     <>
-      <div className="profile-card">
+      <div className="profile-page-heading">
         <h2 className="page-title">Профиль</h2>
         {canEdit ? (
-            <div className="profile-head-toolbar" role="toolbar" aria-label="Действия с профилем">
-              <Link
-                href={`/users/${params.id}/edit`}
-                className="profile-icon-link"
-                title="Редактировать профиль"
-                aria-label="Редактировать профиль"
-              >
-                <img src="/img/edit.svg" alt="" className="profile-icon-img profile-icon-img--rest" decoding="async" />
-                <img src="/img/edit-hover.svg" alt="" className="profile-icon-img profile-icon-img--hover" decoding="async" />
-              </Link>
-              <Link
-                href={`/users/${params.id}/security`}
-                className="profile-icon-link"
-                title="Безопасность аккаунта"
-                aria-label="Безопасность аккаунта"
-              >
-                <img src="/img/settings.svg" alt="" className="profile-icon-img profile-icon-img--rest" decoding="async" />
-                <img src="/img/settings-hover.svg" alt="" className="profile-icon-img profile-icon-img--hover" decoding="async" />
-              </Link>
-            </div>
-          ) : null}
+          <div className="profile-head-toolbar" role="toolbar" aria-label="Действия с профилем">
+            <Link
+              href={`/users/${params.id}/edit`}
+              className="profile-icon-link"
+              title="Редактировать профиль"
+              aria-label="Редактировать профиль"
+            >
+              <img src="/img/edit.svg" alt="" className="profile-icon-img profile-icon-img--rest" decoding="async" />
+              <img src="/img/edit-hover.svg" alt="" className="profile-icon-img profile-icon-img--hover" decoding="async" />
+            </Link>
+            <Link
+              href={`/users/${params.id}/security`}
+              className="profile-icon-link"
+              title="Безопасность аккаунта"
+              aria-label="Безопасность аккаунта"
+            >
+              <img src="/img/settings.svg" alt="" className="profile-icon-img profile-icon-img--rest" decoding="async" />
+              <img src="/img/settings-hover.svg" alt="" className="profile-icon-img profile-icon-img--hover" decoding="async" />
+            </Link>
+          </div>
+        ) : null}
+      </div>
+      <div className="profile-card">
         <div className="profile-card-head">
           
           <div className="profile-header">
