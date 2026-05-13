@@ -240,6 +240,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    justify-content: space-around;
     margin-bottom: 18px;
     padding-bottom: 0;
     border-bottom: 2px solid var(--profile-lavender);
@@ -255,7 +256,6 @@
     font-size: 14px;
     font-weight: 600;
     font-family: inherit;
-    color: var(--profile-purple-muted);
     transition: background 0.2s ease, color 0.2s ease;
 }
 
@@ -905,6 +905,7 @@
     cursor: pointer;
     color: var(--profile-purple);
     font-family: inherit;
+    font-size: 14px;
 }
 
 .pagination button:hover {
