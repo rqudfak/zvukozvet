@@ -47,6 +47,8 @@
                 <option value="Тенор" {{ old('timbre', $user->timbre) === 'Тенор' ? 'selected' : '' }}>Тенор</option>
                 <option value="Баритон" {{ old('timbre', $user->timbre) === 'Баритон' ? 'selected' : '' }}>Баритон</option>
                 <option value="Бас" {{ old('timbre', $user->timbre) === 'Бас' ? 'selected' : '' }}>Бас</option>
+                <option value="Дискант" {{ old('timbre', $user->timbre) === 'Дискант' ? 'selected' : '' }}>Дискант</option>
+                <option value="Альт" {{ old('timbre', $user->timbre) === 'Альт' ? 'selected' : '' }}>Альт</option>
                 <option value="Сопрано" {{ old('timbre', $user->timbre) === 'Сопрано' ? 'selected' : '' }}>Сопрано</option>
                 <option value="Меццо-сопрано" {{ old('timbre', $user->timbre) === 'Меццо-сопрано' ? 'selected' : '' }}>Меццо-сопрано</option>
                 <option value="Контральто" {{ old('timbre', $user->timbre) === 'Контральто' ? 'selected' : '' }}>Контральто</option>

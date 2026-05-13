@@ -15,7 +15,17 @@ type UserPayload = {
 };
 
 const GENDER_OPTIONS = ["Мужской", "Женский", "Не указано"];
-const TIMBRE_OPTIONS = ["Тенор", "Баритон", "Бас", "Сопрано", "Меццо-сопрано", "Контральто", "Не указано"];
+const TIMBRE_OPTIONS = [
+  "Тенор",
+  "Баритон",
+  "Бас",
+  "Дискант",
+  "Альт",
+  "Сопрано",
+  "Меццо-сопрано",
+  "Контральто",
+  "Не указано",
+];
 
 export default function EditUserPage() {
   const params = useParams<{ id: string }>();

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { fetchApi } from "@/lib/api";
 import { buildGenreIconUrl } from "@/lib/media";
+import { formatAnnouncementTimbresDisplay } from "@/lib/announcementTimbres";
 import CreateAnnouncementButton from "@/components/CreateAnnouncementButton";
 import AnnouncementsFilters from "@/components/AnnouncementsFilters";
 
@@ -13,6 +14,7 @@ type Announcement = {
   genre_icon?: string | null;
   languages: string;
   gender: string;
+  timbres?: string[];
   duration: string;
   description: string;
   created_at: string;
@@ -87,6 +89,14 @@ export default async function Home({
     ),
   );
   const selectedSearch = (resolved.search as string) ?? "";
+  const selectedTimbres = Array.from(
+    new Set(
+      [
+        ...valueToArray(resolved.timbres as string | string[] | undefined),
+        ...valueToArray(resolved["timbres[]"] as string | string[] | undefined),
+      ].filter((value): value is string => typeof value === "string" && value.length > 0),
+    ),
+  );
 
   return (
     <div className="home-announcements">
@@ -126,6 +136,7 @@ export default async function Home({
             typeGameChecked={typeGameChecked}
             selectedGenres={selectedGenres}
             selectedGenders={selectedGenders}
+            selectedTimbres={selectedTimbres}
             selectedSearch={selectedSearch}
           />
         </div>
@@ -180,6 +191,10 @@ export default async function Home({
                   <div className="detail-item">
                     <span className="detail-label">Голос озвучивания:</span>
                     <span className="detail-value">{announcement.gender}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Тембр:</span>
+                    <span className="detail-value">{formatAnnouncementTimbresDisplay(announcement.timbres)}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Срок:</span>

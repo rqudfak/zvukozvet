@@ -70,7 +70,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'gender' => 'required|in:Мужской,Женский,Не указано',
             'language' => 'required|string|max:255',
-            'timbre' => 'required|in:Тенор,Баритон,Бас,Сопрано,Меццо-сопрано,Контральто,Не указано',
+            'timbre' => 'required|in:Тенор,Баритон,Бас,Дискант,Альт,Сопрано,Меццо-сопрано,Контральто,Не указано',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
