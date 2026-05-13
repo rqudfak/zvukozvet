@@ -1,12 +1,16 @@
-/* Профиль — визуальный стиль доски объявлений и шапки (крем, фиолетовый, оранжевый акцент) */
+/* Профиль — акценты верхнего блока: #F1642E, #C4C3E3, #FFC44B, #A3B565 */
 :root {
     --profile-purple: #504e76;
     --profile-purple-muted: #625e8e;
-    --profile-accent: #f1642e;
+    --acc-orange: #f1642e;
+    --acc-lavender: #c4c3e3;
+    --acc-gold: #ffc44b;
+    --acc-sage: #a3b565;
+    --profile-accent: var(--acc-orange);
     --profile-accent-hover: #e55a28;
     --profile-cream: #fdf8e2;
     --profile-cream-deep: #f5efd5;
-    --profile-lavender: #c4c3e3;
+    --profile-lavender: var(--acc-lavender);
     --profile-lavender-soft: #eae8f3;
     --profile-border: #e0dde8;
     --profile-shadow: 0 4px 14px rgba(80, 78, 118, 0.14);
@@ -20,13 +24,30 @@
     font-size: 22px;
     font-weight: 700;
     color: var(--profile-purple);
+    padding-left: 14px;
+    border-left: 4px solid var(--acc-gold);
 }
 
 .profile-card {
+    background: #fff;
     border-radius: var(--profile-radius);
     box-shadow: var(--profile-shadow);
     padding: 26px 28px;
     margin-bottom: 30px;
+}
+
+/* Верх профиля (до вкладок): только палитра акцентов */
+.profile-card-head {
+    margin: -26px -28px 24px;
+    padding: 28px 28px 26px;
+    border-radius: var(--profile-radius) var(--profile-radius) 0 0;
+    background: linear-gradient(155deg, rgba(255, 196, 75, 0.18) 0%, rgba(196, 195, 227, 0.16) 38%, #fff 92%);
+    box-shadow: inset 4px 0 0 var(--acc-orange);
+    border-bottom: 2px solid var(--acc-lavender);
+}
+
+.profile-card-head .profile-header {
+    margin-bottom: 0;
 }
 
 .profile-header {
@@ -130,20 +151,11 @@
     font-weight: 600;
     border: none;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.15s ease;
+    transition: filter 0.2s ease, transform 0.15s ease;
 }
 
 .btn-edit-profile:hover {
-    background: var(--profile-accent-hover);
-    color: #fff !important;
-}
-
-.btn-edit-profile.is-following {
-    background: var(--profile-purple-muted);
-}
-
-.btn-edit-profile.is-following:hover {
-    background: var(--profile-purple);
+    filter: brightness(0.93);
     color: #fff !important;
 }
 
@@ -188,11 +200,6 @@
     background: #fff;
 }
 
-.password-confirm input:focus {
-    outline: none;
-    border-color: var(--profile-accent);
-}
-
 .btn-security {
     padding: 10px 18px;
     border: none;
@@ -201,7 +208,7 @@
     cursor: pointer;
     font-size: 14px;
     font-family: inherit;
-    transition: background 0.2s ease;
+    transition: filter 0.2s ease;
 }
 
 .btn-security.enable {
@@ -210,7 +217,7 @@
 }
 
 .btn-security.enable:hover {
-    background: var(--profile-accent-hover);
+    filter: brightness(0.93);
 }
 
 .btn-security.disable {
@@ -219,27 +226,7 @@
 }
 
 .btn-security.disable:hover {
-    background: #b4b2d6;
-}
-
-.badge-success {
-    display: inline-block;
-    padding: 6px 12px;
-    background: #e8f5e9;
-    color: #2e7d32;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.badge-warning {
-    display: inline-block;
-    padding: 6px 12px;
-    background: #fff3e0;
-    color: #e65100;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 600;
+    filter: brightness(0.94);
 }
 
 .security-status {
@@ -258,6 +245,101 @@
     margin: 8px 0 0;
     font-size: 14px;
     color: var(--profile-purple-muted);
+}
+
+/* Акценты палитры только в верхней части карточки (перебивают базовые стили выше) */
+.profile-card-head .profile-avatar {
+    border: 3px solid var(--acc-lavender);
+    background: linear-gradient(145deg, rgba(255, 196, 75, 0.12), rgba(196, 195, 227, 0.18));
+    box-shadow: 0 4px 14px rgba(80, 78, 118, 0.12);
+}
+
+.profile-card-head .profile-avatar-placeholder {
+    border-color: var(--acc-lavender);
+    background: linear-gradient(145deg, rgba(255, 196, 75, 0.12), rgba(196, 195, 227, 0.2));
+}
+
+.profile-card-head .profile-achievements-bar {
+    background: rgba(196, 195, 227, 0.38);
+    border: 1px solid rgba(196, 195, 227, 0.65);
+}
+
+.profile-card-head .profile-achievements-bar-fill {
+    background: linear-gradient(90deg, var(--acc-sage) 0%, var(--acc-orange) 100%);
+}
+
+.profile-card-head .btn-edit-profile {
+    background: var(--acc-orange);
+}
+
+.profile-card-head .btn-edit-profile:hover {
+    filter: brightness(0.93);
+}
+
+.profile-card-head .btn-edit-profile.is-following {
+    background: var(--acc-lavender);
+    color: var(--profile-purple) !important;
+}
+
+.profile-card-head .btn-edit-profile.is-following:hover {
+    background: var(--acc-lavender);
+    filter: brightness(0.94);
+    color: var(--profile-purple) !important;
+}
+
+.profile-card-head .profile-security-section {
+    border-top-color: rgba(196, 195, 227, 0.7);
+}
+
+.profile-card-head .profile-security-section h4 {
+    padding-left: 12px;
+    border-left: 3px solid var(--acc-gold);
+}
+
+.profile-card-head .password-confirm input:focus {
+    outline: none;
+    border-color: var(--acc-gold);
+    box-shadow: 0 0 0 2px rgba(255, 196, 75, 0.35);
+}
+
+.profile-card-head .btn-security.enable {
+    background: var(--acc-orange);
+    color: #fff;
+}
+
+.profile-card-head .btn-security.enable:hover {
+    filter: brightness(0.93);
+}
+
+.profile-card-head .btn-security.disable {
+    background: var(--acc-lavender);
+    color: var(--profile-purple);
+}
+
+.profile-card-head .btn-security.disable:hover {
+    filter: brightness(0.94);
+}
+
+.profile-card-head .badge-success {
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(163, 181, 101, 0.38);
+    color: var(--profile-purple);
+    border: 1px solid rgba(163, 181, 101, 0.65);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.profile-card-head .badge-warning {
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(255, 196, 75, 0.4);
+    color: var(--profile-purple);
+    border: 1px solid rgba(255, 196, 75, 0.75);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 /* Вкладки */
@@ -317,7 +399,7 @@
 .portfolio-upload {
     margin-bottom: 28px;
     padding: 18px 20px;
-    background: var(--profile-lavender-soft);
+    background: #C4C3E3;
     border: 1px solid var(--profile-border);
     border-radius: var(--profile-radius);
     display: flex;
@@ -566,6 +648,11 @@
         padding: 18px 16px;
     }
 
+    .profile-card-head {
+        margin: -18px -16px 20px;
+        padding: 22px 16px 20px;
+    }
+
     .profile-header {
         flex-direction: column;
         align-items: center;
@@ -641,8 +728,8 @@
 }
 
 .review-avatar {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     border: 2px solid var(--profile-lavender);
     object-fit: cover;
