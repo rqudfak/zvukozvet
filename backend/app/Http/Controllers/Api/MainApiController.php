@@ -785,6 +785,9 @@ class MainApiController extends Controller
     {
         $request->validate([
             'password' => 'required|string',
+        ], [
+            'password.required' => 'Введите текущий пароль.',
+            'password.string' => 'Пароль указан в неверном формате.',
         ]);
 
         if (!Hash::check((string) $request->input('password'), $request->user()->password)) {
@@ -802,6 +805,9 @@ class MainApiController extends Controller
     {
         $request->validate([
             'password' => 'required|string',
+        ], [
+            'password.required' => 'Введите текущий пароль.',
+            'password.string' => 'Пароль указан в неверном формате.',
         ]);
 
         if (!Hash::check((string) $request->input('password'), $request->user()->password)) {

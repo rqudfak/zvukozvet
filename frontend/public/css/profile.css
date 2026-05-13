@@ -159,86 +159,39 @@
     color: #fff !important;
 }
 
-/* Безопасность (2FA) */
-.profile-security-section {
-    margin-top: 22px;
-    padding-top: 22px;
-    border-top: 1px solid var(--profile-border);
-}
-
-.profile-security-section h4 {
-    font-size: 16px;
-    font-weight: 700;
-    margin: 0 0 14px;
-    color: var(--profile-purple);
-}
-
-.security-note {
-    font-size: 14px;
-    color: var(--profile-purple-muted);
-    margin: 8px 0 0;
-    line-height: 1.45;
-}
-
-.password-confirm {
+.profile-edit-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 12px;
+    gap: 12px;
     align-items: center;
+    margin-top: 16px;
 }
 
-.password-confirm input {
-    flex: 1;
-    min-width: 180px;
-    padding: 10px 12px;
-    border: 1px solid var(--profile-border);
-    border-radius: var(--profile-radius);
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--profile-purple);
-    background: #fff;
+.profile-card-head .profile-edit-actions {
+    margin-top: 16px;
 }
 
-.btn-security {
-    padding: 10px 18px;
-    border: none;
+.profile-edit-actions .btn-edit-profile {
+    margin-top: 0;
+}
+
+.btn-profile-security {
+    display: inline-block;
+    padding: 10px 22px;
+    background: transparent;
+    color: var(--profile-purple) !important;
+    text-decoration: none;
     border-radius: var(--profile-radius);
     font-weight: 600;
+    border: 2px solid var(--acc-lavender);
     cursor: pointer;
-    font-size: 14px;
-    font-family: inherit;
-    transition: filter 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
-.btn-security.enable {
-    background: var(--profile-accent);
-    color: #fff;
-}
-
-.btn-security.enable:hover {
-    filter: brightness(0.93);
-}
-
-.btn-security.disable {
-    background: var(--profile-lavender);
-    color: var(--profile-purple);
-}
-
-.btn-security.disable:hover {
-    filter: brightness(0.94);
-}
-
-.security-status {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.profile-security-section > p {
-    margin: 10px 0 0;
-    font-size: 14px;
-    color: var(--profile-purple-muted);
+.btn-profile-security:hover {
+    border-color: var(--acc-orange);
+    color: var(--acc-orange) !important;
+    background: rgba(255, 196, 75, 0.14);
 }
 
 .portfolio-upload > p {
@@ -287,61 +240,6 @@
     color: var(--profile-purple) !important;
 }
 
-.profile-card-head .profile-security-section {
-    border-top-color: rgba(196, 195, 227, 0.7);
-}
-
-.profile-card-head .profile-security-section h4 {
-    padding-left: 12px;
-    border-left: 3px solid var(--acc-gold);
-}
-
-.profile-card-head .password-confirm input:focus {
-    outline: none;
-    border-color: var(--acc-gold);
-    box-shadow: 0 0 0 2px rgba(255, 196, 75, 0.35);
-}
-
-.profile-card-head .btn-security.enable {
-    background: var(--acc-orange);
-    color: #fff;
-}
-
-.profile-card-head .btn-security.enable:hover {
-    filter: brightness(0.93);
-}
-
-.profile-card-head .btn-security.disable {
-    background: var(--acc-lavender);
-    color: var(--profile-purple);
-}
-
-.profile-card-head .btn-security.disable:hover {
-    filter: brightness(0.94);
-}
-
-.profile-card-head .badge-success {
-    display: inline-block;
-    padding: 6px 12px;
-    background: rgba(163, 181, 101, 0.38);
-    color: var(--profile-purple);
-    border: 1px solid rgba(163, 181, 101, 0.65);
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.profile-card-head .badge-warning {
-    display: inline-block;
-    padding: 6px 12px;
-    background: rgba(255, 196, 75, 0.4);
-    color: var(--profile-purple);
-    border: 1px solid rgba(255, 196, 75, 0.75);
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
 /* Вкладки */
 .profile-tabs {
     display: flex;
@@ -373,7 +271,6 @@
 
 .profile-tab.active {
     background: var(--profile-cream);
-    color: var(--profile-purple);
     font-weight: 700;
     border-color: var(--profile-border);
     border-bottom: 2px solid var(--profile-cream);
@@ -681,19 +578,6 @@
         white-space: nowrap;
         font-size: 13px;
         padding: 8px 12px;
-    }
-
-    .password-confirm {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .password-confirm input {
-        min-width: 0;
-    }
-
-    .btn-security {
-        width: 100%;
     }
 }
 

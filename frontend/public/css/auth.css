@@ -221,6 +221,35 @@
     margin-bottom: 0;
 }
 
+/* Настройки 2FA в аккаунте (/users/…/security) */
+.auth-block .two-factor-status {
+    max-width: 320px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    text-align: left;
+    border: 1px solid #c4c3e3;
+}
+
+.auth-block .two-factor-status p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
+    color: #504e76;
+}
+
+.auth-block .two-factor-status--on {
+    background: rgba(163, 181, 101, 0.28);
+    border-color: #a3b565;
+}
+
+.auth-block .two-factor-status--off {
+    background: rgba(255, 196, 75, 0.22);
+    border-color: #ffc44b;
+}
+
 .auth-block .two-factor-footer {
     text-align: center;
     margin-top: 20px;
