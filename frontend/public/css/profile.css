@@ -28,6 +28,24 @@
     border-radius: 8px;
     object-fit: cover;
     background: #eee;
+    flex-shrink: 0;
+    vertical-align: middle;
+    /* Растровое фото, не «пиксельная» интерполяция как у пиксель-арта */
+    image-rendering: auto;
+    /* Часто убирает «мыльность» при масштабировании в отдельном композитном слое (Chromium) */
+    transform: translateZ(0);
+}
+
+@supports (image-rendering: smooth) {
+    .profile-avatar {
+        image-rendering: smooth;
+    }
+}
+
+@supports (image-rendering: high-quality) {
+    .profile-avatar {
+        image-rendering: high-quality;
+    }
 }
 
 .profile-avatar-placeholder {
@@ -394,12 +412,28 @@
 }
 
 .review-avatar {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 1px solid #d8d8e6;
     object-fit: cover;
     background: #f3f3f8;
+    flex-shrink: 0;
+    vertical-align: middle;
+    image-rendering: auto;
+    transform: translateZ(0);
+}
+
+@supports (image-rendering: smooth) {
+    .review-avatar {
+        image-rendering: smooth;
+    }
+}
+
+@supports (image-rendering: high-quality) {
+    .review-avatar {
+        image-rendering: high-quality;
+    }
 }
 
 .review-avatar-placeholder {
