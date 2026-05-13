@@ -223,7 +223,7 @@ export default function HeaderNav() {
               <>
                 {isAdmin ? (
                   <li>
-                    <Link href="/admin">Админка</Link>
+                    <Link href="/admin">Админ-панель</Link>
                   </li>
                 ) : null}
                 <li className="notif" ref={notifRef}>

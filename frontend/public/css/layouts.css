@@ -192,6 +192,7 @@ nav ul {
 nav li a, .btn-auth {
     color: white;
     font-family: "Source Code Pro", monospace;
+    transition: color 0.2s;
 }
 nav li a:active, nav li a:hover, .btn-auth:active, .btn-auth:hover {
     color: #F1642E;

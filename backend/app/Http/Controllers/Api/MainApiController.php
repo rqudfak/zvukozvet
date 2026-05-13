@@ -367,11 +367,6 @@ class MainApiController extends Controller
         return response()->json($paginator);
     }
 
-    /**
-     * Подставить актуальную иконку жанра из справочника (в т.ч. если в объявлении поле пустое).
-     *
-     * @param  \Illuminate\Support\Collection<string, string|null>|null  $iconsByGenreName
-     */
     private function hydrateAnnouncementGenreIcon(Announcement $announcement, $iconsByGenreName = null): void
     {
         if ($iconsByGenreName !== null) {
@@ -429,7 +424,6 @@ class MainApiController extends Controller
             }
         }
 
-        // Всегда отдаём фронту (в т.ч. гостям), иначе нельзя скрыть форму отклика на закрытом объявлении.
         $acceptedResponseId = AnnouncementResponse::query()
             ->where('announcement_id', $announcement->id)
             ->where('status', 'Принято')

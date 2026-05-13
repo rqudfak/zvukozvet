@@ -450,6 +450,7 @@
         width: min(380px, 100%);
         max-width: 100%;
         box-sizing: border-box;
+        height: auto;
     }
 
     .home-announcements .announcement-title-row {
