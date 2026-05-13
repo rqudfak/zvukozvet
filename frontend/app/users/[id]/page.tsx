@@ -464,7 +464,8 @@ export default function UserPage() {
     <>
       <h2 className="page-title">Профиль</h2>
       <div className="profile-card">
-        <div className="profile-header">
+        <div className="profile-card-head">
+          <div className="profile-header">
           <div className="profile-avatar-wrap">
             {payload.user.avatar ? (
               <img
@@ -574,6 +575,7 @@ export default function UserPage() {
                 {securityMessage ? <p>{securityMessage}</p> : null}
               </div>
             ) : null}
+          </div>
           </div>
         </div>
 
