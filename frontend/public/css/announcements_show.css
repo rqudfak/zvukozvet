@@ -508,14 +508,12 @@
 }
 
 .review-rating-stars-field {
-    margin-bottom: 12px;
+    margin-bottom: 4px;
 }
 
 .review-rating-field-label {
     display: block;
-    margin-bottom: 8px;
     font-weight: 600;
-    color: #444365;
 }
 
 .review-rating-star-picker {
