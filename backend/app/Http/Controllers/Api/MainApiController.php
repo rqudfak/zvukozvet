@@ -776,6 +776,24 @@ class MainApiController extends Controller
         ]);
     }
 
+    public function destroyUserAvatar(Request $request, User $user)
+    {
+        if ($request->user()->id !== $user->id) {
+            return response()->json(['message' => 'Удалить аватар можно только в своём профиле'], 403);
+        }
+
+        if ($user->avatar && $user->avatar !== 'defult.png') {
+            Storage::disk('public')->delete('avatars/' . $user->avatar);
+        }
+
+        $user->forceFill(['avatar' => 'defult.png'])->save();
+
+        return response()->json([
+            'message' => 'Изображение профиля удалено',
+            'user' => $user->fresh(),
+        ]);
+    }
+
     public function updateMyProfile(Request $request)
     {
         return $this->updateUser($request, $request->user());
@@ -797,6 +815,8 @@ class MainApiController extends Controller
         $user = $request->user();
         $user->two_factor_enabled = true;
         $user->save();
+
+        return response()->json(['message' => 'Двухфакторная аутентификация успешно включена!']);
     }
 
     public function disableTwoFactor(Request $request)
