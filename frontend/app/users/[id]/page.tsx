@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildAchievementIconUrl, buildStorageUrl } from "@/lib/media";
-import { achievementCategorySpansFullWidth, groupAchievementsByCategory } from "@/lib/achievementCategories";
+import { groupAchievementsByCategory } from "@/lib/achievementCategories";
 
 type Review = {
   id: number;
@@ -1092,11 +1092,7 @@ export default function UserPage() {
           ) : (
             <div className="achievements-by-category">
               {achievementSections.map((section) => (
-                <section
-                  key={section.key}
-                  className={`achievement-category${achievementCategorySpansFullWidth(section.key) ? " achievement-category--span-full" : ""}`}
-                  aria-labelledby={`ach-cat-${section.key}`}
-                >
+                <section key={section.key} className="achievement-category" aria-labelledby={`ach-cat-${section.key}`}>
                   <h3 id={`ach-cat-${section.key}`} className="achievement-category-title">
                     {section.title}
                   </h3>
