@@ -898,8 +898,6 @@ class MainApiController extends Controller
 
         Storage::disk('public')->delete($portfolio_item->audio_path);
         $portfolio_item->delete();
-
-        return response()->json(['message' => 'Запись удалена']);
     }
 
     public function adminStatistics(Request $request)
