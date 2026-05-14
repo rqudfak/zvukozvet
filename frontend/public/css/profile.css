@@ -833,16 +833,21 @@
     color: var(--profile-accent);
 }
 
-/* Достижения */
+/* Достижения: секции в адаптивной сетке; «Отзывы» на всю ширину — «Портфолио» и «Активность» могут встать в один ряд */
 .achievements-by-category {
     display: grid;
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
-    justify-content: space-around;
-    gap: 16px 20px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px 20px;
+    align-items: start;
+}
+
+.achievement-category--span-full {
+    grid-column: 1 / -1;
 }
 
 .achievement-category {
     margin: 0;
+    min-width: 0;
 }
 
 .achievement-category-title {

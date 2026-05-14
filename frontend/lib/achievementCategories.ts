@@ -13,8 +13,8 @@ export const ACHIEVEMENT_CATEGORY_ORDER: {
   { key: "announcements", title: "Объявления" },
   { key: "responses", title: "Отклики" },
   { key: "portfolio", title: "Портфолио" },
-  { key: "reviews", title: "Отзывы" },
   { key: "activity", title: "Активность на сайте" },
+  { key: "reviews", title: "Отзывы" },
   { key: "other", title: "Прочее" },
 ];
 
@@ -58,4 +58,9 @@ export function groupAchievementsByCategory<T extends { id: number; code?: strin
     title,
     items: buckets.get(key)!,
   })).filter((section) => section.items.length > 0);
+}
+
+/** Широкие блоки (много карточек) — на всю ширину сетки, чтобы короткие секции могли стоять в одном ряду. */
+export function achievementCategorySpansFullWidth(key: AchievementCategoryKey): boolean {
+  return key === "reviews";
 }
