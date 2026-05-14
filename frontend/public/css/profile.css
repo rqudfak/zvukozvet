@@ -878,6 +878,7 @@
     gap: 16px;
 }
 
+/* Отзывы: ≥890px — одна строка; <890px — по 2 в ряд; узкие экраны — одна колонка как в остальных секциях */
 .achievements-grid--single-row {
     display: flex;
     flex-direction: row;
@@ -892,7 +893,28 @@
 
 .achievements-grid--single-row .achievement-item {
     flex: 1 1 0;
-    min-width: 128px;
+    min-width: 0;
+}
+
+@media (max-width: 889px) {
+    .achievements-grid--single-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        flex-wrap: unset;
+        overflow-x: visible;
+        padding-bottom: 0;
+    }
+
+    .achievements-grid--single-row .achievement-item {
+        flex: unset;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 520px) {
+    .achievements-grid--single-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 .achievement-item {
