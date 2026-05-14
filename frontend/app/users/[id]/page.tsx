@@ -686,7 +686,7 @@ export default function UserPage() {
                   Добавить
                 </button>
               </div>
-              {portfolioMessage ? <p>{portfolioMessage}</p> : null}
+              {portfolioMessage ? <p style={{ color: "#e74c3c"}}>{portfolioMessage}</p> : null}
             </div>
           ) : null}
           <div className="portfolio-list">
