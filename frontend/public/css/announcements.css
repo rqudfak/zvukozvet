@@ -475,8 +475,6 @@
     text-decoration: underline;
     font-weight: bold;
 }
-
-/* Главная: скрытый чекбокс — показ/скрытие фильтрации при ширине ≤900px */
 .home-filters-panel-checkbox {
     position: absolute;
     width: 1px;
@@ -526,7 +524,7 @@
     display: none;
 }
 
-@media (min-width: 901px) {
+@media (min-width: 1239px) {
     .home-filters-panel-toggle {
         display: none !important;
     }
@@ -576,7 +574,7 @@
     .home-announcements .announcements-main {
         flex-direction: column;
         align-items: stretch;
-        gap: 26px;
+        gap: 20px;
     }
 
     .home-announcements .filters-container {
@@ -584,7 +582,7 @@
         max-width: 100%;
         box-sizing: border-box;
         border-radius: 10px;
-        padding: 22px 20px 24px;
+        padding: 18px 16px 20px;
         box-shadow: 0 2px 14px rgba(80, 78, 118, 0.1);
         border: 1px solid rgba(80, 78, 118, 0.12);
     }
@@ -596,7 +594,7 @@
 
     .home-announcements .filter-tags-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 10px 12px;
     }
 
@@ -629,6 +627,7 @@
         max-width: none;
         margin: 0;
         box-sizing: border-box;
+        padding: 17px 16px;
     }
 
     .home-announcements .announcement-title-row {
@@ -638,7 +637,7 @@
     }
 
     .home-announcements .announcement-title a {
-        font-size: clamp(17px, 1.2vw + 14px, 22px);
+        font-size: clamp(16px, 1.8vw + 12px, 21px);
         line-height: 1.25;
     }
 
@@ -664,9 +663,7 @@
         justify-content: center;
         row-gap: 6px;
     }
-}
 
-@media (max-width: 900px) {
     .home-filters-panel-toggle {
         display: flex;
         align-items: center;
@@ -678,25 +675,12 @@
     .home-filters-panel-checkbox:not(:checked) ~ .announcements-main .filters-container {
         display: none !important;
     }
+}
 
-    .home-announcements .announcements-main {
-        gap: 20px;
-    }
-
-    .home-announcements .filters-container {
-        padding: 18px 16px 20px;
-    }
-
-    .home-announcements .announcement-card {
-        padding: 17px 16px;
-    }
-
-    .home-announcements .announcement-title a {
-        font-size: clamp(16px, 1.8vw + 12px, 21px);
-    }
-
-    .home-announcements .filter-tags-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+@media (max-width: 700px) {
+    .home-announcements .announcements-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
 }
 
@@ -728,13 +712,7 @@
         box-sizing: border-box;
     }
 
-    .home-announcements .announcements-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
     .home-announcements .filter-tags-grid {
-        grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
         gap: 8px 10px;
     }
 
