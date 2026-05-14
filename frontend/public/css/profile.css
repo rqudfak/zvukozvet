@@ -712,6 +712,18 @@
         font-size: 13px;
         padding: 8px 12px;
     }
+
+    .profile-avatar {
+        width: 200px;
+        height: 200px;
+    }
+    .profile-name {
+        font-size: 16px;
+    }
+    .profile-meta-col p, .profile-meta-block .profile-achievements-bar-wrap strong {
+        font-size: 14px;
+    }
+
     .btn-submit {
         font-size: 14px;
     }
