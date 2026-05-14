@@ -342,7 +342,6 @@
 
 .auth-form .form-buttons .btn-switch.btn-switch-auth {
     width: 100%;
-    max-width: 320px;
 }
 
 @media (max-width: 489px) {
