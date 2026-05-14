@@ -312,13 +312,37 @@
 }
 
 .form-input--forgot-wrap .forgot-password-link {
-    color: #f1642e;
     font-size: 14px;
     text-decoration: none;
 }
 
 .form-input--forgot-wrap .forgot-password-link:hover {
     text-decoration: underline;
+}
+
+/* Оранжевая «вторичная» ссылка в формах авторизации и на связанных страницах (перебивает серый .btn-switch из объявлений) */
+.btn-switch.btn-switch-auth {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 10px 0;
+    color: #f1642e;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    background-color: #fff;
+    border: #f1642e 2px solid;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-switch.btn-switch-auth:hover {
+    background-color: #f1642e;
+    color: #fff;
+}
+
+.auth-form .form-buttons .btn-switch.btn-switch-auth {
+    width: 100%;
+    max-width: 320px;
 }
 
 @media (max-width: 489px) {
@@ -363,26 +387,10 @@
         max-width: 100%;
     }
 
-    .btn-switch-auth {
-        width: 100%;
-        text-align: center;
-        box-sizing: border-box;
+    .auth-form .form-buttons .btn-switch.btn-switch-auth {
+        max-width: 100%;
+    }
 
-        padding: 10px 0;
-        color: #F1642E;
-        text-align: center;
-        font-weight: 600;
-    
-        background-color: white;
-        border: #F1642E 2px solid;
-        border-radius: 5px;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    .btn-switch-auth:hover {
-        background-color: #F1642E;
-        color: white;
-    }
-    
     .auth-form-message {
         font-size: 13px;
         max-width: 100%;
