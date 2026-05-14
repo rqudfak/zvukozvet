@@ -501,7 +501,6 @@
 .portfolio-item-date {
     font-size: 14px;
     font-weight: 600;
-    color: var(--profile-purple-muted);
 }
 
 .portfolio-item-desc {
@@ -510,7 +509,6 @@
     margin-bottom: 6px;
     font-size: 16px;
     line-height: 1.25;
-    color: var(--profile-purple);
     padding-right: 60px;
     white-space: pre-line;
 }
