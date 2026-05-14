@@ -631,18 +631,6 @@
         justify-content: center;
         row-gap: 6px;
     }
-
-    .home-filters-panel-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 4px;
-    }
-
-    .home-filters-panel-checkbox:not(:checked) ~ .announcements-main .filters-container {
-        display: none !important;
-    }
 }
 
 @media (max-width: 901px) {
@@ -676,6 +664,18 @@
         min-width: 0;
         text-align: center;
         box-sizing: border-box;
+    }
+    
+    .home-filters-panel-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .home-filters-panel-checkbox:not(:checked) ~ .announcements-main .filters-container {
+        display: none !important;
     }
 }
 
