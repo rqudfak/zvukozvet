@@ -27,17 +27,22 @@ export function buildStorageUrl(rawPath?: string | null): string | null {
   return `${PUBLIC_API_BASE}/storage/${normalizedPath}`;
 }
 
-/** Иконка достижения: `backend/public/images/achievements/{icon}`. */
+//иконки достижений
 export function buildAchievementIconUrl(icon?: string | null): string | null {
   if (!icon?.trim()) return null;
   const filename =
     icon.trim().replace(/\\/g, "/").split("/").pop() ?? icon.trim();
   if (!filename) return null;
+  const encoded = encodeURIComponent(filename);
+  const api = (process.env.NEXT_PUBLIC_API_URL ?? API_URL)?.trim().replace(/\/+$/, "");
+  if (api) {
+    return `${api}/images/achievements/${encoded}`;
+  }
   const base = resolveBackendPublicOrigin() || PUBLIC_API_BASE;
-  return `${base.replace(/\/+$/, "")}/images/achievements/${encodeURIComponent(filename)}`;
+  return `${base.replace(/\/+$/, "")}/images/achievements/${encoded}`;
 }
 
-/** Иконка жанра: новые файлы в storage/app/public/genres (URL /storage/genres/…), старые — public/images/genres. */
+//иконки жанров
 export function buildGenreIconUrl(icon?: string | null): string | null {
   if (!icon) return null;
   

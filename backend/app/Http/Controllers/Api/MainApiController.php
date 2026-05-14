@@ -841,6 +841,25 @@ class MainApiController extends Controller
         return response()->json(['message' => 'Двухфакторная аутентификация отключена']);
     }
 
+    /**
+     * Иконки достижений из public/images/achievements (на случай, если веб-сервер не отдаёт /images с корня).
+     */
+    public function achievementIcon(string $filename)
+    {
+        if ($filename !== basename($filename)) {
+            abort(404);
+        }
+        if (! preg_match('/^[a-zA-Z0-9_\-\.]+\.(svg|png|webp|jpe?g)$/i', $filename)) {
+            abort(404);
+        }
+        $path = public_path('images/achievements/'.$filename);
+        if (! is_file($path)) {
+            abort(404);
+        }
+
+        return response()->file($path);
+    }
+
     public function storePortfolio(Request $request, User $user)
     {
         if ($request->user()->id !== $user->id) {

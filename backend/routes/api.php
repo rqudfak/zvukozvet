@@ -22,6 +22,8 @@ Route::post('/reset-password', [MainApiController::class, 'resetPassword']);
 
 Route::get('/announcements', [MainApiController::class, 'announcements']);
 Route::get('/announcements/{announcement}', [MainApiController::class, 'announcement']);
+Route::get('/images/achievements/{filename}', [MainApiController::class, 'achievementIcon'])
+    ->where('filename', '[a-zA-Z0-9_\-\.]+');
 Route::get('/genres', [MainApiController::class, 'genres']);
 Route::get('/users/{user}', [MainApiController::class, 'userProfile']);
 
