@@ -367,8 +367,22 @@
         width: 100%;
         text-align: center;
         box-sizing: border-box;
-    }
 
+        padding: 10px 0;
+        color: #F1642E;
+        text-align: center;
+        font-weight: 600;
+    
+        background-color: white;
+        border: #F1642E 2px solid;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .auth-form .btn-switch:hover {
+        background-color: #F1642E;
+        color: white;
+    }
+    
     .auth-form-message {
         font-size: 13px;
         max-width: 100%;
