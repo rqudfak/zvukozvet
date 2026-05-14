@@ -835,15 +835,21 @@
     color: var(--profile-accent);
 }
 
-/* Достижения */
+/* Достижения: секции в адаптивной сетке; «Отзывы» на всю ширину — «Портфолио» и «Активность» могут встать в один ряд */
 .achievements-by-category {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px 20px;
+    align-items: start;
+}
+
+.achievement-category--span-full {
+    grid-column: 1 / -1;
 }
 
 .achievement-category {
     margin: 0;
+    min-width: 0;
 }
 
 .achievement-category-title {
@@ -858,16 +864,18 @@
 
 .achievements-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 16px;
 }
 
 .achievement-item {
+    min-height: 130px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     padding: 16px;
-    border-radius: var(--profile-radius);
+    border-radius: 12px;
     text-align: center;
     border: 1px solid var(--profile-border);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
