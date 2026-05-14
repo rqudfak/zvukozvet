@@ -634,7 +634,7 @@
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 700px) {
     .portfolio-upload-label,
     .portfolio-upload-label::after {
         font-size: 20px;
@@ -674,10 +674,6 @@
         margin: -18px 0 0;
     }
 
-    .profile-header {
-        gap: 14px;
-    }
-
     .profile-meta-columns {
         grid-template-columns: 1fr;
         gap: 8px;
@@ -687,6 +683,7 @@
         flex-direction: column;
         align-items: center;
         text-align: center;
+        gap: 14px;
     }
 
     .profile-info {
@@ -711,6 +708,9 @@
         white-space: nowrap;
         font-size: 13px;
         padding: 8px 12px;
+    }
+    .btn-submit {
+        font-size: 14px;
     }
 }
 
@@ -1063,4 +1063,116 @@
 
 .pagination-bottom {
     margin-top: 18px;
+}
+
+@media (max-width: 335px) {
+    .profile-card {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .profile-tab-content.active {
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .portfolio-list {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .portfolio-upload {
+        padding: 12px 10px;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .portfolio-form-input {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 10px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .portfolio-file-input {
+        max-width: 100%;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .portfolio-desc-input {
+        flex: none;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .portfolio-form-input .btn-submit {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .portfolio-item {
+        padding: 12px 10px 12px;
+        max-width: 100%;
+        box-sizing: border-box;
+        min-width: 0;
+    }
+
+    .portfolio-item-desc {
+        padding-right: 42px;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .portfolio-audio-player {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+        gap: 8px 10px;
+        padding: 10px 8px;
+        max-width: 100%;
+        box-sizing: border-box;
+        align-items: center;
+    }
+
+    .portfolio-audio-play {
+        grid-column: 1;
+        grid-row: 1;
+        width: 34px;
+        height: 34px;
+        font-size: 18px;
+    }
+
+    .portfolio-audio-play.is-playing {
+        font-size: 20px;
+    }
+
+    .portfolio-audio-duration {
+        grid-column: 2;
+        grid-row: 1;
+        font-size: 13px;
+        justify-self: end;
+        align-self: center;
+        white-space: nowrap;
+    }
+
+    .portfolio-audio-seek {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        flex: unset;
+    }
 }
