@@ -11,9 +11,9 @@ export const ACHIEVEMENT_CATEGORY_ORDER: {
   title: string;
 }[] = [
   { key: "announcements", title: "Объявления" },
-  { key: "responses", title: "Отклики" },
   { key: "portfolio", title: "Портфолио" },
   { key: "reviews", title: "Отзывы" },
+  { key: "responses", title: "Отклики" },
   { key: "activity", title: "Активность на сайте" },
   { key: "other", title: "Прочее" },
 ];

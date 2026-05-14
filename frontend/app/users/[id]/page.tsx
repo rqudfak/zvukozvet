@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildAchievementIconUrl, buildStorageUrl } from "@/lib/media";
-import { groupAchievementsByCategory } from "@/lib/achievementCategories";
+import { groupAchievementsByCategory, type AchievementCategoryKey } from "@/lib/achievementCategories";
 
 type Review = {
   id: number;
@@ -480,6 +480,67 @@ export default function UserPage() {
 
   const userAchievementIds = new Set((payload.user.achievements ?? []).map((a) => a.id));
   const achievementSections = groupAchievementsByCategory(payload.all_achievements);
+  const achievementByKey = new Map(
+    achievementSections.map((s) => [s.key, s] as const),
+  );
+
+  const renderAchievementCards = (items: Achievement[]) =>
+    items.map((achievement) => {
+      const unlocked = userAchievementIds.has(achievement.id);
+      const achievementIconSrc = buildAchievementIconUrl(achievement.icon);
+      return (
+        <div
+          key={achievement.id}
+          className={`achievement-item ${unlocked ? "unlocked" : "locked"}`}
+          title={achievement.description || ""}
+        >
+          {achievementIconSrc ? (
+            <img src={achievementIconSrc} alt="" className="achievement-icon" />
+          ) : (
+            <div className="achievement-icon-placeholder">🏆</div>
+          )}
+          <span className="achievement-name">{achievement.name}</span>
+          {achievement.description ? (
+            <span className="achievement-desc">{achievement.description}</span>
+          ) : null}
+        </div>
+      );
+    });
+
+  function renderAchievementCategoryPairSlot(categoryKey: AchievementCategoryKey) {
+    const section = achievementByKey.get(categoryKey);
+    if (!section) return null;
+    return (
+      <section
+        key={categoryKey}
+        className="achievement-category"
+        aria-labelledby={`ach-cat-${categoryKey}`}
+      >
+        <h3 id={`ach-cat-${categoryKey}`} className="achievement-category-title">
+          {section.title}
+        </h3>
+        <div className="achievements-grid">{renderAchievementCards(section.items)}</div>
+      </section>
+    );
+  }
+
+  function renderReviewsAchievementRow() {
+    const section = achievementByKey.get("reviews");
+    if (!section) return null;
+    return (
+      <section
+        className="achievement-category"
+        aria-labelledby="ach-cat-reviews"
+      >
+        <h3 id="ach-cat-reviews" className="achievement-category-title">
+          {section.title}
+        </h3>
+        <div className="achievements-grid achievements-grid--single-row">
+          {renderAchievementCards(section.items)}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -1091,42 +1152,24 @@ export default function UserPage() {
             <p className="profile-empty">Список достижений пока не заполнен.</p>
           ) : (
             <div className="achievements-by-category">
-              {achievementSections.map((section) => (
-                <section key={section.key} className="achievement-category" aria-labelledby={`ach-cat-${section.key}`}>
-                  <h3 id={`ach-cat-${section.key}`} className="achievement-category-title">
-                    {section.title}
-                  </h3>
-                  <div className="achievements-grid">
-                    {section.items.map((achievement) => {
-                      const unlocked = userAchievementIds.has(achievement.id);
-                      const achievementIconSrc = buildAchievementIconUrl(
-                        achievement.icon,
-                      );
-                      return (
-                        <div
-                          key={achievement.id}
-                          className={`achievement-item ${unlocked ? "unlocked" : "locked"}`}
-                          title={achievement.description || ""}
-                        >
-                          {achievementIconSrc ? (
-                            <img
-                              src={achievementIconSrc}
-                              alt=""
-                              className="achievement-icon"
-                            />
-                          ) : (
-                            <div className="achievement-icon-placeholder">🏆</div>
-                          )}
-                          <span className="achievement-name">{achievement.name}</span>
-                          {achievement.description ? (
-                            <span className="achievement-desc">{achievement.description}</span>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </section>
-              ))}
+              {(achievementByKey.has("announcements") || achievementByKey.has("portfolio")) ? (
+                <div className="achievement-pair-row">
+                  {renderAchievementCategoryPairSlot("announcements")}
+                  {renderAchievementCategoryPairSlot("portfolio")}
+                </div>
+              ) : null}
+              {renderReviewsAchievementRow()}
+              {(achievementByKey.has("responses") || achievementByKey.has("activity")) ? (
+                <div className="achievement-pair-row">
+                  {renderAchievementCategoryPairSlot("responses")}
+                  {renderAchievementCategoryPairSlot("activity")}
+                </div>
+              ) : null}
+              {achievementByKey.has("other") ? (
+                <div className="achievement-full-row">
+                  {renderAchievementCategoryPairSlot("other")}
+                </div>
+              ) : null}
             </div>
           )}
         </div>
