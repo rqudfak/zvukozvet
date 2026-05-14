@@ -625,9 +625,8 @@
 }
 
 .portfolio-audio-duration {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
-    color: var(--profile-purple-muted);
 }
 
 @media (max-width: 900px) {

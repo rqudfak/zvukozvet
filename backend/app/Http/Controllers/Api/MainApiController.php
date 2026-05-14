@@ -1069,9 +1069,7 @@ class MainApiController extends Controller
             $announcement->user->notify(new NewResponseOnYourAnnouncement($announcement, $request->user()));
         }
 
-        if ($request->user()->responses()->count() === 1) {
-            app(AchievementService::class)->award($request->user(), 'first_response');
-        }
+        app(AchievementService::class)->award($request->user(), 'first_response');
 
         return response()->json(['message' => 'Отклик отправлен', 'response' => $response], 201);
     }

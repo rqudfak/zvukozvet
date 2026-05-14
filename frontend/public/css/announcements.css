@@ -244,14 +244,14 @@
 }
 
 .error {
-    color: #e74c3c;
-    font-size: 12px;
+    color: #d11a2a;
+    font-size: 14px;
 }
 
 .announcement-form .field-error {
     display: block;
     color: #d11a2a;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.35;
     margin-top: 6px;
 }
