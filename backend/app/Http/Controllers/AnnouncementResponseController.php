@@ -50,9 +50,9 @@ class AnnouncementResponseController extends Controller
             $announcement->user->notify(new NewResponseOnYourAnnouncement($announcement, Auth::user()));
         }
 
-        // Достижение: первый отклик
+        // Достижение: первый отклик (award идемпотентен — повторно не выдаётся)
         $user = Auth::user();
-        if ($user && $user->responses()->count() === 1) {
+        if ($user) {
             app(AchievementService::class)->award($user, 'first_response');
         }
 
