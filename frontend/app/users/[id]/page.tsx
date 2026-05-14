@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
-import { buildStorageUrl } from "@/lib/media";
+import { buildAchievementIconUrl, buildStorageUrl } from "@/lib/media";
 
 type Review = {
   id: number;
@@ -1078,15 +1078,18 @@ export default function UserPage() {
             ) : (
               payload.all_achievements.map((achievement) => {
                 const unlocked = userAchievementIds.has(achievement.id);
+                const achievementIconSrc = buildAchievementIconUrl(
+                  achievement.icon,
+                );
                 return (
                   <div
                     key={achievement.id}
                     className={`achievement-item ${unlocked ? "unlocked" : "locked"}`}
                     title={achievement.description || ""}
                   >
-                    {achievement.icon ? (
+                    {achievementIconSrc ? (
                       <img
-                        src={`${API_URL?.replace(/\/api\/?$/, "")}/images/achievements/${achievement.icon}`}
+                        src={achievementIconSrc}
                         alt=""
                         className="achievement-icon"
                       />
