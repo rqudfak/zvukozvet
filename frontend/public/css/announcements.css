@@ -577,39 +577,7 @@
         gap: 20px;
     }
 
-    .home-announcements .filters-container {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        border-radius: 10px;
-        padding: 18px 16px 20px;
-        box-shadow: 0 2px 14px rgba(80, 78, 118, 0.1);
-        border: 1px solid rgba(80, 78, 118, 0.12);
-    }
-
-    .home-announcements .filters-container .filter-search-input {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .home-announcements .filter-tags-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 10px 12px;
-    }
-
-    .home-announcements .filter-actions {
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .home-announcements .filter-actions .btn-submit,
-    .home-announcements .filter-actions .btn-switch {
-        flex: 1 1 140px;
-        min-width: 0;
-        text-align: center;
-        box-sizing: border-box;
-    }
+    
 
     .home-announcements .announcements-grid {
         width: 100%;
@@ -674,6 +642,40 @@
 
     .home-filters-panel-checkbox:not(:checked) ~ .announcements-main .filters-container {
         display: none !important;
+    }
+}
+
+@media (max-width: 901px) {
+    .home-announcements .filters-container {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        border-radius: 10px;
+        padding: 18px 16px 20px;
+        box-shadow: 0 2px 14px rgba(80, 78, 118, 0.1);
+        border: 1px solid rgba(80, 78, 118, 0.12);
+    }
+
+    .home-announcements .filters-container .filter-search-input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .home-announcements .filter-tags-grid {
+        gap: 10px 12px;
+    }
+
+    .home-announcements .filter-actions {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .home-announcements .filter-actions .btn-submit,
+    .home-announcements .filter-actions .btn-switch {
+        flex: 1 1 140px;
+        min-width: 0;
+        text-align: center;
+        box-sizing: border-box;
     }
 }
 
