@@ -91,6 +91,8 @@ function isProfileAnnouncementClosed(a: { accepted_responses_count?: number }): 
   return (a.accepted_responses_count ?? 0) > 0;
 }
 
+const PORTFOLIO_AUDIO_REQUIRED_MSG = "Выберите аудиозапись";
+
 /** Свой загруженный аватар (не заглушка в БД). */
 function hasCustomProfileAvatar(avatar: string | null | undefined): boolean {
   if (avatar == null || String(avatar).trim() === "") return false;
@@ -201,7 +203,7 @@ export default function UserPage() {
   async function uploadPortfolio() {
     setPortfolioMessage(null);
     if (!portfolioAudio) {
-      setPortfolioMessage("Выберите аудиофайл.");
+      setPortfolioMessage(PORTFOLIO_AUDIO_REQUIRED_MSG);
       return;
     }
 
@@ -686,7 +688,17 @@ export default function UserPage() {
                   Добавить
                 </button>
               </div>
-              {portfolioMessage ? <p>{portfolioMessage}</p> : null}
+              {portfolioMessage ? (
+                <p
+                  className={
+                    portfolioMessage === PORTFOLIO_AUDIO_REQUIRED_MSG
+                      ? "portfolio-upload-message-error"
+                      : undefined
+                  }
+                >
+                  {portfolioMessage}
+                </p>
+              ) : null}
             </div>
           ) : null}
           <div className="portfolio-list">

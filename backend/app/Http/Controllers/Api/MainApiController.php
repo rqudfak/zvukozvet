@@ -886,7 +886,6 @@ class MainApiController extends Controller
         }
 
         return response()->json([
-            'message' => 'Запись добавлена в портфолио',
             'item' => $item,
         ], 201);
     }
@@ -899,8 +898,6 @@ class MainApiController extends Controller
 
         Storage::disk('public')->delete($portfolio_item->audio_path);
         $portfolio_item->delete();
-
-        return response()->json(['message' => 'Запись удалена']);
     }
 
     public function adminStatistics(Request $request)
