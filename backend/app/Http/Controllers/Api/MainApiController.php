@@ -886,7 +886,6 @@ class MainApiController extends Controller
         }
 
         return response()->json([
-            'message' => 'Запись добавлена в портфолио',
             'item' => $item,
         ], 201);
     }
