@@ -476,8 +476,65 @@
     font-weight: bold;
 }
 
+/* Главная: скрытый чекбокс — показ/скрытие фильтрации при ширине ≤900px */
+.home-filters-panel-checkbox {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    opacity: 0;
+}
 
+.home-filters-panel-toggle {
+    display: none;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 0 14px 0;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-family: "Source Code Pro", monospace;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    color: #504e76;
+    background: #e8e7f4;
+    border: 2px solid #b5b4dd;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
 
+.home-filters-panel-toggle:hover {
+    background: #deddfa;
+    border-color: #7a79a8;
+}
+
+.home-filters-panel-toggle:focus-visible {
+    outline: 2px solid #f1642e;
+    outline-offset: 2px;
+}
+
+.home-filters-panel-checkbox:checked ~ .home-filters-panel-toggle .home-filters-panel-toggle-show {
+    display: none;
+}
+
+.home-filters-panel-checkbox:not(:checked) ~ .home-filters-panel-toggle .home-filters-panel-toggle-hide {
+    display: none;
+}
+
+@media (min-width: 901px) {
+    .home-filters-panel-toggle {
+        display: none !important;
+    }
+
+    .home-announcements .announcements-main .filters-container {
+        display: block !important;
+    }
+}
 
 @media (max-width: 1239px) {
     .home-announcements {
@@ -559,8 +616,8 @@
     .home-announcements .announcements-grid {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-        gap: 22px 18px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 16px;
         justify-content: stretch;
         justify-items: stretch;
         margin-bottom: 28px;
@@ -610,17 +667,24 @@
 }
 
 @media (max-width: 900px) {
+    .home-filters-panel-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .home-filters-panel-checkbox:not(:checked) ~ .announcements-main .filters-container {
+        display: none !important;
+    }
+
     .home-announcements .announcements-main {
         gap: 20px;
     }
 
     .home-announcements .filters-container {
         padding: 18px 16px 20px;
-    }
-
-    .home-announcements .announcements-grid {
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
-        gap: 18px 14px;
     }
 
     .home-announcements .announcement-card {

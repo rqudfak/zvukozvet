@@ -98,8 +98,22 @@ export default async function Home({
     ),
   );
 
+  const hasActiveFilters =
+    typeBookChecked ||
+    typeGameChecked ||
+    selectedGenres.length > 0 ||
+    selectedGenders.length > 0 ||
+    selectedTimbres.length > 0 ||
+    selectedSearch.trim().length > 0;
+
   return (
     <div className="home-announcements">
+      <input
+        type="checkbox"
+        id="home-filters-panel"
+        className="home-filters-panel-checkbox"
+        defaultChecked={hasActiveFilters}
+      />
       <div className="announcements-header">
         <h2>Доска объявлений</h2>
         {announcements.last_page > 1 ? (
@@ -126,6 +140,11 @@ export default async function Home({
 
         <CreateAnnouncementButton />
       </div>
+
+      <label htmlFor="home-filters-panel" className="home-filters-panel-toggle">
+        <span className="home-filters-panel-toggle-show">Показать фильтрацию</span>
+        <span className="home-filters-panel-toggle-hide">Скрыть фильтрацию</span>
+      </label>
 
       <div className="announcements-main">
         <div className="filters-container">
