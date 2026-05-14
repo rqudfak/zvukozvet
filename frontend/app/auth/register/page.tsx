@@ -204,7 +204,7 @@ export default function RegisterPage() {
           <button className="btn-submit" type="submit" id="submit-btn" disabled={loading || !isFormFilled}>
             Создать аккаунт
           </button>
-          <Link className="btn-switch-auth" href="/auth/login">
+          <Link className="btn-switch btn-switch-auth" href="/auth/login">
             У меня уже есть аккаунт
           </Link>
         </div>

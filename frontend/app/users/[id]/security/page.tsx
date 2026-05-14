@@ -210,7 +210,7 @@ export default function AccountSecurityPage() {
                 Включить 2FA
               </button>
             )}
-            <Link className="btn-switch-auth" href={`/users/${userId}`}>
+            <Link className="btn-switch btn-switch-auth" href={`/users/${userId}`}>
               Вернуться в профиль
             </Link>
           </div>
