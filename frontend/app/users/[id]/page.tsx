@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildAchievementIconUrl, buildStorageUrl } from "@/lib/media";
+import { groupAchievementsByCategory } from "@/lib/achievementCategories";
 
 type Review = {
   id: number;
@@ -16,6 +17,7 @@ type Review = {
 
 type Achievement = {
   id: number;
+  code?: string | null;
   name: string;
   description?: string;
   icon?: string | null;
@@ -477,6 +479,7 @@ export default function UserPage() {
   }
 
   const userAchievementIds = new Set((payload.user.achievements ?? []).map((a) => a.id));
+  const achievementSections = groupAchievementsByCategory(payload.all_achievements);
 
   return (
     <>
@@ -1084,39 +1087,48 @@ export default function UserPage() {
         </div>
 
         <div className={`profile-tab-content ${activeTab === "achievements" ? "active" : ""}`}>
-          <div className="achievements-grid">
-            {payload.all_achievements.length === 0 ? (
-              <p className="profile-empty">Список достижений пока не заполнен.</p>
-            ) : (
-              payload.all_achievements.map((achievement) => {
-                const unlocked = userAchievementIds.has(achievement.id);
-                const achievementIconSrc = buildAchievementIconUrl(
-                  achievement.icon,
-                );
-                return (
-                  <div
-                    key={achievement.id}
-                    className={`achievement-item ${unlocked ? "unlocked" : "locked"}`}
-                    title={achievement.description || ""}
-                  >
-                    {achievementIconSrc ? (
-                      <img
-                        src={achievementIconSrc}
-                        alt=""
-                        className="achievement-icon"
-                      />
-                    ) : (
-                      <div className="achievement-icon-placeholder">🏆</div>
-                    )}
-                    <span className="achievement-name">{achievement.name}</span>
-                    {achievement.description ? (
-                      <span className="achievement-desc">{achievement.description}</span>
-                    ) : null}
+          {achievementSections.length === 0 ? (
+            <p className="profile-empty">Список достижений пока не заполнен.</p>
+          ) : (
+            <div className="achievements-by-category">
+              {achievementSections.map((section) => (
+                <section key={section.key} className="achievement-category" aria-labelledby={`ach-cat-${section.key}`}>
+                  <h3 id={`ach-cat-${section.key}`} className="achievement-category-title">
+                    {section.title}
+                  </h3>
+                  <div className="achievements-grid">
+                    {section.items.map((achievement) => {
+                      const unlocked = userAchievementIds.has(achievement.id);
+                      const achievementIconSrc = buildAchievementIconUrl(
+                        achievement.icon,
+                      );
+                      return (
+                        <div
+                          key={achievement.id}
+                          className={`achievement-item ${unlocked ? "unlocked" : "locked"}`}
+                          title={achievement.description || ""}
+                        >
+                          {achievementIconSrc ? (
+                            <img
+                              src={achievementIconSrc}
+                              alt=""
+                              className="achievement-icon"
+                            />
+                          ) : (
+                            <div className="achievement-icon-placeholder">🏆</div>
+                          )}
+                          <span className="achievement-name">{achievement.name}</span>
+                          {achievement.description ? (
+                            <span className="achievement-desc">{achievement.description}</span>
+                          ) : null}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })
-            )}
-          </div>
+                </section>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

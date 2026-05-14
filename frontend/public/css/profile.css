@@ -836,6 +836,26 @@
 }
 
 /* Достижения */
+.achievements-by-category {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.achievement-category {
+    margin: 0;
+}
+
+.achievement-category-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--profile-purple);
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--profile-border);
+    letter-spacing: 0.02em;
+}
+
 .achievements-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
