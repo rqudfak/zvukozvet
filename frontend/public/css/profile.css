@@ -429,6 +429,12 @@
     gap: 12px;
 }
 
+.portfolio-upload-message-error {
+    color: #e74c3c;
+    margin: 0;
+    font-size: 14px;
+}
+
 .portfolio-form-label,
 .portfolio-form-input {
     display: flex;

@@ -42,6 +42,8 @@ type ExistingReview = { id: number; message: string; rating: number; reviewed_us
 
 const RESPONSE_STATUSES = ["Не проверено", "На рассмотрении", "Принято", "Отклонено"];
 
+const RESPONSE_AUDIO_REQUIRED_MSG = "Выберите аудиозапись";
+
 function formatDateTime(dateString: string): string {
   const date = new Date(dateString);
   const dd = String(date.getDate()).padStart(2, "0");
@@ -204,9 +206,17 @@ export default function AnnouncementDetailPage({
 
   async function submitResponse(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!announcement || !audioFile) return;
+    setResponseError(null);
+    if (!announcement) return;
+    if (!audioFile) {
+      setResponseError(RESPONSE_AUDIO_REQUIRED_MSG);
+      return;
+    }
     const token = localStorage.getItem("auth_token");
-    if (!token) return;
+    if (!token) {
+      setResponseError("Войдите в аккаунт, чтобы отправить отклик.");
+      return;
+    }
     const formData = new FormData();
     formData.append("message", message);
     formData.append("audio", audioFile);
@@ -578,12 +588,14 @@ export default function AnnouncementDetailPage({
                   id="audio"
                   name="audio"
                   accept="audio/*"
-                  required
-                  onChange={(e) => setAudioFile(e.target.files?.[0] ?? null)}
+                  onChange={(e) => {
+                    setAudioFile(e.target.files?.[0] ?? null);
+                    setResponseError(null);
+                  }}
                 />
               </div>
               <div className="form-actions">
-                <button type="submit" className="btn-submit" disabled={!audioFile || loading}>
+                <button type="submit" className="btn-submit" disabled={loading}>
                   Откликнуться
                 </button>
               </div>
