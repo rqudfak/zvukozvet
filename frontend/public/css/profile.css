@@ -874,7 +874,7 @@
 
 .achievements-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
     gap: 16px;
 }
 
@@ -899,7 +899,7 @@
 @media (max-width: 889px) {
     .achievements-grid--single-row {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         flex-wrap: unset;
         overflow-x: visible;
         padding-bottom: 0;
@@ -909,9 +909,25 @@
         flex: unset;
         min-width: 0;
     }
+
+    .achievements-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 829px) {
+    .achievements-grid--single-row {
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .achievements-grid--single-row {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 409px) {
     .achievements-grid--single-row {
         grid-template-columns: 1fr;
     }
