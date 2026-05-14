@@ -80,7 +80,7 @@ export default function LoginPage() {
           <button className="btn-submit" type="submit" id="submit-btn" disabled={loading}>
             Войти в аккаунт
           </button>
-          <Link className="btn-switch" href="/auth/register">
+          <Link className="btn-switch-auth" href="/auth/register">
             Создать аккаунт
           </Link>
         </div>
