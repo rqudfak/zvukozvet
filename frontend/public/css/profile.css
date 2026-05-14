@@ -837,9 +837,10 @@
 
 /* Достижения */
 .achievements-by-category {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    justify-content: space-around;
+    gap: 16px 20px;
 }
 
 .achievement-category {
@@ -858,16 +859,18 @@
 
 .achievements-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 16px;
 }
 
 .achievement-item {
+    min-height: 130px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     padding: 16px;
-    border-radius: var(--profile-radius);
+    border-radius: 12px;
     text-align: center;
     border: 1px solid var(--profile-border);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
