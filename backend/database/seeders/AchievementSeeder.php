@@ -56,25 +56,25 @@ class AchievementSeeder extends Seeder
                 'code' => 'first_month',
                 'name' => 'Месяц на сайте',
                 'description' => 'Пользователь находится на сайте уже месяц',
-                'icon' => 'first_review_received.svg',
+                'icon' => 'month_on_site.svg',
             ],
             [
                 'code' => 'five_reviews',
                 'name' => 'Пять отзывов',
                 'description' => 'Получено 5 отзывов от авторов объявлений',
-                'icon' => 'first_review_received.svg',
+                'icon' => 'five_reviews.svg',
             ],
             [
                 'code' => 'portfolio_three',
                 'name' => 'Три записи в портфолио',
                 'description' => 'Добавлено 3 аудиозаписи в портфолио',
-                'icon' => 'first_review_received.svg',
+                'icon' => 'portfolio_three.svg',
             ],
             [
                 'code' => 'star_rating',
                 'name' => 'Отличная оценка',
                 'description' => 'Получен отзыв с рейтингом 5 звёзд',
-                'icon' => 'first_review_received.svg',
+                'icon' => 'star_rating.svg',
             ],
         ];
 
