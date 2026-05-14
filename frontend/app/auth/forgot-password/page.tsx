@@ -131,7 +131,7 @@ export default function ForgotPasswordPage() {
           <button className="btn-submit" type="submit" disabled={loading}>
             Отправить ссылку
           </button>
-          <Link className="btn-switch" href="/auth/login">
+          <Link className="btn-switch-auth" href="/auth/login">
             Вернуться назад
           </Link>
         </div>

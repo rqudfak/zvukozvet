@@ -177,7 +177,7 @@ function ResetPasswordForm() {
           <button className="btn-submit" type="submit" disabled={loading || !token}>
             Сохранить пароль
           </button>
-          <Link className="btn-switch" href="/auth/login">
+          <Link className="btn-switch-auth" href="/auth/login">
             Войти по логину
           </Link>
         </div>
