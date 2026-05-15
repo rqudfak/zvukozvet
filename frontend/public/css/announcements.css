@@ -733,6 +733,7 @@
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
+        margin-bottom: 10px;
     }
 
     .home-announcements .announcements-header h2 {
