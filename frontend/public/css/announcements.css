@@ -539,7 +539,7 @@
     .alert-success {
         margin: 30px 20px;
     }
-    
+
     .home-announcements {
         padding-left: clamp(12px, 3.2vw, 22px);
         padding-right: clamp(12px, 3.2vw, 22px);
@@ -672,8 +672,6 @@
     }
 
     .home-announcements .filter-tags-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 10px 12px;
     }
 
