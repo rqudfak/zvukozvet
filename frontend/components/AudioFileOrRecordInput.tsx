@@ -3,11 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   blobToAudioFile,
-  createAudioMediaRecorder,
   formatRecordingDuration,
-  getRecordingAvailability,
-  requestMicrophoneStream,
-  type RecordingAvailability,
+  getSupportedRecorderMimeType,
+  isAudioRecordingSupported,
 } from "@/lib/audioRecording";
 
 type SourceMode = "file" | "record";
@@ -32,9 +30,7 @@ export default function AudioFileOrRecordInput({
   fileInputClassName,
 }: AudioFileOrRecordInputProps) {
   const [mode, setMode] = useState<SourceMode>("file");
-  const [recordingAvailability, setRecordingAvailability] = useState<RecordingAvailability>({
-    canRecord: false,
-  });
+  const [canRecord, setCanRecord] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [elapsedSec, setElapsedSec] = useState(0);
   const [recordError, setRecordError] = useState<string | null>(null);
@@ -49,7 +45,7 @@ export default function AudioFileOrRecordInput({
   const previewUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
-    setRecordingAvailability(getRecordingAvailability());
+    setCanRecord(isAudioRecordingSupported());
   }, []);
 
   const stopStream = useCallback(() => {
@@ -133,8 +129,9 @@ export default function AudioFileOrRecordInput({
   const startRecording = async () => {
     if (disabled || isRecording) return;
 
-    if (!recordingAvailability.canRecord) {
-      setRecordError(recordingAvailability.reason ?? "Запись с микрофона недоступна.");
+    const mimeType = getSupportedRecorderMimeType();
+    if (!mimeType) {
+      setRecordError("Запись с микрофона не поддерживается в этом браузере.");
       return;
     }
 
@@ -146,12 +143,12 @@ export default function AudioFileOrRecordInput({
     }
 
     try {
-      const stream = await requestMicrophoneStream();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
       chunksRef.current = [];
-
-      const { recorder, mimeType } = createAudioMediaRecorder(stream);
       mimeTypeRef.current = mimeType;
+
+      const recorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = recorder;
 
       recorder.ondataavailable = (event) => {
@@ -193,13 +190,11 @@ export default function AudioFileOrRecordInput({
       timerRef.current = setInterval(() => {
         setElapsedSec((value) => value + 1);
       }, 1000);
-    } catch (error) {
+    } catch {
       stopStream();
-      const message =
-        error instanceof Error && error.message
-          ? error.message
-          : "Не удалось получить доступ к микрофону. Разрешите доступ в настройках браузера или загрузите файл.";
-      setRecordError(message);
+      setRecordError(
+        "Не удалось получить доступ к микрофону. Разрешите доступ в настройках браузера или загрузите файл.",
+      );
       resetRecorder();
     }
   };
@@ -245,7 +240,7 @@ export default function AudioFileOrRecordInput({
           role="tab"
           aria-selected={mode === "record"}
           className={`audio-source-tab${mode === "record" ? " is-active" : ""}`}
-          disabled={disabled || isRecording}
+          disabled={disabled || !canRecord}
           onClick={() => switchMode("record")}
         >
           Записать с микрофона
@@ -265,10 +260,9 @@ export default function AudioFileOrRecordInput({
         />
       ) : (
         <div className="audio-source-record-panel">
-          {!recordingAvailability.canRecord ? (
-            <p className="audio-source-hint audio-source-hint-warning">
-              {recordingAvailability.reason ??
-                "Запись с микрофона недоступна. Загрузите готовый файл."}
+          {!canRecord ? (
+            <p className="audio-source-hint">
+              Запись с микрофона недоступна в этом браузере. Загрузите готовый файл.
             </p>
           ) : (
             <>
