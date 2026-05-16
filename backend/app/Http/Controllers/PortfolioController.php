@@ -24,7 +24,7 @@ class PortfolioController extends Controller
 
         $data = $request->validate([
             'description' => 'nullable|string|max:2000',
-            'audio' => 'required|file|mimes:mp3,wav,ogg,m4a,webm|max:20480',
+            'audio' => 'required|file|mimes:mp3,wav,ogg,m4a|max:20480',
         ], [
             'audio.required' => 'Необходимо прикрепить аудиофайл',
         ]);

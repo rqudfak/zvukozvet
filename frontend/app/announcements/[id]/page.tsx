@@ -9,7 +9,6 @@ import { buildGenreIconUrl, buildStorageUrl } from "@/lib/media";
 import { setSuccessFlash } from "@/lib/flash";
 import StatusDropdown from "@/components/StatusDropdown";
 import PortfolioStyleAudioPlayer from "@/components/PortfolioStyleAudioPlayer";
-import AudioFileOrRecordInput from "@/components/AudioFileOrRecordInput";
 
 type Announcement = {
   id: number;
@@ -583,15 +582,14 @@ export default function AnnouncementDetailPage({
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="audio" style={{ marginTop: "10px" }}>
-                  Аудиозапись (обязательно)
-                </label>
-                <AudioFileOrRecordInput
+                <label htmlFor="audio" style={{marginTop: "10px"}}>Аудиофайл (обязательно)</label>
+                <input
+                  type="file"
                   id="audio"
-                  file={audioFile}
-                  disabled={loading}
-                  onFileChange={(file) => {
-                    setAudioFile(file);
+                  name="audio"
+                  accept="audio/*"
+                  onChange={(e) => {
+                    setAudioFile(e.target.files?.[0] ?? null);
                     setResponseError(null);
                   }}
                 />
