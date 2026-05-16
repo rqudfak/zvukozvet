@@ -6,7 +6,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { API_URL, fetchApi } from "@/lib/api";
 import { buildAchievementIconUrl, buildStorageUrl } from "@/lib/media";
 import { groupAchievementsByCategory, type AchievementCategoryKey } from "@/lib/achievementCategories";
-import AudioFileOrRecordInput from "@/components/AudioFileOrRecordInput";
 
 type Review = {
   id: number;
@@ -733,13 +732,14 @@ export default function UserPage() {
           {canEdit ? (
             <div className="portfolio-upload">
               <div className="portfolio-form-input">
-                <AudioFileOrRecordInput
-                  file={portfolioAudio}
-                  onFileChange={(file) => {
+                <input
+                  type="file"
+                  accept=".mp3,.wav,.ogg,.m4a"
+                  className="portfolio-file-input"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null;
                     setPortfolioAudio(file);
-                    if (file) setPortfolioMessage(null);
                   }}
-                  fileInputClassName="portfolio-file-input"
                 />
                 <input
                   type="text"
