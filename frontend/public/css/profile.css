@@ -557,6 +557,11 @@
     line-height: 1.45;
 }
 
+.audio-source-hint-warning {
+    color: #e74c3c;
+    max-width: 420px;
+}
+
 .audio-source-error {
     margin: 0;
     font-size: 14px;
