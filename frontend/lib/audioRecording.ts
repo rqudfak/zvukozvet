@@ -17,13 +17,21 @@ function hasGetUserMediaApi(): boolean {
     return false;
   }
 
-  if (navigator.mediaDevices?.getUserMedia) {
+  if (typeof navigator.mediaDevices !== "undefined") {
     return true;
   }
 
   const legacy = navigator as Navigator & {
-    webkitGetUserMedia?: typeof navigator.mediaDevices.getUserMedia;
-    mozGetUserMedia?: typeof navigator.mediaDevices.getUserMedia;
+    webkitGetUserMedia?: (
+      constraints: MediaStreamConstraints,
+      success: (stream: MediaStream) => void,
+      error: (error: unknown) => void,
+    ) => void;
+    mozGetUserMedia?: (
+      constraints: MediaStreamConstraints,
+      success: (stream: MediaStream) => void,
+      error: (error: unknown) => void,
+    ) => void;
   };
 
   return Boolean(legacy.webkitGetUserMedia || legacy.mozGetUserMedia);
