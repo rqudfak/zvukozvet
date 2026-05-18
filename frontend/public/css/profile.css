@@ -845,6 +845,39 @@
     color: var(--profile-accent);
 }
 
+@media (max-width: 400px) {
+    .review-header {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 10px;
+        row-gap: 6px;
+        align-items: start;
+    }
+
+    .review-user {
+        display: contents;
+    }
+
+    .review-avatar {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        align-self: start;
+    }
+
+    .review-meta {
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+    }
+
+    .review-rating {
+        grid-column: 2;
+        grid-row: 2;
+        margin: 0;
+        justify-content: flex-start;
+    }
+}
+
 /* Достижения: Объявления|Портфолио → Отзывы в одну строку → Отклики|Активность */
 .achievements-by-category {
     display: flex;
