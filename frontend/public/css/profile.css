@@ -116,6 +116,38 @@
     color: var(--profile-purple-muted);
 }
 
+@media (max-width: 370px) {
+    .profile-page-heading:has(.profile-head-toolbar--follow) {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        row-gap: 10px;
+        column-gap: 12px;
+    }
+
+    .profile-page-heading:has(.profile-head-toolbar--follow) .page-title {
+        grid-column: 1;
+        grid-row: 1;
+        flex: unset;
+    }
+
+    .profile-head-toolbar--follow {
+        display: contents;
+    }
+
+    .profile-page-heading:has(.profile-head-toolbar--follow) .profile-follow-badge {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: start;
+    }
+
+    .profile-page-heading:has(.profile-head-toolbar--follow) .profile-icon-link--follow {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+    }
+}
+
 .profile-icon-link {
     position: relative;
     display: flex;
