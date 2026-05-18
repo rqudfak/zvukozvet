@@ -989,7 +989,6 @@
     margin-top: 6px;
     font-size: 12px;
     line-height: 1.25;
-    color: var(--profile-purple-muted);
 }
 
 .achievement-item.locked .achievement-icon {
