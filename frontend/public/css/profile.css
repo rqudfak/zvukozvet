@@ -116,6 +116,38 @@
     color: var(--profile-purple-muted);
 }
 
+@media (max-width: 370px) {
+    .profile-page-heading:has(.profile-head-toolbar--follow) {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        row-gap: 10px;
+        column-gap: 12px;
+    }
+
+    .profile-page-heading:has(.profile-head-toolbar--follow) .page-title {
+        grid-column: 1;
+        grid-row: 1;
+        flex: unset;
+    }
+
+    .profile-head-toolbar--follow {
+        display: contents;
+    }
+
+    .profile-page-heading:has(.profile-head-toolbar--follow) .profile-follow-badge {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: start;
+    }
+
+    .profile-page-heading:has(.profile-head-toolbar--follow) .profile-icon-link--follow {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+    }
+}
+
 .profile-icon-link {
     position: relative;
     display: flex;
@@ -845,6 +877,39 @@
     color: var(--profile-accent);
 }
 
+@media (max-width: 400px) {
+    .review-header {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 10px;
+        row-gap: 6px;
+        align-items: start;
+    }
+
+    .review-user {
+        display: contents;
+    }
+
+    .review-avatar {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        align-self: start;
+    }
+
+    .review-meta {
+        grid-column: 2;
+        grid-row: 1;
+        min-width: 0;
+    }
+
+    .review-rating {
+        grid-column: 2;
+        grid-row: 2;
+        margin: 0;
+        justify-content: flex-start;
+    }
+}
+
 /* Достижения: Объявления|Портфолио → Отзывы в одну строку → Отклики|Активность */
 .achievements-by-category {
     display: flex;
@@ -989,7 +1054,6 @@
     margin-top: 6px;
     font-size: 12px;
     line-height: 1.25;
-    color: var(--profile-purple-muted);
 }
 
 .achievement-item.locked .achievement-icon {
