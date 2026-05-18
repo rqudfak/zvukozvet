@@ -138,7 +138,7 @@
     .profile-page-heading:has(.profile-head-toolbar--follow) .profile-follow-badge {
         grid-column: 1 / -1;
         grid-row: 2;
-        justify-self: start;
+        justify-self: center;
     }
 
     .profile-page-heading:has(.profile-head-toolbar--follow) .profile-icon-link--follow {
