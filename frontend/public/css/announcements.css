@@ -31,27 +31,11 @@
     width: 82%;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
-    column-gap: 30px;
+     
+    justify-content: space-between;
     row-gap: 25px;
     margin-bottom: 30px;
     align-content: start;
-}
-
-/* Главная (широкий экран): сетка вместо flex+space-between — порядок карточек = порядок в API */
-@media (min-width: 1240px) {
-    .home-announcements .announcements-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 25px 30px;
-        justify-content: stretch;
-    }
-
-    .home-announcements .announcement-card {
-        width: 100%;
-        max-width: none;
-        margin: 0;
-    }
 }
 
 .announcement-card {
