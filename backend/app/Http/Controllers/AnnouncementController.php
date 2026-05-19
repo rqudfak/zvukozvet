@@ -56,7 +56,9 @@ class AnnouncementController extends Controller
         }
         
         // сначала новые (по дате создания)
-        $announcements = $query->orderBy('created_at', 'desc')
+        $announcements = $query
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->paginate(10)
             ->appends($request->query());
         
