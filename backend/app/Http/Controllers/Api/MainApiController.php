@@ -365,7 +365,11 @@ class MainApiController extends Controller
             $query->whereRaw('LOWER(title) LIKE ?', ['%' . $term . '%']);
         }
 
-        $paginator = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $paginator = $query
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate(10)
+            ->withQueryString();
         $iconsByGenreName = Genre::query()
             ->whereIn('name', $paginator->getCollection()->pluck('genre')->unique()->filter()->all())
             ->pluck('icon', 'name');

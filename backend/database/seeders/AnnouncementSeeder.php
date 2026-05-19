@@ -406,19 +406,25 @@ Joel: I know, baby girl. I know. But I got you. I\'ll always have you.
             
         ];
 
-        foreach ($announcements as $data) {
+        $seededAt = now();
+
+        foreach ($announcements as $index => $data) {
             $data['color'] = Announcement::getColorByGenre($data['genre']) ?? '#F1642E';
             $data['genre_icon'] = Announcement::getIconByGenre($data['genre']) ?? null;
             $data['status'] = $data['status'] ?? 'Одобрено';
             $data['timbres'] = $data['timbres'] ?? ['Не указано'];
 
-            Announcement::updateOrCreate(
+            $announcement = Announcement::updateOrCreate(
                 [
                     'user_id' => $data['user_id'],
                     'title' => $data['title'],
                 ],
                 $data
             );
+
+            // Первый элемент в массиве — самый новый на доске; иначе при одинаковом created_at порядок «прыгает».
+            $announcement->created_at = $seededAt->copy()->subMinutes($index);
+            $announcement->saveQuietly();
         }
     }
 }
