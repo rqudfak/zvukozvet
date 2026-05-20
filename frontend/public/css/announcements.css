@@ -1,6 +1,5 @@
 .announcements-header {
-    margin-top: 30px;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -36,7 +35,7 @@
     display: flex;
     flex-wrap: wrap;
      
-    justify-content: space-between;
+    justify-content: space-around;
     row-gap: 25px;
     margin-bottom: 30px;
     align-content: start;
