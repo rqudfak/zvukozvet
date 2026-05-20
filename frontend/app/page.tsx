@@ -108,6 +108,7 @@ export default async function Home({
 
   return (
     <div className="home-announcements">
+      <h2>Доска объявлений</h2>
       <input
         type="checkbox"
         id="home-filters-panel"
@@ -115,7 +116,6 @@ export default async function Home({
         defaultChecked={hasActiveFilters}
       />
       <div className="announcements-header">
-        <h2>Доска объявлений</h2>
         {announcements.last_page > 1 ? (
           <div className="pagination pagination-top">
             <nav>
