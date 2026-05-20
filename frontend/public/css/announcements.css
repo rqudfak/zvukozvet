@@ -27,6 +27,10 @@
 }
 
 /* Сетка объявлений */
+.home-announcements h2 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
 .announcements-grid {
     width: 82%;
     display: flex;
