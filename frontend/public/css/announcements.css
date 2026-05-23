@@ -622,7 +622,7 @@
 @media (min-width: 1091px) {
     .home-announcements .announcements-header {
         display: grid;
-        grid-template-columns: 1fr 21%;
+        grid-template-columns: 1fr 24%;
         gap: 30px;
         align-items: start;
         justify-content: stretch;
