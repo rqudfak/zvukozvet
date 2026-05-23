@@ -629,29 +629,29 @@
     }
 
     .home-announcements .announcements-header h2 {
-        flex: 0 0 auto;
-        margin: 0;
+        grid-column: 1;
+        grid-row: 1;
+        flex: unset;
         min-width: 0;
     }
 
     .home-announcements .announcements-header .pagination {
-        flex: 1 1 auto;
-        min-width: 0;
+        grid-column: 1;
+        grid-row: 2;
+        flex: unset;
         margin: 0;
-        justify-content: center;
-    }
-
-    .home-announcements .announcements-header .pagination nav {
-        flex-wrap: nowrap;
     }
 
     .home-announcements .announcements-header .btn-submit {
-        flex: 0 0 21%;
-        width: 21%;
-        max-width: 21%;
-        margin-left: auto;
+        grid-column: 2;
+        grid-row: 1;
+        display: block;
+        align-self: start;
+        justify-self: stretch;
+        width: 100%;
+        max-width: 100%;
         box-sizing: border-box;
-        text-align: center;
+        flex-shrink: unset;
         white-space: normal;
     }
 
