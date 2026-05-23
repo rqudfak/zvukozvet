@@ -35,7 +35,7 @@
     display: flex;
     flex-wrap: wrap;
      
-    justify-content: space-around;
+    justify-content: space-between;
     row-gap: 25px;
     margin-bottom: 30px;
     align-content: start;
@@ -334,7 +334,7 @@
 
 /* Блок фильтрации */
 .filters-container {
-    width: 21%;
+    width: 24%;
     padding: 20px;
     margin-bottom: 30px;
     background-color: #C4C3E3;
@@ -621,11 +621,11 @@
 
 @media (min-width: 1091px) {
     .home-announcements .announcements-header {
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        justify-content: flex-start;
+        display: grid;
+        grid-template-columns: 1fr 24%;
         gap: 30px;
+        align-items: start;
+        justify-content: stretch;
     }
 
     .home-announcements .announcements-header h2 {
@@ -672,7 +672,7 @@
     }
 
     .home-announcements .filters-container {
-        width: 21%;
+        width: 24%;
         flex-shrink: 0;
         box-sizing: border-box;
     }
