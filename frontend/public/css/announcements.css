@@ -35,7 +35,7 @@
     display: flex;
     flex-wrap: wrap;
      
-    justify-content: space-around;
+    justify-content: space-between;
     row-gap: 25px;
     margin-bottom: 30px;
     align-content: start;
@@ -334,7 +334,7 @@
 
 /* Блок фильтрации */
 .filters-container {
-    width: 21%;
+    width: 24%;
     padding: 20px;
     margin-bottom: 30px;
     background-color: #C4C3E3;
@@ -646,9 +646,9 @@
     }
 
     .home-announcements .announcements-header .btn-submit {
-        flex: 0 0 21%;
-        width: 21%;
-        max-width: 21%;
+        flex: 0 0 24%;
+        width: 24%;
+        max-width: 24%;
         margin-left: auto;
         box-sizing: border-box;
         text-align: center;
@@ -672,7 +672,6 @@
     }
 
     .home-announcements .filters-container {
-        width: 21%;
         flex-shrink: 0;
         box-sizing: border-box;
     }
