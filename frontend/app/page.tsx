@@ -221,7 +221,7 @@ export default async function Home({
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Описание:</span>
-                    <span className="detail-value">{announcement.description.slice(0, 100)}</span>
+                    <span className="detail-value detail-value--description-clamp">{announcement.description}</span>
                   </div>
                 </div>
               </div>
