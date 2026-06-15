@@ -53,8 +53,28 @@
     margin-left: auto;
 }
 
-.admin-table-toolbar.notifications-page-toolbar .btn-submit {
+.notifications-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 16px;
+    margin-bottom: 16px;
+}
+
+.notifications-page-header .page-title {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: min(100%, 200px);
+}
+
+.notifications-page-header .btn-submit {
+    flex-shrink: 0;
     margin-left: auto;
+}
+
+.notifications-page-toolbar {
+    justify-content: flex-start;
 }
 
 .notifications-pagination-bottom {
@@ -1008,6 +1028,11 @@
 }
 
 @media (max-width: 600px) {
+    .notifications-page-header .btn-submit {
+        flex: 1 1 100%;
+        margin-left: 0;
+    }
+
     .modal-footer {
         flex-direction: column-reverse;
         align-items: stretch;

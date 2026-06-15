@@ -161,6 +161,16 @@
     flex: 1;
 }
 
+.home-announcements .detail-value--description-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    min-width: 0;
+    word-break: break-word;
+}
+
 .announcement-actions {
     display: flex;
     gap: 10px;

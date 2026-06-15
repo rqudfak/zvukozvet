@@ -171,19 +171,21 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="profile-card">
-      <h2 className="page-title">Уведомления</h2>
+    <div className="profile-card notifications-page">
+      <div className="notifications-page-header">
+        <h2 className="page-title">Уведомления</h2>
+        <button
+          type="button"
+          className="btn-submit"
+          onClick={markAllRead}
+          disabled={readingAll || unreadTotal === 0}
+        >
+          Прочитать все
+        </button>
+      </div>
       <div className="admin-table-container">
         <div className="admin-table-toolbar notifications-page-toolbar">
           <Pagination />
-          <button
-            type="button"
-            className="btn-submit"
-            onClick={markAllRead}
-            disabled={readingAll || unreadTotal === 0}
-          >
-            Прочитать все
-          </button>
         </div>
         {error ? <p>{error}</p> : null}
         {items.map((item) => (
