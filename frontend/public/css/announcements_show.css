@@ -97,7 +97,6 @@
 
 .info-item {
     font-size: 14px;
-    color: #3b3a57;
 }
 .info-item a {
     color: #F1642E;
@@ -106,12 +105,10 @@
 
 .announcement-detail-description {
     margin-bottom: 30px;
-    color: #3b3a57;
 }
 
-.announcement-detail-description h3 {
+.announcement-detail-description h3, .announcement-detail-fragment h3 {
     margin-bottom: 15px;
-    color: #343352;
 }
 
 .announcement-detail-description p {
