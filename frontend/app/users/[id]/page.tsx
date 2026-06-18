@@ -703,14 +703,14 @@ export default function UserPage() {
             className={`profile-tab ${activeTab === "subscriptions" ? "active" : ""}`}
             onClick={() => setActiveTab("subscriptions")}
           >
-            Подписки ({payload.subscriptions_count})
+            Подписки
           </button>
           <button
             type="button"
             className={`profile-tab ${activeTab === "subscribers" ? "active" : ""}`}
             onClick={() => setActiveTab("subscribers")}
           >
-            Подписчики ({payload.subscribers_count})
+            Подписчики
           </button>
           <button
             type="button"
